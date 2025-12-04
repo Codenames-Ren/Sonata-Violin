@@ -1,0 +1,325 @@
+CRITICAL - 2025-12-04 05:37:47 --> Error: Class "App\Models\OperatorModel" not found
+[Method: GET, Route: login]
+in APPPATH\Controllers\AuthController.php on line 13.
+ 1 SYSTEMPATH\CodeIgniter.php(903): App\Controllers\AuthController->__construct()
+ 2 SYSTEMPATH\CodeIgniter.php(498): CodeIgniter\CodeIgniter->createController()
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ 7 SYSTEMPATH\rewrite.php(44): require_once('D:\\Mata-Kuliah\\Semester-3\\Pemrogramman-Web-2\\Sonata-Violin\\public\\index.php')
+ERROR - 2025-12-04 05:45:35 --> Error connecting to the database: mysqli_sql_exception: Access denied for user ''@'localhost' (using password: NO) in D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\Database\MySQLi\Connection.php:202
+Stack trace:
+#0 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\Database\MySQLi\Connection.php(202): mysqli->real_connect('localhost', '', '', '', 3306, '', 0)
+#1 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\Database\BaseConnection.php(419): CodeIgniter\Database\MySQLi\Connection->connect(false)
+#2 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\Database\BaseConnection.php(614): CodeIgniter\Database\BaseConnection->initialize()
+#3 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `op...', Array, false)
+#4 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+#5 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\BaseModel.php(838): CodeIgniter\Model->doInsert(Array)
+#6 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\Model.php(797): CodeIgniter\BaseModel->insert(Array, true)
+#7 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\app\Controllers\AuthController.php(61): CodeIgniter\Model->insert(Array)
+#8 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\CodeIgniter.php(933): App\Controllers\AuthController->registerProcess()
+#9 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AuthController))
+#10 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#11 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#12 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#13 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#14 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\rewrite.php(44): require_once('D:\\Mata-Kuliah\\...')
+#15 {main}
+
+Next CodeIgniter\Database\Exceptions\DatabaseException: Access denied for user ''@'localhost' (using password: NO) in D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\Database\MySQLi\Connection.php:246
+Stack trace:
+#0 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\Database\BaseConnection.php(419): CodeIgniter\Database\MySQLi\Connection->connect(false)
+#1 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\Database\BaseConnection.php(614): CodeIgniter\Database\BaseConnection->initialize()
+#2 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `op...', Array, false)
+#3 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+#4 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\BaseModel.php(838): CodeIgniter\Model->doInsert(Array)
+#5 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\Model.php(797): CodeIgniter\BaseModel->insert(Array, true)
+#6 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\app\Controllers\AuthController.php(61): CodeIgniter\Model->insert(Array)
+#7 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\CodeIgniter.php(933): App\Controllers\AuthController->registerProcess()
+#8 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AuthController))
+#9 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\rewrite.php(44): require_once('D:\\Mata-Kuliah\\...')
+#14 {main}
+CRITICAL - 2025-12-04 05:45:35 --> CodeIgniter\Database\Exceptions\DatabaseException: Unable to connect to the database.
+Main connection [MySQLi]: Access denied for user ''@'localhost' (using password: NO)
+[Method: POST, Route: register]
+in SYSTEMPATH\Database\BaseConnection.php on line 465.
+ 1 SYSTEMPATH\Database\BaseConnection.php(614): CodeIgniter\Database\BaseConnection->initialize()
+ 2 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `operator` (`username`, `nama_lengkap`, `password`, `role`, `created_at`) VALUES (:username:, :nama_lengkap:, :password:, :role:, :created_at:)', [...], false)
+ 3 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 4 SYSTEMPATH\BaseModel.php(838): CodeIgniter\Model->doInsert([...])
+ 5 SYSTEMPATH\Model.php(797): CodeIgniter\BaseModel->insert([...], true)
+ 6 APPPATH\Controllers\AuthController.php(61): CodeIgniter\Model->insert([...])
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AuthController->registerProcess()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AuthController))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+13 SYSTEMPATH\rewrite.php(44): require_once('D:\\Mata-Kuliah\\Semester-3\\Pemrogramman-Web-2\\Sonata-Violin\\public\\index.php')
+ERROR - 2025-12-04 05:46:18 --> Error connecting to the database: TypeError: str_replace(): Argument #1 ($search) must be of type array|string, int given in D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\Database\MySQLi\Connection.php:244
+Stack trace:
+#0 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\Database\MySQLi\Connection.php(244): str_replace(945313, '****', 'mysqli::real_co...')
+#1 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\Database\BaseConnection.php(419): CodeIgniter\Database\MySQLi\Connection->connect(false)
+#2 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\Database\BaseConnection.php(614): CodeIgniter\Database\BaseConnection->initialize()
+#3 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `op...', Array, false)
+#4 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+#5 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\BaseModel.php(838): CodeIgniter\Model->doInsert(Array)
+#6 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\Model.php(797): CodeIgniter\BaseModel->insert(Array, true)
+#7 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\app\Controllers\AuthController.php(61): CodeIgniter\Model->insert(Array)
+#8 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\CodeIgniter.php(933): App\Controllers\AuthController->registerProcess()
+#9 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AuthController))
+#10 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#11 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#12 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#13 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#14 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\rewrite.php(44): require_once('D:\\Mata-Kuliah\\...')
+#15 {main}
+CRITICAL - 2025-12-04 05:46:18 --> CodeIgniter\Database\Exceptions\DatabaseException: Unable to connect to the database.
+Main connection [MySQLi]: str_replace(): Argument #1 ($search) must be of type array|string, int given
+[Method: POST, Route: register]
+in SYSTEMPATH\Database\BaseConnection.php on line 465.
+ 1 SYSTEMPATH\Database\BaseConnection.php(614): CodeIgniter\Database\BaseConnection->initialize()
+ 2 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `operator` (`username`, `nama_lengkap`, `password`, `role`, `created_at`) VALUES (:username:, :nama_lengkap:, :password:, :role:, :created_at:)', [...], false)
+ 3 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 4 SYSTEMPATH\BaseModel.php(838): CodeIgniter\Model->doInsert([...])
+ 5 SYSTEMPATH\Model.php(797): CodeIgniter\BaseModel->insert([...], true)
+ 6 APPPATH\Controllers\AuthController.php(61): CodeIgniter\Model->insert([...])
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AuthController->registerProcess()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AuthController))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+13 SYSTEMPATH\rewrite.php(44): require_once('D:\\Mata-Kuliah\\Semester-3\\Pemrogramman-Web-2\\Sonata-Violin\\public\\index.php')
+ERROR - 2025-12-04 05:46:31 --> Error connecting to the database: mysqli_sql_exception: Access denied for user ''@'localhost' (using password: YES) in D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\Database\MySQLi\Connection.php:202
+Stack trace:
+#0 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\Database\MySQLi\Connection.php(202): mysqli->real_connect('localhost', '', '945313', '', 3306, '', 0)
+#1 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\Database\BaseConnection.php(419): CodeIgniter\Database\MySQLi\Connection->connect(false)
+#2 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\Database\BaseConnection.php(614): CodeIgniter\Database\BaseConnection->initialize()
+#3 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `op...', Array, false)
+#4 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+#5 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\BaseModel.php(838): CodeIgniter\Model->doInsert(Array)
+#6 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\Model.php(797): CodeIgniter\BaseModel->insert(Array, true)
+#7 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\app\Controllers\AuthController.php(61): CodeIgniter\Model->insert(Array)
+#8 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\CodeIgniter.php(933): App\Controllers\AuthController->registerProcess()
+#9 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AuthController))
+#10 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#11 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#12 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#13 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#14 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\rewrite.php(44): require_once('D:\\Mata-Kuliah\\...')
+#15 {main}
+
+Next CodeIgniter\Database\Exceptions\DatabaseException: Access denied for user ''@'localhost' (using password: YES) in D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\Database\MySQLi\Connection.php:246
+Stack trace:
+#0 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\Database\BaseConnection.php(419): CodeIgniter\Database\MySQLi\Connection->connect(false)
+#1 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\Database\BaseConnection.php(614): CodeIgniter\Database\BaseConnection->initialize()
+#2 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `op...', Array, false)
+#3 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+#4 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\BaseModel.php(838): CodeIgniter\Model->doInsert(Array)
+#5 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\Model.php(797): CodeIgniter\BaseModel->insert(Array, true)
+#6 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\app\Controllers\AuthController.php(61): CodeIgniter\Model->insert(Array)
+#7 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\CodeIgniter.php(933): App\Controllers\AuthController->registerProcess()
+#8 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AuthController))
+#9 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 D:\Mata-Kuliah\Semester-3\Pemrogramman-Web-2\Sonata-Violin\system\rewrite.php(44): require_once('D:\\Mata-Kuliah\\...')
+#14 {main}
+CRITICAL - 2025-12-04 05:46:31 --> CodeIgniter\Database\Exceptions\DatabaseException: Unable to connect to the database.
+Main connection [MySQLi]: Access denied for user ''@'localhost' (using password: YES)
+[Method: POST, Route: register]
+in SYSTEMPATH\Database\BaseConnection.php on line 465.
+ 1 SYSTEMPATH\Database\BaseConnection.php(614): CodeIgniter\Database\BaseConnection->initialize()
+ 2 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `operator` (`username`, `nama_lengkap`, `password`, `role`, `created_at`) VALUES (:username:, :nama_lengkap:, :password:, :role:, :created_at:)', [...], false)
+ 3 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 4 SYSTEMPATH\BaseModel.php(838): CodeIgniter\Model->doInsert([...])
+ 5 SYSTEMPATH\Model.php(797): CodeIgniter\BaseModel->insert([...], true)
+ 6 APPPATH\Controllers\AuthController.php(61): CodeIgniter\Model->insert([...])
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AuthController->registerProcess()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AuthController))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+13 SYSTEMPATH\rewrite.php(44): require_once('D:\\Mata-Kuliah\\Semester-3\\Pemrogramman-Web-2\\Sonata-Violin\\public\\index.php')
+DEBUG - 2025-12-04 05:50:18 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 05:50:49 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 06:38:20 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 06:38:33 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 06:38:50 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 06:39:02 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 06:39:03 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2025-12-04 06:39:03 --> ErrorException: Trying to access array offset on value of type null
+[Method: GET, Route: dashboard]
+in APPPATH\Views\layout\template.php on line 467.
+ 1 APPPATH\Views\layout\template.php(467): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Trying to access array offset on value of type null', 'D:\\Mata-Kuliah\\Semester-3\\Pemrogramman-Web-2\\Sonata-Violin\\app\\Views\\layout\\template.php', 467)
+ 2 SYSTEMPATH\View\View.php(226): include('D:\\Mata-Kuliah\\Semester-3\\Pemrogramman-Web-2\\Sonata-Violin\\app\\Views\\layout\\template.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\View\View.php(242): CodeIgniter\View\View->render('layout/template', [], true)
+ 5 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('dashboard', [], true)
+ 6 APPPATH\Controllers\Dashboard.php(9): view('dashboard')
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Dashboard->index()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Dashboard))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+13 SYSTEMPATH\rewrite.php(44): require_once('D:\\Mata-Kuliah\\Semester-3\\Pemrogramman-Web-2\\Sonata-Violin\\public\\index.php')
+DEBUG - 2025-12-04 06:41:43 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 06:41:43 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 07:04:09 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 07:04:11 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 07:37:59 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2025-12-04 07:44:09 --> ParseError: syntax error, unexpected end of file
+[Method: GET, Route: dashboard]
+in APPPATH\Config\Routes.php on line 30.
+ 1 SYSTEMPATH\CodeIgniter.php(821): CodeIgniter\Router\RouteCollection->loadRoutes()
+ 2 SYSTEMPATH\CodeIgniter.php(455): CodeIgniter\CodeIgniter->tryToRouteIt(null)
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ 7 SYSTEMPATH\rewrite.php(44): require_once('D:\\Mata-Kuliah\\Semester-3\\Pemrogramman-Web-2\\Sonata-Violin\\public\\index.php')
+DEBUG - 2025-12-04 07:44:43 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 07:44:47 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 07:44:56 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 07:44:56 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 07:45:00 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 07:45:12 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 07:46:16 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 07:46:42 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 07:50:28 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 07:50:30 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2025-12-04 07:50:30 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "settings/operators/operator.php"
+[Method: GET, Route: settings/operators]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('settings/operators/operator.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('settings/operators/operator', [], true)
+ 3 APPPATH\Controllers\OperatorController.php(26): view('settings/operators/operator', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\OperatorController->operators()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\OperatorController))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+10 SYSTEMPATH\rewrite.php(44): require_once('D:\\Mata-Kuliah\\Semester-3\\Pemrogramman-Web-2\\Sonata-Violin\\public\\index.php')
+DEBUG - 2025-12-04 07:54:11 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 07:54:13 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2025-12-04 07:54:13 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "settings/operators/operators.php"
+[Method: GET, Route: settings/operators]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('settings/operators/operators.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('settings/operators/operators', [], true)
+ 3 APPPATH\Controllers\OperatorController.php(26): view('settings/operators/operators', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\OperatorController->operators()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\OperatorController))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+10 SYSTEMPATH\rewrite.php(44): require_once('D:\\Mata-Kuliah\\Semester-3\\Pemrogramman-Web-2\\Sonata-Violin\\public\\index.php')
+DEBUG - 2025-12-04 07:54:31 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2025-12-04 07:54:31 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "settings/operators/operators.php"
+[Method: GET, Route: settings/operators]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('settings/operators/operators.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('settings/operators/operators', [], true)
+ 3 APPPATH\Controllers\OperatorController.php(26): view('settings/operators/operators', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\OperatorController->operators()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\OperatorController))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+10 SYSTEMPATH\rewrite.php(44): require_once('D:\\Mata-Kuliah\\Semester-3\\Pemrogramman-Web-2\\Sonata-Violin\\public\\index.php')
+DEBUG - 2025-12-04 07:55:11 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 07:55:13 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2025-12-04 07:55:13 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "settings/operators/index.php"
+[Method: GET, Route: settings/operators]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('settings/operators/index.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('settings/operators/index', [], true)
+ 3 APPPATH\Controllers\OperatorController.php(26): view('settings/operators/index', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\OperatorController->operators()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\OperatorController))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+10 SYSTEMPATH\rewrite.php(44): require_once('D:\\Mata-Kuliah\\Semester-3\\Pemrogramman-Web-2\\Sonata-Violin\\public\\index.php')
+DEBUG - 2025-12-04 07:59:02 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 07:59:04 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2025-12-04 07:59:04 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "settings/operators/operator.php"
+[Method: GET, Route: settings/operators]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('settings/operators/operator.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('settings/operators/operator', [], true)
+ 3 APPPATH\Controllers\OperatorController.php(26): view('settings/operators/operator', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\OperatorController->operators()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\OperatorController))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+10 SYSTEMPATH\rewrite.php(44): require_once('D:\\Mata-Kuliah\\Semester-3\\Pemrogramman-Web-2\\Sonata-Violin\\public\\index.php')
+DEBUG - 2025-12-04 07:59:24 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2025-12-04 07:59:24 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "settings/operators/operator.php"
+[Method: GET, Route: settings/operators]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('settings/operators/operator.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('settings/operators/operator', [], true)
+ 3 APPPATH\Controllers\OperatorController.php(26): view('settings/operators/operator', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\OperatorController->operators()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\OperatorController))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+10 SYSTEMPATH\rewrite.php(44): require_once('D:\\Mata-Kuliah\\Semester-3\\Pemrogramman-Web-2\\Sonata-Violin\\public\\index.php')
+DEBUG - 2025-12-04 08:02:04 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 08:02:06 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 08:08:23 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 08:08:41 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 08:08:42 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 08:08:44 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 08:11:59 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 08:12:02 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 08:12:03 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 08:16:07 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 08:20:30 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 08:24:02 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 08:24:54 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 08:24:55 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 08:24:59 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 08:24:59 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 08:25:13 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 08:25:14 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 08:25:17 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 08:25:17 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 08:25:22 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 08:25:22 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 08:25:52 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 08:26:03 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 08:31:07 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 08:32:03 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 08:32:58 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 08:34:38 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 08:36:09 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 08:37:58 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 08:40:23 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 08:41:35 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 08:41:47 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 08:43:27 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 08:46:45 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 08:48:23 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 08:48:51 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 08:49:17 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 08:49:17 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-04 08:49:49 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.

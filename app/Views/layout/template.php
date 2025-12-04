@@ -1,8 +1,5 @@
 <?php
-/**
- * Modern CI4 Template — Enhanced Sidebar with Better Design
- * Fixed: Mobile submenu, styling improvements, proper positioning
- */
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -30,6 +27,50 @@
     body {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh;
+    }
+
+    /* -------------------- HAMBURGER BUTTON -------------------- */
+    #mobileToggle {
+      width: 50px;
+      height: 40px;
+      background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(6, 182, 212, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    #mobileToggle:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(6, 182, 212, 0.45);
+    }
+
+    #mobileToggle:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 8px rgba(6, 182, 212, 0.35);
+    }
+
+    #mobileToggle i {
+      font-size: 16px;
+      color: white;
+    }
+
+    /* Hide hamburger on desktop */
+    @media (min-width: 769px) {
+      #mobileToggle {
+        display: none !important;
+      }
+    }
+
+    /* Show hamburger on mobile */
+    @media (max-width: 768px) {
+      #mobileToggle {
+        display: flex !important;
+      }
     }
 
     /* -------------------- SIDEBAR DESKTOP -------------------- */
@@ -109,6 +150,11 @@
       }
 
       .sidebar-button {
+        display: none !important;
+      }
+
+      /* Hide mobile overlay on desktop */
+      #mobileOverlay {
         display: none !important;
       }
     }
@@ -352,27 +398,32 @@
 <?php
 $uri = service('uri')->getPath();
 
+$role = session('role');
+
 $menuGroups = [
-  ['id'=>'dashboard','label'=>'Dashboard','icon'=>'fa-home','items'=>null,'link'=>'/dashboard'],
+      ['id'=>'dashboard','label'=>'Dashboard','icon'=>'fa-home','items'=>null,'link'=>'/dashboard'],
 
-  ['id'=>'management','label'=>'Management','icon'=>'fa-boxes-stacked','items'=>[
-      ['/siswa','Siswa','fa-user-graduate'],
-      ['/instruktur','Instruktur','fa-chalkboard-user'],
-      ['/ruangan','Ruang Kelas','fa-door-open'],
-      ['/paket','Paket Kursus','fa-box-open'],
-  ]],
+      $role === 'admin'
+      ? ['id'=>'management','label'=>'Management','icon'=>'fa-boxes-stacked','items'=>[
+          ['/siswa','Siswa','fa-user-graduate'],
+          ['/instruktur','Instruktur','fa-chalkboard-user'],
+          ['/ruangan','Ruang Kelas','fa-door-open'],
+          ['/paket','Paket Kursus','fa-box-open'],
+      ]]
+      : null,
 
-  ['id'=>'operations','label'=>'Operations','icon'=>'fa-briefcase','items'=>[
-      ['/jadwal','Jadwal Kelas','fa-calendar-days'],
-      ['/pendaftaran','Pendaftaran','fa-file-signature'],
-      ['/pembayaran','Pembayaran','fa-money-check-dollar'],
-  ]],
+      ['id'=>'operations','label'=>'Operations','icon'=>'fa-briefcase','items'=>[
+          ['/jadwal','Jadwal Kelas','fa-calendar-days'],
+          ['/pendaftaran','Pendaftaran','fa-file-signature'],
+          ['/verifikasi','Verifikasi Pembayaran','fa-money-check-dollar'],
+          ['/absensi','Absensi','fa-user-check'],
+      ]],
 
-  ['id'=>'reports','label'=>'Reports','icon'=>'fa-chart-pie','items'=>[
-      ['/progress','Progress Kursus','fa-chart-line'],
-      ['/laporan','Laporan','fa-file-pdf'],
-  ]],
-];
+      ['id'=>'reports','label'=>'Reports','icon'=>'fa-chart-pie','items'=>[
+          ['/progress','Progress Kursus','fa-chart-line'],
+          ['/laporan','Laporan','fa-file-pdf'],
+      ]],
+  ];
 ?>
 
 <!-- MOBILE OVERLAY -->
@@ -394,29 +445,36 @@ $menuGroups = [
   <nav class="w-full flex flex-col gap-2">
 
     <?php foreach ($menuGroups as $group): 
+      if ($group === null) continue;
+
       $hasSub = !is_null($group['items']);
       $active = false;
 
-      if (!$hasSub && $group['link'] && ltrim($group['link'],'/') === $uri)
+      if (!$hasSub && $group['link'] && ltrim($group['link'],'/') === $uri) {
           $active = true;
+      }
 
       if ($hasSub) {
-        foreach ($group['items'] as $it)
-          if (ltrim($it[0],'/') === $uri) $active = true;
+          foreach ($group['items'] as $it) {
+              if (ltrim($it[0], '/') === $uri) $active = true;
+          }
       }
     ?>
 
       <!-- MENU ITEM -->
       <?php if ($hasSub): ?>
-        <div class="sidebar-item-full <?= $active ? 'active' : ''; ?>" 
-             data-menu="<?= $group['id']; ?>"
-             onclick="toggleMobileSubmenu('<?= $group['id']; ?>')">
+
+        <div class="sidebar-item-full <?= $active ? 'active' : ''; ?>"
+            data-menu="<?= $group['id']; ?>"
+            onmouseenter="openFlyoutMenu('<?= $group['id']; ?>')"
+            onclick="toggleMobileSubmenu('<?= $group['id']; ?>')">
+
           <i class="fa <?= $group['icon']; ?> sidebar-icon"></i>
           <span><?= $group['label']; ?></span>
           <i class="fa fa-chevron-right"></i>
         </div>
-        
-        <!-- MOBILE SUBMENU (Inline) -->
+
+        <!-- MOBILE SUBMENU -->
         <div id="mobile-submenu-<?= $group['id']; ?>" class="mobile-submenu">
           <?php foreach ($group['items'] as $it): ?>
             <a href="<?= base_url($it[0]); ?>">
@@ -425,23 +483,31 @@ $menuGroups = [
             </a>
           <?php endforeach; ?>
         </div>
+
       <?php else: ?>
-        <a href="<?= base_url($group['link']); ?>" class="sidebar-item-full <?= $active ? 'active' : ''; ?>">
+
+        <a href="<?= base_url($group['link']); ?>"
+          class="sidebar-item-full <?= $active ? 'active' : ''; ?>">
           <i class="fa <?= $group['icon']; ?> sidebar-icon"></i>
           <span><?= $group['label']; ?></span>
         </a>
+
       <?php endif; ?>
 
     <?php endforeach; ?>
+
   </nav>
 
 <div class="flex-1"></div>
 
   <div class="pt-4 border-t border-white/10 space-y-2">
-    <button class="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 transition-all">
+    <?php if (session('role') === 'admin'): ?>
+    <a href="<?= base_url('/settings/operators'); ?>" 
+      class="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 transition-all">
       <i class="fa fa-cog text-cyan-400"></i>
-      <span class="text-slate-300 text-sm font-medium">Settings</span>
-    </button>
+      <span class="text-slate-300 text-sm font-medium">Manajemen Operator</span>
+    </a>
+    <?php endif; ?>
     
     <a href="<?= base_url('/logout'); ?>" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-red-500/10 hover:bg-red-500/20 transition-all text-red-400 hover:text-red-300">
       <i class="fa fa-right-from-bracket"></i>
@@ -452,7 +518,10 @@ $menuGroups = [
 </aside>
 
 <!-- FLYOUT PANELS (Desktop Only) -->
-<?php foreach ($menuGroups as $group): if (is_null($group['items'])) continue; ?>
+  <?php foreach ($menuGroups as $group): 
+        if ($group === null) continue;
+        if (empty($group['items'])) continue;
+  ?>
   <div id="flyout-<?= $group['id']; ?>" class="flyout" aria-hidden="true">
     <div class="flyout-title"><?= $group['label']; ?></div>
     <div class="flex flex-col gap-1">
@@ -472,8 +541,8 @@ $menuGroups = [
   <header class="topbar px-6 py-4 sticky top-0 z-30">
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-4">
-        <button id="mobileToggle" class="md:hidden w-10 h-10 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-xl flex items-center justify-center shadow-lg">
-          <i class="fa fa-bars text-white"></i>
+        <button id="mobileToggle">
+          <i class="fa fa-bars"></i>
         </button>
 
         <div>
@@ -488,12 +557,17 @@ $menuGroups = [
         </button>
 
         <div class="flex items-center gap-3 pl-3 border-l border-slate-200">
-          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-500 text-white flex items-center justify-center font-semibold shadow-lg">
-            A
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-500 
+            text-white flex items-center justify-center font-semibold shadow-lg">
+              <?= strtoupper(substr(session('username'), 0, 1)); ?>
           </div>
           <div class="hidden md:block">
-            <p class="text-sm font-semibold text-slate-700">Admin</p>
-            <p class="text-xs text-slate-500">Administrator</p>
+            <p class="text-sm font-semibold text-slate-700">
+                <?= session('nama'); ?>
+            </p>
+            <p class="text-xs text-slate-500">
+                <?= ucfirst(session('role')); ?>
+            </p>
           </div>
         </div>
       </div>
@@ -523,15 +597,35 @@ $menuGroups = [
     });
 
     trigger.addEventListener("mouseleave", () => {
-      if (!isMobile())
-        setTimeout(() => { if (!flyout.matches(":hover")) hideFlyout(flyout); }, 150);
+      if (isMobile()) return;
+      setTimeout(() => { 
+        if (!flyout.matches(":hover")) {
+          hideFlyout(flyout);
+        }
+      }, 150);
     });
 
-    flyout.addEventListener("mouseleave", () => hideFlyout(flyout));
+    flyout.addEventListener("mouseenter", () => {
+      if (isMobile()) return;
+      flyout.classList.add("active");
+    });
+
+    flyout.addEventListener("mouseleave", () => {
+      if (isMobile()) return;
+      hideFlyout(flyout);
+    });
   });
 
   function showFlyout(trigger, flyout) {
-    document.querySelectorAll(".flyout.active").forEach(f => hideFlyout(f));
+    if (isMobile()) return;
+    
+    // Close all other flyouts first
+    document.querySelectorAll(".flyout.active").forEach(f => {
+      if (f !== flyout) {
+        hideFlyout(f);
+      }
+    });
+    
     const rect = trigger.getBoundingClientRect();
     flyout.style.top = rect.top + window.scrollY + "px";
     flyout.classList.add("active");
@@ -600,6 +694,18 @@ $menuGroups = [
       }
     });
   });
+
+  function openFlyoutMenu(id) {
+    if (isMobile()) return;
+
+    const trigger = document.querySelector(`[data-menu="${id}"]`);
+    const flyout = document.getElementById("flyout-" + id);
+
+    if (!trigger || !flyout) return;
+
+    showFlyout(trigger, flyout);
+  }
+
 </script>
 
 </body>

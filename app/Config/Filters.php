@@ -34,6 +34,9 @@ class Filters extends BaseFilters
         'forcehttps'    => ForceHTTPS::class,
         'pagecache'     => PageCache::class,
         'performance'   => PerformanceMetrics::class,
+        'auth'          => \App\Filters\AuthFilter::class,
+        'admin'         => \App\Filters\AdminFilter::class,
+        'role'          => \App\Filters\RoleFilter::class,
     ];
 
     /**
@@ -106,5 +109,29 @@ class Filters extends BaseFilters
      *
      * @var array<string, array<string, list<string>>>
      */
-    public array $filters = [];
+    
+    public array $filters = [
+
+        'role:admin' => [
+            'before' => [
+                'management/*',
+                'siswa/*',
+                'instruktur/*',
+                'ruangan/*',
+                'paket/*',
+            ]
+        ],
+
+        'role:admin,operator' => [
+            'before' => [
+                'pendaftaran/*',
+                'jadwal/*',
+                'pembayaran/*',
+                'verifikasi/*',
+                'absensi/*',
+                'progress/*',
+                'laporan/*',
+            ]
+        ],
+    ];
 }

@@ -45,6 +45,14 @@
       z-index: 10;
     }
 
+    .slide-panel {
+      pointer-events: none;
+    }
+
+    .paw-bg {
+      pointer-events: none;
+    }
+
     .slide-panel.active {
       transform: translateX(100%);
     }
@@ -194,15 +202,15 @@
       </div>
 
       <!-- Login Form -->
-      <form method="POST" action="#">
+      <form method="POST" action="<?= base_url('/login'); ?>">
         <?= csrf_field(); ?>
 
         <div class="mb-4">
           <div class="relative">
-            <input type="email" name="email" required
-                   class="w-full px-4 py-3 pl-11 bg-gray-50 border border-gray-200 rounded-xl transition-all"
-                   placeholder="Email Address">
-            <i class="fas fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            <input type="text" name="username" required
+                  class="w-full px-4 py-3 pl-11 bg-gray-50 border border-gray-200 rounded-xl transition-all"
+                  placeholder="Username">
+            <i class="fas fa-user absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
           </div>
         </div>
 
@@ -263,17 +271,17 @@
 
       <div class="flex items-center gap-3 mb-6">
         <div class="flex-1 h-px bg-gray-200"></div>
-        <span class="text-sm text-gray-400">or register with email</span>
+        <span class="text-sm text-gray-400">or register</span>
         <div class="flex-1 h-px bg-gray-200"></div>
       </div>
 
       <!-- Register -->
-      <form method="POST" action="#">
+      <form method="POST" action="<?= base_url('/register'); ?>">
         <?= csrf_field(); ?>
 
         <div class="mb-4">
           <div class="relative">
-            <input type="text" name="name" required
+            <input type="text" name="nama_lengkap" required
                    class="w-full px-4 py-3 pl-11 bg-gray-50 border border-gray-200 rounded-xl transition-all"
                    placeholder="Full Name">
             <i class="fas fa-user absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
@@ -282,9 +290,9 @@
 
         <div class="mb-4">
           <div class="relative">
-            <input type="email" name="email" required
+            <input type="text" name="username" required
                    class="w-full px-4 py-3 pl-11 bg-gray-50 border border-gray-200 rounded-xl transition-all"
-                   placeholder="Email Address">
+                   placeholder="Username">
             <i class="fas fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
           </div>
         </div>
