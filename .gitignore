@@ -1,0 +1,27 @@
+# Ignore environment files
+.env
+.env.*
+
+# Ignore CI4 writable folder content
+writable/*
+!writable/index.html
+
+# Ignore debugbar files
+writable/debugbar/*
+writable/logs/*
+writable/session/*
+
+# Ignore vendor
+vendor/
+
+# Ignore node_modules (jika ada)
+node_modules/
+
+# Ignore IDE/editor files
+.vscode/
+.idea/
+*.swp
+
+# Ignore system files
+Thumbs.db
+.DS_Store
