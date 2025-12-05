@@ -458,7 +458,7 @@
             <input type="text" name="username" required
                    class="w-full px-4 py-3 pl-11 bg-gray-50 border border-gray-200 rounded-xl transition-all"
                    placeholder="Username">
-            <i class="fas fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            <i class="fa-solid fa-circle-user absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
           </div>
         </div>
 
