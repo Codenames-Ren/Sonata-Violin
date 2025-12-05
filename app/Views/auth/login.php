@@ -371,10 +371,10 @@
       </div>
 
       <!-- Login Form -->
-      <form method="POST" action="/login">
+      <form method="POST" action="/login" id="loginForm">
         <div class="mb-4">
           <div class="relative">
-            <input type="text" name="username" required
+            <input type="text" name="username" id="usernameInput" required
                   class="w-full px-4 py-3 pl-11 bg-gray-50 border border-gray-200 rounded-xl transition-all"
                   placeholder="Username">
             <i class="fas fa-user absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
@@ -396,7 +396,7 @@
 
         <div class="flex items-center justify-between mb-6">
           <label class="flex items-center gap-2 cursor-pointer">
-            <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-purple-600">
+            <input type="checkbox" id="rememberMe" class="w-4 h-4 rounded border-gray-300 text-purple-600">
             <span class="text-sm text-slate-600">Remember me</span>
           </label>
           <a href="#" class="text-sm text-purple-600 hover:text-purple-700 font-medium">
@@ -514,6 +514,33 @@
 </div>
 
 <script>
+  // Load saved credentials saat halaman load
+  window.addEventListener('DOMContentLoaded', function() {
+    const savedUsername = localStorage.getItem('rememberedUsername');
+    const savedPassword = localStorage.getItem('rememberedPassword');
+    
+    if (savedUsername && savedPassword) {
+      document.getElementById('usernameInput').value = savedUsername;
+      document.getElementById('loginPassword').value = savedPassword;
+      document.getElementById('rememberMe').checked = true;
+    }
+  });
+
+  // Save/remove credentials saat submit
+  document.getElementById('loginForm').addEventListener('submit', function(e) {
+    const rememberMe = document.getElementById('rememberMe').checked;
+    const username = document.getElementById('usernameInput').value;
+    const password = document.getElementById('loginPassword').value;
+    
+    if (rememberMe) {
+      localStorage.setItem('rememberedUsername', username);
+      localStorage.setItem('rememberedPassword', password);
+    } else {
+      localStorage.removeItem('rememberedUsername');
+      localStorage.removeItem('rememberedPassword');
+    }
+  });
+
   function showRegister() {
     document.getElementById('slidePanel').classList.add('active');
   }
