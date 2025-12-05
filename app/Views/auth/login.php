@@ -43,13 +43,6 @@
       height: 100%;
       transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
       z-index: 10;
-    }
-
-    .slide-panel {
-      pointer-events: none;
-    }
-
-    .paw-bg {
       pointer-events: none;
     }
 
@@ -83,7 +76,8 @@
       padding: 40px;
       text-align: center;
       color: white;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%), 
+            url('<?= base_url('image/bg1.jpg'); ?>') center/cover no-repeat;
       transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     }
 
@@ -106,19 +100,7 @@
     }
 
     .social-btn {
-      width: 45px;
-      height: 45px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s ease;
-      cursor: pointer;
-    }
-
-    .social-btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      display: none !important;
     }
 
     input:focus {
@@ -137,27 +119,214 @@
         radial-gradient(circle at 60% 70%, rgba(255,255,255,0.3) 5px, transparent 5px),
         radial-gradient(circle at 80% 20%, rgba(255,255,255,0.3) 5px, transparent 5px);
       background-size: 150px 150px;
+      pointer-events: none;
     }
 
+    /* ========== MOBILE RESPONSIVE ========== */
     @media (max-width: 768px) {
-      .auth-container {
-        height: auto;
-        min-height: 600px;
+      body {
+        padding: 16px;
       }
 
-      .slide-panel,
-      .form-panel,
-      .overlay-panel {
+      .auth-container {
+        max-width: 100%;
+        width: 100%;
+        height: auto;
+        min-height: 500px;
+        max-height: 90vh;
+        border-radius: 20px;
+      }
+
+      .form-panel {
+        padding: 28px 20px;
+      }
+
+      .w-full.max-w-sm {
+        max-width: 100%;
         width: 100%;
       }
 
-      .slide-panel.active {
-        transform: translateY(100%);
+      /* HIDE: Logo icon di atas form */
+      .form-panel .w-16.h-16 {
+        display: none !important;
       }
 
-      .overlay-left,
-      .overlay-right {
-        display: none;
+      /* HIDE: Social media buttons - SEMUA MODE */
+      .form-panel .flex.justify-center.gap-3 {
+        display: none !important;
+      }
+
+      /* HIDE: Divider "or use credentials" - SEMUA MODE */
+      .form-panel .flex.items-center.gap-3 {
+        display: none !important;
+      }
+
+      /* Text header - lebih kecil dan compact */
+      .text-center.mb-8 {
+        margin-bottom: 1.25rem !important;
+      }
+
+      .text-3xl {
+        font-size: 1.5rem !important;
+        line-height: 1.3 !important;
+        margin-bottom: 0.375rem !important;
+      }
+
+      .text-slate-500.text-sm {
+        font-size: 0.8125rem !important;
+        line-height: 1.4 !important;
+      }
+
+      /* Input fields - lebih compact */
+      .mb-4 {
+        margin-bottom: 0.875rem !important;
+      }
+
+      input {
+        padding: 0.6875rem 0.875rem 0.6875rem 2.625rem !important;
+        font-size: 0.875rem !important;
+        border-radius: 0.75rem !important;
+      }
+
+      input::placeholder {
+        font-size: 0.875rem !important;
+      }
+
+      /* Icons di input */
+      .absolute.left-4 {
+        left: 0.875rem !important;
+        font-size: 0.9375rem !important;
+      }
+
+      .absolute.right-4 {
+        right: 0.875rem !important;
+        font-size: 0.9375rem !important;
+      }
+
+      /* Remember me & Forgot password - DIPERKECIL */
+      .flex.items-center.justify-between.mb-6 {
+        margin-bottom: 1rem !important;
+      }
+
+      .flex.items-center.justify-between label span,
+      .flex.items-center.justify-between a {
+        font-size: 0.6875rem !important;
+      }
+
+      .flex.items-center.gap-2 input[type="checkbox"] {
+        width: 0.75rem !important;
+        height: 0.75rem !important;
+      }
+
+      /* Submit button */
+      button[type="submit"] {
+        padding: 0.8125rem 1rem !important;
+        font-size: 0.9375rem !important;
+        border-radius: 0.75rem !important;
+      }
+
+      /* Overlay panel */
+      .overlay-panel {
+        padding: 28px 20px !important;
+      }
+
+      .overlay-panel h2 {
+        font-size: 1.625rem !important;
+        margin-bottom: 0.625rem !important;
+      }
+
+      .overlay-panel p {
+        font-size: 0.8125rem !important;
+        margin-bottom: 1.5rem !important;
+        line-height: 1.5 !important;
+      }
+
+      .overlay-panel i.fa-user-shield,
+      .overlay-panel i.fa-users-cog {
+        font-size: 2.75rem !important;
+        margin-bottom: 1rem !important;
+      }
+
+      .overlay-panel button {
+        padding: 0.625rem 1.75rem !important;
+        font-size: 0.875rem !important;
+      }
+    }
+
+    /* Extra small devices */
+    @media (max-width: 480px) {
+      body {
+        padding: 12px;
+      }
+
+      .auth-container {
+        min-height: 480px;
+        border-radius: 18px;
+      }
+
+      .form-panel {
+        padding: 24px 18px;
+      }
+
+      .text-3xl {
+        font-size: 1.375rem !important;
+      }
+
+      .text-slate-500.text-sm {
+        font-size: 0.75rem !important;
+      }
+
+      input {
+        padding: 0.625rem 0.75rem 0.625rem 2.375rem !important;
+        font-size: 0.8125rem !important;
+      }
+
+      input::placeholder {
+        font-size: 0.8125rem !important;
+      }
+
+      .absolute.left-4 {
+        left: 0.75rem !important;
+        font-size: 0.875rem !important;
+      }
+
+      .absolute.right-4 {
+        right: 0.75rem !important;
+        font-size: 0.875rem !important;
+      }
+
+      /* Remember me & Forgot password - LEBIH KECIL LAGI */
+      .flex.items-center.justify-between label span,
+      .flex.items-center.justify-between a {
+        font-size: 0.625rem !important;
+      }
+
+      .flex.items-center.gap-2 input[type="checkbox"] {
+        width: 0.6875rem !important;
+        height: 0.6875rem !important;
+      }
+
+      button[type="submit"] {
+        padding: 0.75rem 0.875rem !important;
+        font-size: 0.875rem !important;
+      }
+
+      .overlay-panel h2 {
+        font-size: 1.5rem !important;
+      }
+
+      .overlay-panel p {
+        font-size: 0.75rem !important;
+      }
+
+      .overlay-panel i.fa-user-shield,
+      .overlay-panel i.fa-users-cog {
+        font-size: 2.5rem !important;
+      }
+
+      .overlay-panel button {
+        padding: 0.5625rem 1.5rem !important;
+        font-size: 0.8125rem !important;
       }
     }
   </style>
@@ -177,10 +346,10 @@
 
       <div class="text-center mb-8">
         <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl mx-auto mb-4 flex items-center justify-center shadow-lg">
-          <i class="fas fa-music text-white text-2xl"></i>
+          <i class="fas fa-user-shield text-white text-2xl"></i>
         </div>
-        <h2 class="text-3xl font-bold text-slate-800 mb-2">Welcome Back!</h2>
-        <p class="text-slate-500 text-sm">Sign in to continue to your account</p>
+        <h2 class="text-3xl font-bold text-slate-800 mb-2">Admin Login</h2>
+        <p class="text-slate-500 text-sm">Internal system access for staff only</p>
       </div>
 
       <div class="flex justify-center gap-3 mb-6">
@@ -197,14 +366,12 @@
 
       <div class="flex items-center gap-3 mb-6">
         <div class="flex-1 h-px bg-gray-200"></div>
-        <span class="text-sm text-gray-400">or use your account</span>
+        <span class="text-sm text-gray-400">use credentials</span>
         <div class="flex-1 h-px bg-gray-200"></div>
       </div>
 
       <!-- Login Form -->
-      <form method="POST" action="<?= base_url('/login'); ?>">
-        <?= csrf_field(); ?>
-
+      <form method="POST" action="/login">
         <div class="mb-4">
           <div class="relative">
             <input type="text" name="username" required
@@ -253,8 +420,8 @@
         <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl mx-auto mb-4 flex items-center justify-center shadow-lg">
           <i class="fas fa-user-plus text-white text-2xl"></i>
         </div>
-        <h2 class="text-3xl font-bold text-slate-800 mb-2">Create Account</h2>
-        <p class="text-slate-500 text-sm">Fill in your details to get started</p>
+        <h2 class="text-3xl font-bold text-slate-800 mb-2">Staff Registration</h2>
+        <p class="text-slate-500 text-sm">Create new staff account</p>
       </div>
 
       <div class="flex justify-center gap-3 mb-6">
@@ -271,14 +438,12 @@
 
       <div class="flex items-center gap-3 mb-6">
         <div class="flex-1 h-px bg-gray-200"></div>
-        <span class="text-sm text-gray-400">or register</span>
+        <span class="text-sm text-gray-400">fill the form</span>
         <div class="flex-1 h-px bg-gray-200"></div>
       </div>
 
       <!-- Register -->
-      <form method="POST" action="<?= base_url('/register'); ?>">
-        <?= csrf_field(); ?>
-
+      <form method="POST" action="/register">
         <div class="mb-4">
           <div class="relative">
             <input type="text" name="nama_lengkap" required
@@ -310,20 +475,8 @@
           </div>
         </div>
 
-        <div class="mb-6">
-          <label class="flex items-start gap-2 cursor-pointer">
-            <input type="checkbox" required class="w-4 h-4 mt-1 rounded border-gray-300 text-purple-600">
-            <span class="text-sm text-slate-600">
-              I agree to the 
-              <a href="#" class="text-purple-600 font-medium">Terms of Service</a> 
-              and 
-              <a href="#" class="text-purple-600 font-medium">Privacy Policy</a>
-            </span>
-          </label>
-        </div>
-
         <button type="submit" class="w-full py-3 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-semibold rounded-xl shadow-lg">
-          Sign Up
+          Create Account
         </button>
       </form>
 
@@ -334,9 +487,9 @@
   <div class="overlay-panel overlay-left">
     <div class="paw-bg"></div>
     <div class="relative z-10">
-      <i class="fas fa-music text-6xl mb-4 opacity-90"></i>
-      <h2 class="text-4xl font-bold mb-3">Hello, Friend!</h2>
-      <p class="text-white/90 mb-8">Already have an account? Sign in to continue your musical journey with us</p>
+      <i class="fas fa-user-shield text-6xl mb-4 opacity-90"></i>
+      <h2 class="text-4xl font-bold mb-3">Already Registered?</h2>
+      <p class="text-white/90 mb-8">Sign in with your staff credentials to access the system</p>
       <button onclick="showLogin()" 
               class="px-8 py-3 border-2 border-white text-white font-semibold rounded-full hover:bg-white hover:text-purple-600 transition-all">
         Sign In
@@ -348,9 +501,9 @@
   <div class="overlay-panel overlay-right">
     <div class="paw-bg"></div>
     <div class="relative z-10">
-      <i class="fas fa-violin text-6xl mb-4 opacity-90"></i>
-      <h2 class="text-4xl font-bold mb-3">Welcome!</h2>
-      <p class="text-white/90 mb-8">New here? Create your account and begin your musical journey!</p>
+      <i class="fas fa-users-cog text-6xl mb-4 opacity-90"></i>
+      <h2 class="text-4xl font-bold mb-3">New Staff?</h2>
+      <p class="text-white/90 mb-8">Register your staff account to get system access</p>
       <button onclick="showRegister()" 
               class="px-8 py-3 border-2 border-white text-white font-semibold rounded-full hover:bg-white hover:text-purple-600 transition-all">
         Sign Up
