@@ -94,6 +94,7 @@
   padding: 1rem;
   color: #334155;
   vertical-align: middle;
+  text-align: center;
 }
 
 .table-container tbody tr {
@@ -182,28 +183,20 @@
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0);
+  backdrop-filter: blur(0px);
   z-index: 9999;
   display: none;
   align-items: center;
   justify-content: center;
   padding: 1rem;
-  opacity: 0;
-  transition: opacity 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .modal-overlay.active {
   display: flex;
-  animation: fadeIn 0.2s ease forwards;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
 }
 
 /* Modal Content dengan shadow lebih tegas */
@@ -212,24 +205,18 @@
   border-radius: 1rem;
   width: 100%;
   max-width: 26rem;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   max-height: 85vh;
   overflow-y: auto;
   margin: auto;
   opacity: 0;
-  transform: translateY(20px) scale(0.95);
-  animation: slideUp 0.3s ease forwards;
+  transform: translateY(-20px) scale(0.96);
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+.modal-overlay.active .modal-box {
+  opacity: 1;
+  transform: translateY(0) scale(1);
 }
 
 /* Modal Header dengan gradient */
@@ -611,6 +598,20 @@
 </div>
 
 <script>
+const modal = document.getElementById('modal');
+
+function closeModal() {
+  modal.classList.remove('active');
+}
+
+function openModal() {
+  modal.style.display = 'flex';
+  void modal.offsetWidth;
+  requestAnimationFrame(() => {
+    modal.classList.add('active');
+  });
+}
+
 // Open Create Modal
 document.getElementById('btnOpenCreate').addEventListener('click', () => {
   document.getElementById('modalTitle').textContent = 'Tambah Operator Baru';
@@ -622,14 +623,7 @@ document.getElementById('btnOpenCreate').addEventListener('click', () => {
   document.getElementById('op_role').removeAttribute('disabled');
   document.getElementById('op_password').value = '';
   
-  const modal = document.getElementById('modal');
-  modal.classList.add('active');
-  // Re-trigger animation
-  const modalBox = modal.querySelector('.modal-box');
-  modalBox.style.animation = 'none';
-  setTimeout(() => {
-    modalBox.style.animation = '';
-  }, 10);
+  openModal();
 });
 
 // Open Edit Modal
@@ -654,36 +648,29 @@ document.querySelectorAll('.btnEdit').forEach(btn => {
 
     document.getElementById('modalForm').action = "<?= base_url('/settings/operators/update/') ?>" + id;
     
-    const modal = document.getElementById('modal');
-    modal.classList.add('active');
-    // Re-trigger animation
-    const modalBox = modal.querySelector('.modal-box');
-    modalBox.style.animation = 'none';
-    setTimeout(() => {
-      modalBox.style.animation = '';
-    }, 10);
+    openModal();
   });
 });
 
 // Close Modal
-function closeModal() {
-  document.getElementById('modal').classList.remove('active');
-}
-
 document.getElementById('btnCloseModal').addEventListener('click', closeModal);
 document.getElementById('btnCloseModalX').addEventListener('click', closeModal);
 
-// Close on overlay click
 document.getElementById('modal').addEventListener('click', (e) => {
   if (e.target.id === 'modal') {
     closeModal();
   }
 });
 
-// Close on ESC
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') {
+  if (e.key === 'Escape' && modal.classList.contains('active')) {
     closeModal();
+  }
+});
+
+modal.addEventListener('transitionend', (e) => {
+  if (e.target === modal && !modal.classList.contains('active')) {
+    modal.style.display = 'none';
   }
 });
 </script>
