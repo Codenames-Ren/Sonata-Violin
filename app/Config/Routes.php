@@ -33,3 +33,11 @@ $routes->group('paket', ['filter' => 'admin'], function($routes) {
     $routes->post('update/(:num)', 'PaketController::update/$1');
     $routes->post('delete/(:num)', 'PaketController::delete/$1');
 });
+
+$routes->group('siswa', ['filter' => 'admin'], function($routes) {
+    $routes->get('/', 'SiswaController::siswa');
+    $routes->post('create', 'SiswaController::create');
+    $routes->post('update/(:num)', 'SiswaController::update/$1');
+    $routes->post('delete/(:num', 'SiswaController::delete/$1');
+    $routes->post('toggle-status/(:num)', 'SiswaController::toggleStatus/$1');
+});

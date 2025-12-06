@@ -88,7 +88,7 @@ class OperatorController extends BaseController
             'status'     => 'nonaktif'
         ]);
 
-        return redirect()->back()->with('success', 'Operator berhasil dihapus (soft delete).');
+        return redirect()->back()->with('success', 'Operator berhasil dihapus.');
     }
 
     public function toggleStatus($id)
