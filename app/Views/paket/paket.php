@@ -2,9 +2,7 @@
 <?= $this->section('content') ?>
 
 <style>
-* {
-  transition: all 0.15s ease;
-}
+* { transition: all 0.15s ease; }
 
 .header-section {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -67,12 +65,12 @@
   border-radius: 1rem;
   overflow: hidden;
   box-shadow: 0 1px 3px rgba(0,0,0,.1);
+  margin-bottom: 1.5rem;
 }
 
 .table-container table {
   width: 100%;
   border-collapse: collapse;
-  table-layout: fixed;
 }
 
 .table-container thead {
@@ -104,36 +102,6 @@
   background: #fafbfc;
 }
 
-.table-container thead th:nth-child(1),
-.table-container tbody td:nth-child(1) {
-  width: 60px;
-}
-
-.table-container thead th:nth-child(3),
-.table-container tbody td:nth-child(3) {
-  width: 120px;
-}
-
-.table-container thead th:nth-child(4),
-.table-container tbody td:nth-child(4) {
-  width: 110px;
-}
-
-.table-container thead th:nth-child(5),
-.table-container tbody td:nth-child(5) {
-  width: 110px;
-}
-
-.table-container thead th:nth-child(6),
-.table-container tbody td:nth-child(6) {
-  width: 140px;
-}
-
-.table-container thead th:nth-child(7),
-.table-container tbody td:nth-child(7) {
-  width: 180px;
-}
-
 .btn-action {
   padding: .35rem .55rem;
   border-radius: .375rem;
@@ -151,19 +119,121 @@
   color: #4338ca;
 }
 
-.btn-edit:hover {
-  background: #c7d2fe;
-}
+.btn-edit:hover { background: #c7d2fe; }
 
 .btn-delete {
   background: #fee2e2;
   color: #991b1b;
 }
 
-.btn-delete:hover {
-  background: #fecaca;
+.btn-delete:hover { background: #fecaca; }
+
+/* Mobile Cards */
+.mobile-cards {
+  display: none;
 }
 
+.card-item {
+  background: white;
+  border-radius: .75rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,.1);
+  border: 1px solid #e5e7eb;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  margin-bottom: .75rem;
+  padding-bottom: .75rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.card-title {
+  font-weight: 700;
+  color: #111827;
+  font-size: 1rem;
+}
+
+.card-level {
+  background: #dbeafe;
+  color: #1e40af;
+  padding: .25rem .5rem;
+  border-radius: .375rem;
+  font-size: .75rem;
+  font-weight: 600;
+}
+
+.card-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .75rem;
+  margin-bottom: .75rem;
+}
+
+.card-detail {
+  font-size: .875rem;
+}
+
+.card-detail-label {
+  color: #6b7280;
+  font-size: .75rem;
+  margin-bottom: .125rem;
+}
+
+.card-detail-value {
+  color: #111827;
+  font-weight: 600;
+}
+
+.card-actions {
+  display: flex;
+  gap: .5rem;
+  padding-top: .75rem;
+  border-top: 1px solid #f3f4f6;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: .5rem;
+  margin-top: 1.5rem;
+}
+
+.pagination button {
+  padding: .5rem 1rem;
+  border: 2px solid #e5e7eb;
+  background: white;
+  color: #374151;
+  border-radius: .5rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: .875rem;
+}
+
+.pagination button:hover:not(:disabled) {
+  background: #f9fafb;
+  border-color: #667eea;
+  color: #667eea;
+}
+
+.pagination button:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+.pagination .page-info {
+  color: #6b7280;
+  font-weight: 500;
+  font-size: .875rem;
+  padding: 0 .5rem;
+}
+
+/* Modal */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -187,23 +257,22 @@
   position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%) translateY(-20px) scale(0.96);
+  transform: translate(-50%, -50%) scale(0.96);
   background: white;
   border-radius: 1rem;
   width: 90%;
   max-width: 42rem;
-  max-height: 90vh;
+  max-height: 85vh;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   opacity: 0;
   transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
-  margin-top: 4rem;
 }
 
 .modal-overlay.active .modal-box {
   opacity: 1;
-  transform: translate(-50%, -50%) translateY(0) scale(1);
+  transform: translate(-50%, -50%) scale(1);
 }
 
 .modal-header {
@@ -237,9 +306,7 @@
   color: white;
 }
 
-.modal-close:hover {
-  background: rgba(255,255,255,.3);
-}
+.modal-close:hover { background: rgba(255,255,255,.3); }
 
 .modal-body {
   padding: 1.25rem 1.5rem;
@@ -255,29 +322,10 @@
   margin-bottom: 0.875rem;
 }
 
-.form-row-full {
-  display: grid;
-  grid-template-columns: 1fr;
-  margin-bottom: 0.875rem;
-}
-
-.modal-body::-webkit-scrollbar {
-  width: 6px;
-}
-
-.modal-body::-webkit-scrollbar-track {
-  background: #f1f5f9;
-  border-radius: 10px;
-}
-
-.modal-body::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 10px;
-}
-
-.modal-body::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-}
+.modal-body::-webkit-scrollbar { width: 6px; }
+.modal-body::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
+.modal-body::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+.modal-body::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
 .modal-footer {
   padding: .875rem 1.25rem;
@@ -289,9 +337,7 @@
   flex-shrink: 0;
 }
 
-.form-group {
-  margin-bottom: 0;
-}
+.form-group { margin-bottom: 0; }
 
 .form-label {
   display: block;
@@ -376,44 +422,44 @@
     gap: 0.5rem;
   }
 
+  /* Hide table, show cards */
   .table-container {
-    overflow-x: auto;
+    display: none;
   }
 
-  .table-container table {
-    min-width: 800px;
+  .mobile-cards {
+    display: block;
   }
 
-  .table-container thead th {
-    padding: 0.75rem 0.5rem;
-  }
-
-  .table-container tbody td {
-    padding: 0.75rem 0.5rem;
-  }
-
+  /* Modal Mobile Fix */
   .modal-box {
     width: 95%;
     max-width: 95%;
-    max-height: 85vh;
+    max-height: 90vh;
+    top: 5%;
+    transform: translate(-50%, 0) scale(0.96);
+  }
+
+  .modal-overlay.active .modal-box {
+    transform: translate(-50%, 0) scale(1);
   }
 
   .form-row {
     grid-template-columns: 1fr;
-    gap: 0.875rem;
+    gap: 0.75rem;
   }
 
   .modal-header {
-    padding: 1rem;
+    padding: .875rem 1rem;
   }
 
   .modal-header h3 {
-    font-size: 1rem;
+    font-size: .95rem;
     padding-right: 2rem;
   }
 
   .modal-close {
-    top: 1rem;
+    top: .875rem;
     right: 1rem;
     width: 1.5rem;
     height: 1.5rem;
@@ -423,8 +469,21 @@
     padding: 1rem;
   }
 
+  .form-label {
+    font-size: .8rem;
+  }
+
+  .form-input, .form-select, .form-textarea {
+    padding: .5rem .65rem;
+    font-size: .8rem;
+  }
+
+  .form-textarea {
+    min-height: 50px;
+  }
+
   .modal-footer {
-    padding: 0.75rem 1rem;
+    padding: .75rem 1rem;
     flex-direction: column;
   }
 
@@ -433,34 +492,18 @@
     justify-content: center;
   }
 
-  .btn-action {
-    font-size: 0.7rem;
-    padding: 0.3rem 0.5rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .header-section h2 {
-    font-size: 1.25rem;
-  }
-
-  .header-section p {
-    font-size: 0.8rem;
-  }
-
-  .table-container thead th {
-    font-size: 0.7rem;
-    padding: 0.75rem 0.5rem;
-  }
-
-  .table-container tbody td {
-    font-size: 0.8rem;
-    padding: 0.75rem 0.5rem;
-  }
-
   .alert {
     padding: 0.75rem 1rem;
     font-size: 0.875rem;
+  }
+
+  .pagination button {
+    padding: .4rem .75rem;
+    font-size: .8rem;
+  }
+
+  .pagination .page-info {
+    font-size: .8rem;
   }
 }
 </style>
@@ -491,7 +534,7 @@
   </div>
 <?php endif; ?>
 
-<!-- TABLE -->
+<!-- TABLE DESKTOP -->
 <div class="table-container">
   <table>
     <thead>
@@ -505,52 +548,117 @@
         <th>Aksi</th>
       </tr>
     </thead>
-
-    <tbody>
-      <?php if (!empty($paket)): $i=1; foreach ($paket as $p): ?>
-      <tr>
-        <td><?= $i++ ?></td>
-        <td><strong><?= esc($p['nama_paket']) ?></strong></td>
-        <td><?= esc(ucfirst($p['level'])) ?></td>
-        <td><?= esc($p['durasi']) ?></td>
-        <td><?= esc($p['jumlah_pertemuan']) ?>x</td>
-        <td>Rp <?= number_format($p['harga'],0,',','.') ?></td>
-
-        <td>
-          <div style="display:flex; gap:.5rem; flex-wrap:wrap;">
-            <button class="btn-action btn-edit btnEdit"
-              data-id="<?= $p['id'] ?>"
-              data-nama="<?= esc($p['nama_paket'], 'attr') ?>"
-              data-level="<?= esc($p['level'], 'attr') ?>"
-              data-durasi="<?= esc($p['durasi'], 'attr') ?>"
-              data-pertemuan="<?= esc($p['jumlah_pertemuan'], 'attr') ?>"
-              data-harga="<?= esc($p['harga'], 'attr') ?>"
-              data-deskripsi="<?= esc($p['deskripsi'], 'attr') ?>">
-              <i class="fa fa-pen"></i> Edit
-            </button>
-
-            <form method="POST" action="<?= base_url('/paket/delete/'.$p['id']) ?>" onsubmit="return confirm('Hapus paket ini?')" style="display: inline;">
-              <?= csrf_field() ?>
-              <button type="submit" class="btn-action btn-delete">
-                <i class="fa fa-trash"></i> Hapus
+    <tbody id="tableBody">
+      <?php if (!empty($paket)): ?>
+        <?php foreach ($paket as $index => $p): ?>
+        <tr class="table-row" data-index="<?= $index ?>">
+          <td><?= $index + 1 ?></td>
+          <td><strong><?= esc($p['nama_paket']) ?></strong></td>
+          <td><?= esc(ucfirst($p['level'])) ?></td>
+          <td><?= esc($p['durasi']) ?></td>
+          <td><?= esc($p['jumlah_pertemuan']) ?>x</td>
+          <td>Rp <?= number_format($p['harga'],0,',','.') ?></td>
+          <td>
+            <div style="display:flex; gap:.5rem; justify-content:center; flex-wrap:wrap;">
+              <button class="btn-action btn-edit btnEdit"
+                data-id="<?= $p['id'] ?>"
+                data-nama="<?= esc($p['nama_paket'], 'attr') ?>"
+                data-level="<?= esc($p['level'], 'attr') ?>"
+                data-durasi="<?= esc($p['durasi'], 'attr') ?>"
+                data-pertemuan="<?= esc($p['jumlah_pertemuan'], 'attr') ?>"
+                data-harga="<?= esc($p['harga'], 'attr') ?>"
+                data-deskripsi="<?= esc($p['deskripsi'], 'attr') ?>">
+                <i class="fa fa-pen"></i> Edit
               </button>
-            </form>
-          </div>
-        </td>
-      </tr>
-      <?php endforeach; else: ?>
-      <tr>
-        <td colspan="7">
-          <div class="empty-state">
-            <i class="fa fa-box-open" style="font-size:3rem; opacity:.3; margin-bottom: 1rem;"></i>
-            <p>Belum ada paket kursus</p>
-          </div>
-        </td>
-      </tr>
+              <form method="POST" action="<?= base_url('/paket/delete/'.$p['id']) ?>" onsubmit="return confirm('Hapus paket ini?')" style="display: inline;">
+                <?= csrf_field() ?>
+                <button type="submit" class="btn-action btn-delete">
+                  <i class="fa fa-trash"></i> Hapus
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        <?php endforeach; ?>
+      <?php else: ?>
+        <tr>
+          <td colspan="7">
+            <div class="empty-state">
+              <i class="fa fa-box-open" style="font-size:3rem; opacity:.3; margin-bottom: 1rem;"></i>
+              <p>Belum ada paket kursus</p>
+            </div>
+          </td>
+        </tr>
       <?php endif; ?>
     </tbody>
   </table>
 </div>
+
+<!-- MOBILE CARDS -->
+<div class="mobile-cards" id="mobileCards">
+  <?php if (!empty($paket)): ?>
+    <?php foreach ($paket as $index => $p): ?>
+    <div class="card-item" data-index="<?= $index ?>">
+      <div class="card-header">
+        <div class="card-title"><?= esc($p['nama_paket']) ?></div>
+        <div class="card-level"><?= esc(ucfirst($p['level'])) ?></div>
+      </div>
+      <div class="card-details">
+        <div class="card-detail">
+          <div class="card-detail-label">Durasi</div>
+          <div class="card-detail-value"><?= esc($p['durasi']) ?></div>
+        </div>
+        <div class="card-detail">
+          <div class="card-detail-label">Pertemuan</div>
+          <div class="card-detail-value"><?= esc($p['jumlah_pertemuan']) ?>x</div>
+        </div>
+        <div class="card-detail" style="grid-column: 1 / -1;">
+          <div class="card-detail-label">Harga</div>
+          <div class="card-detail-value" style="color: #667eea; font-size: 1.1rem;">Rp <?= number_format($p['harga'],0,',','.') ?></div>
+        </div>
+      </div>
+      <div class="card-actions">
+        <button class="btn-action btn-edit btnEdit" style="flex:1;"
+          data-id="<?= $p['id'] ?>"
+          data-nama="<?= esc($p['nama_paket'], 'attr') ?>"
+          data-level="<?= esc($p['level'], 'attr') ?>"
+          data-durasi="<?= esc($p['durasi'], 'attr') ?>"
+          data-pertemuan="<?= esc($p['jumlah_pertemuan'], 'attr') ?>"
+          data-harga="<?= esc($p['harga'], 'attr') ?>"
+          data-deskripsi="<?= esc($p['deskripsi'], 'attr') ?>">
+          <i class="fa fa-pen"></i> Edit
+        </button>
+        <form method="POST" action="<?= base_url('/paket/delete/'.$p['id']) ?>" onsubmit="return confirm('Hapus paket ini?')" style="flex:1;">
+          <?= csrf_field() ?>
+          <button type="submit" class="btn-action btn-delete" style="width:100%;">
+            <i class="fa fa-trash"></i> Hapus
+          </button>
+        </form>
+      </div>
+    </div>
+    <?php endforeach; ?>
+  <?php else: ?>
+    <div class="empty-state">
+      <i class="fa fa-box-open" style="font-size:3rem; opacity:.3; margin-bottom: 1rem;"></i>
+      <p>Belum ada paket kursus</p>
+    </div>
+  <?php endif; ?>
+</div>
+
+<!-- PAGINATION -->
+<?php if (!empty($paket)): ?>
+<div class="pagination">
+  <button id="btnPrev" onclick="changePage(-1)">
+    <i class="fa fa-chevron-left"></i> Prev
+  </button>
+  <span class="page-info">
+    Halaman <span id="currentPage">1</span> dari <span id="totalPages">1</span>
+  </span>
+  <button id="btnNext" onclick="changePage(1)">
+    Next <i class="fa fa-chevron-right"></i>
+  </button>
+</div>
+<?php endif; ?>
 
 <!-- MODAL -->
 <div id="modal" class="modal-overlay">
@@ -572,7 +680,6 @@
             <label class="form-label">Nama Paket</label>
             <input type="text" class="form-input" name="nama_paket" id="paket_nama" required placeholder="Masukkan nama paket">
           </div>
-
           <div class="form-group">
             <label class="form-label">Level</label>
             <select name="level" id="paket_level" class="form-select">
@@ -587,11 +694,7 @@
           <div class="form-group">
             <label class="form-label">Durasi</label>
             <input type="text" class="form-input" name="durasi" id="paket_durasi" required placeholder="contoh: 3 Bulan">
-            <p style="font-size: 0.7rem; color: #6b7280; margin-top: 0.25rem;">
-              <i class="fa fa-info-circle"></i> Contoh: 3 Bulan, 6 Minggu
-            </p>
           </div>
-
           <div class="form-group">
             <label class="form-label">Jumlah Pertemuan</label>
             <input type="number" min="1" class="form-input" name="jumlah_pertemuan" id="paket_pertemuan" required placeholder="Jumlah pertemuan">
@@ -603,10 +706,9 @@
             <label class="form-label">Harga (Rp)</label>
             <input type="number" class="form-input" name="harga" id="paket_harga" required placeholder="Masukkan harga">
           </div>
-
           <div class="form-group">
             <label class="form-label">Deskripsi</label>
-            <textarea class="form-textarea" name="deskripsi" id="paket_deskripsi" placeholder="Deskripsi paket (opsional)" style="min-height: 60px;"></textarea>
+            <textarea class="form-textarea" name="deskripsi" id="paket_deskripsi" placeholder="Deskripsi paket (opsional)"></textarea>
           </div>
         </div>
       </div>
@@ -622,6 +724,43 @@
 </div>
 
 <script>
+// Pagination
+let currentPage = 1;
+let itemsPerPage = window.innerWidth <= 768 ? 3 : 8;
+
+function updatePagination() {
+  const isMobile = window.innerWidth <= 768;
+  itemsPerPage = isMobile ? 3 : 8;
+  
+  const items = isMobile 
+    ? document.querySelectorAll('.card-item[data-index]')
+    : document.querySelectorAll('.table-row[data-index]');
+  
+  const totalItems = items.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  
+  if (currentPage > totalPages) currentPage = totalPages || 1;
+  
+  items.forEach((item, index) => {
+    const page = Math.floor(index / itemsPerPage) + 1;
+    item.style.display = page === currentPage ? '' : 'none';
+  });
+  
+  document.getElementById('currentPage').textContent = currentPage;
+  document.getElementById('totalPages').textContent = totalPages;
+  document.getElementById('btnPrev').disabled = currentPage === 1;
+  document.getElementById('btnNext').disabled = currentPage === totalPages;
+}
+
+function changePage(direction) {
+  currentPage += direction;
+  updatePagination();
+}
+
+window.addEventListener('resize', updatePagination);
+updatePagination();
+
+// Modal
 const modal = document.getElementById('modal');
 
 function closeModal() {
@@ -630,34 +769,24 @@ function closeModal() {
 
 function openModal() {
   modal.style.display = 'block';
-  void modal.offsetWidth;
-  requestAnimationFrame(() => {
-    modal.classList.add('active');
-  });
+  requestAnimationFrame(() => modal.classList.add('active'));
 }
 
 document.getElementById('btnOpenCreate').addEventListener('click', () => {
   document.getElementById('modalTitle').textContent = 'Tambah Paket Kursus';
   document.getElementById('modalForm').action = "<?= base_url('/paket/create') ?>";
-
-  document.getElementById('paket_id').value = '';
-  document.getElementById('paket_nama').value = '';
+  ['paket_id', 'paket_nama', 'paket_durasi', 'paket_pertemuan', 'paket_harga', 'paket_deskripsi'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
   document.getElementById('paket_level').value = 'beginner';
-  document.getElementById('paket_durasi').value = '';
-  document.getElementById('paket_pertemuan').value = '';
-  document.getElementById('paket_harga').value = '';
-  document.getElementById('paket_deskripsi').value = '';
-
   openModal();
 });
 
 document.querySelectorAll('.btnEdit').forEach(btn => {
   btn.addEventListener('click', () => {
     document.getElementById('modalTitle').textContent = 'Edit Paket Kursus';
-    
     const id = btn.dataset.id;
     document.getElementById('modalForm').action = "<?= base_url('/paket/update/') ?>" + id;
-
     document.getElementById('paket_id').value = id;
     document.getElementById('paket_nama').value = btn.dataset.nama;
     document.getElementById('paket_level').value = btn.dataset.level;
@@ -665,26 +794,18 @@ document.querySelectorAll('.btnEdit').forEach(btn => {
     document.getElementById('paket_pertemuan').value = btn.dataset.pertemuan;
     document.getElementById('paket_harga').value = btn.dataset.harga;
     document.getElementById('paket_deskripsi').value = btn.dataset.deskripsi;
-
     openModal();
   });
 });
 
 document.getElementById('btnCloseModal').addEventListener('click', closeModal);
 document.getElementById('btnCloseModalX').addEventListener('click', closeModal);
-
 document.getElementById('modal').addEventListener('click', (e) => {
-  if (e.target.id === 'modal') {
-    closeModal();
-  }
+  if (e.target.id === 'modal') closeModal();
 });
-
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && modal.classList.contains('active')) {
-    closeModal();
-  }
+  if (e.key === 'Escape' && modal.classList.contains('active')) closeModal();
 });
-
 modal.addEventListener('transitionend', (e) => {
   if (e.target === modal && !modal.classList.contains('active')) {
     modal.style.display = 'none';

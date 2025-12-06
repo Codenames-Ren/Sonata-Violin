@@ -13,14 +13,14 @@ class PaketController extends BaseController
         $this->paket = new PaketModel();
     }
 
-    public function index()
+    public function paket()
     {
         $data['paket'] = $this->paket->findAll();
 
         $data['page_title'] = 'Paket Kursus';
         $data['page_subtitle'] = 'Kelola daftar paket kursus yang tersedia';
 
-        return view('paket/index', $data);
+        return view('paket/paket', $data);
     }
 
     // CREATE

@@ -13,9 +13,6 @@ class OperatorController extends BaseController
         $this->operator = new OperatorModel();
     }
 
-    // ============================
-    // LIST OPERATOR
-    // ============================
     public function operators()
     {
         $data['operators'] = $this->operator
@@ -28,12 +25,8 @@ class OperatorController extends BaseController
         return view('operators/operator', $data);
     }
 
-    // ============================
-    // CREATE OPERATOR
-    // ============================
     public function create()
     {
-        // Jika membuat admin baru → password wajib
         if ($this->request->getPost('role') === 'admin' && empty($this->request->getPost('password'))) {
             return redirect()->back()->with('error', 'Password wajib untuk membuat akun admin.');
         }
@@ -51,9 +44,6 @@ class OperatorController extends BaseController
         return redirect()->back()->with('success', 'Operator berhasil ditambahkan!');
     }
 
-    // ============================
-    // UPDATE OPERATOR
-    // ============================
     public function update($id)
     {
         $op = $this->operator->find($id);
@@ -62,7 +52,6 @@ class OperatorController extends BaseController
             return redirect()->back()->with('error', 'Operator tidak ditemukan.');
         }
 
-        // ADMIN tidak boleh diturunkan jabatannya menjadi operator
         if ($op['role'] === 'admin' && $this->request->getPost('role') !== 'admin') {
             return redirect()->back()->with('error', 'Admin tidak boleh diubah menjadi operator.');
         }
@@ -73,7 +62,6 @@ class OperatorController extends BaseController
             'role'         => $this->request->getPost('role'),
         ];
 
-        // Jika password diisi, update
         if (!empty($this->request->getPost('password'))) {
             $updateData['password'] = password_hash($this->request->getPost('password'), PASSWORD_DEFAULT);
         }
@@ -83,9 +71,6 @@ class OperatorController extends BaseController
         return redirect()->back()->with('success', 'Data operator berhasil diperbarui!');
     }
 
-    // ============================
-    // SOFT DELETE
-    // ============================
     public function delete($id)
     {
         $op = $this->operator->find($id);
@@ -94,7 +79,6 @@ class OperatorController extends BaseController
             return redirect()->back()->with('error', 'Operator tidak ditemukan.');
         }
 
-        // Cegah admin terhapus
         if ($op['role'] === 'admin') {
             return redirect()->back()->with('error', 'Admin tidak dapat dihapus.');
         }
@@ -107,9 +91,6 @@ class OperatorController extends BaseController
         return redirect()->back()->with('success', 'Operator berhasil dihapus (soft delete).');
     }
 
-    // ============================
-    // TOGGLE STATUS (Activate/Deactivate)
-    // ============================
     public function toggleStatus($id)
     {
         $op = $this->operator->find($id);
@@ -118,7 +99,6 @@ class OperatorController extends BaseController
             return redirect()->back()->with('error', 'Operator tidak ditemukan.');
         }
 
-        // 📌 Admin tidak boleh dinonaktifkan
         if ($op['role'] === 'admin') {
             return redirect()->back()->with('error', 'Admin tidak dapat dinonaktifkan.');
         }

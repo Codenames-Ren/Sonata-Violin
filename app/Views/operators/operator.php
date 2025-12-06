@@ -2,12 +2,8 @@
 <?= $this->section('content') ?>
 
 <style>
-/* Smooth transitions */
-* {
-  transition: all 0.15s ease;
-}
+* { transition: all 0.15s ease; }
 
-/* Header Section dengan gradient subtle */
 .header-section {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   padding: 2rem;
@@ -24,31 +20,29 @@
 }
 
 .header-section p {
-  color: rgba(255, 255, 255, 0.9);
-  margin: 0.25rem 0 0 0;
+  color: rgba(255,255,255,0.9);
+  margin-top: .25rem;
 }
 
-/* Button Primary yang lebih eye-catching */
 .btn-primary {
   background: white;
   color: #667eea;
-  padding: 0.625rem 1.5rem;
-  border-radius: 0.5rem;
+  padding: .625rem 1.5rem;
+  border-radius: .5rem;
   font-weight: 600;
   border: none;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0,0,0,.1);
   cursor: pointer;
 }
 
 .btn-primary:hover {
-  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
   transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0,0,0,.15);
 }
 
-/* Flash Messages dengan style baru */
 .alert {
   padding: 1rem 1.25rem;
-  border-radius: 0.75rem;
+  border-radius: .75rem;
   margin-bottom: 1.5rem;
   border-left: 4px solid;
   font-weight: 500;
@@ -66,15 +60,19 @@
   color: #991b1b;
 }
 
-/* Table Container dengan style card modern */
 .table-container {
   background: white;
   border-radius: 1rem;
   overflow: hidden;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgba(0,0,0,.1);
+  margin-bottom: 1.5rem;
 }
 
-/* Table Header dengan background */
+.table-container table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
 .table-container thead {
   background: #f8fafc;
   border-bottom: 2px solid #e2e8f0;
@@ -85,15 +83,14 @@
   font-weight: 600;
   color: #475569;
   text-transform: uppercase;
-  font-size: 0.75rem;
-  letter-spacing: 0.05em;
+  font-size: .75rem;
+  letter-spacing: .05em;
+  text-align: center;
 }
 
-/* Table Body */
 .table-container tbody td {
   padding: 1rem;
   color: #334155;
-  vertical-align: middle;
   text-align: center;
 }
 
@@ -105,18 +102,12 @@
   background: #fafbfc;
 }
 
-.table-container tbody tr:last-child {
-  border-bottom: none;
-}
-
-/* Badge Status dengan style baru */
 .badge {
   display: inline-block;
-  padding: 0.375rem 0.75rem;
+  padding: .375rem .75rem;
   border-radius: 9999px;
-  font-size: 0.75rem;
+  font-size: .75rem;
   font-weight: 600;
-  letter-spacing: 0.025em;
 }
 
 .badge-success {
@@ -129,17 +120,16 @@
   color: #92400e;
 }
 
-/* Action Buttons dengan warna berbeda */
 .btn-action {
-  padding: 0.35rem 0.55rem;
-  border-radius: 0.375rem;
-  font-size: 0.75rem;
+  padding: .35rem .55rem;
+  border-radius: .375rem;
+  font-size: .75rem;
   font-weight: 500;
   border: none;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: .25rem;
   white-space: nowrap;
 }
 
@@ -148,82 +138,203 @@
   color: #4338ca;
 }
 
-.btn-edit:hover {
-  background: #c7d2fe;
-}
+.btn-edit:hover { background: #c7d2fe; }
 
 .btn-toggle-active {
   background: #fef3c7;
   color: #92400e;
 }
 
-.btn-toggle-active:hover {
-  background: #fde68a;
-}
+.btn-toggle-active:hover { background: #fde68a; }
 
 .btn-toggle-inactive {
   background: #d1fae5;
   color: #065f46;
 }
 
-.btn-toggle-inactive:hover {
-  background: #a7f3d0;
-}
+.btn-toggle-inactive:hover { background: #a7f3d0; }
 
 .btn-delete {
   background: #fee2e2;
   color: #991b1b;
 }
 
-.btn-delete:hover {
-  background: #fecaca;
+.btn-delete:hover { background: #fecaca; }
+
+.text-protected {
+  font-size: .75rem;
+  color: #9ca3af;
+  font-style: italic;
 }
 
-/* Modal Overlay */
+/* Mobile Cards */
+.mobile-cards {
+  display: none;
+}
+
+.card-item {
+  background: white;
+  border-radius: .75rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,.1);
+  border: 1px solid #e5e7eb;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  margin-bottom: .75rem;
+  padding-bottom: .75rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.card-title {
+  font-weight: 700;
+  color: #111827;
+  font-size: 1rem;
+}
+
+.card-subtitle {
+  color: #6b7280;
+  font-size: .875rem;
+  margin-top: .125rem;
+}
+
+.card-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: .25rem;
+}
+
+.card-role {
+  background: #dbeafe;
+  color: #1e40af;
+  padding: .25rem .5rem;
+  border-radius: .375rem;
+  font-size: .75rem;
+  font-weight: 600;
+}
+
+.card-details {
+  display: grid;
+  gap: .5rem;
+  margin-bottom: .75rem;
+}
+
+.card-detail {
+  font-size: .875rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-detail-label {
+  color: #6b7280;
+  font-size: .75rem;
+}
+
+.card-detail-value {
+  color: #111827;
+  font-weight: 600;
+}
+
+.card-actions {
+  display: flex;
+  gap: .5rem;
+  padding-top: .75rem;
+  border-top: 1px solid #f3f4f6;
+  flex-wrap: wrap;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: .5rem;
+  margin-top: 1.5rem;
+}
+
+.pagination button {
+  padding: .5rem 1rem;
+  border: 2px solid #e5e7eb;
+  background: white;
+  color: #374151;
+  border-radius: .5rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: .875rem;
+}
+
+.pagination button:hover:not(:disabled) {
+  background: #f9fafb;
+  border-color: #667eea;
+  color: #667eea;
+}
+
+.pagination button:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+.pagination .page-info {
+  color: #6b7280;
+  font-weight: 500;
+  font-size: .875rem;
+  padding: 0 .5rem;
+}
+
+/* Modal */
 .modal-overlay {
   position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0);
-  backdrop-filter: blur(0px);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   z-index: 9999;
   display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
+  background: rgba(0, 0, 0, 0);
+  backdrop-filter: blur(0px);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .modal-overlay.active {
-  display: flex;
+  display: block;
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(2px);
 }
 
-/* Modal Content dengan shadow lebih tegas */
 .modal-box {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.96);
   background: white;
   border-radius: 1rem;
-  width: 100%;
+  width: 90%;
   max-width: 26rem;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   max-height: 85vh;
-  overflow-y: auto;
-  margin: auto;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   opacity: 0;
-  transform: translateY(-20px) scale(0.96);
   transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
 }
 
 .modal-overlay.active .modal-box {
   opacity: 1;
-  transform: translateY(0) scale(1);
+  transform: translate(-50%, -50%) scale(1);
 }
 
-/* Modal Header dengan gradient */
 .modal-header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   padding: 1.25rem;
   border-radius: 1rem 1rem 0 0;
+  position: relative;
+  flex-shrink: 0;
 }
 
 .modal-header h3 {
@@ -237,47 +348,45 @@
   position: absolute;
   top: 1.25rem;
   right: 1.25rem;
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
+  background: rgba(255,255,255,.2);
   border: none;
   width: 1.75rem;
   height: 1.75rem;
-  border-radius: 0.375rem;
-  cursor: pointer;
   display: flex;
-  align-items: center;
   justify-content: center;
-  font-size: 1rem;
+  align-items: center;
+  border-radius: .4rem;
+  cursor: pointer;
+  color: white;
 }
 
-.modal-close:hover {
-  background: rgba(255, 255, 255, 0.3);
-}
+.modal-close:hover { background: rgba(255,255,255,.3); }
 
-/* Modal Body */
 .modal-body {
   padding: 1.25rem;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
 }
 
-/* Form Elements */
 .form-group {
   margin-bottom: 1rem;
 }
 
 .form-label {
   display: block;
-  font-size: 0.875rem;
+  font-size: .875rem;
   font-weight: 600;
   color: #374151;
-  margin-bottom: 0.5rem;
+  margin-bottom: .5rem;
 }
 
 .form-input, .form-select {
   width: 100%;
-  padding: 0.625rem 0.875rem;
+  padding: .625rem .875rem;
   border: 2px solid #e5e7eb;
-  border-radius: 0.5rem;
-  font-size: 0.875rem;
+  border-radius: .5rem;
+  font-size: .875rem;
   color: #1f2937;
 }
 
@@ -292,21 +401,25 @@
   cursor: not-allowed;
 }
 
-/* Modal Footer */
+.modal-body::-webkit-scrollbar { width: 6px; }
+.modal-body::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
+.modal-body::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
 .modal-footer {
-  padding: 0.875rem 1.25rem;
+  padding: .875rem 1.25rem;
   background: #f9fafb;
   border-radius: 0 0 1rem 1rem;
   display: flex;
   justify-content: flex-end;
-  gap: 0.625rem;
+  gap: .625rem;
+  flex-shrink: 0;
 }
 
 .btn-secondary {
-  padding: 0.5rem 1rem;
-  border-radius: 0.375rem;
+  padding: .5rem 1rem;
+  border-radius: .375rem;
   font-weight: 600;
-  font-size: 0.875rem;
+  font-size: .875rem;
   border: 2px solid #e5e7eb;
   background: white;
   color: #6b7280;
@@ -319,10 +432,10 @@
 }
 
 .btn-submit {
-  padding: 0.5rem 1.25rem;
-  border-radius: 0.375rem;
+  padding: .5rem 1.25rem;
+  border-radius: .375rem;
   font-weight: 600;
-  font-size: 0.875rem;
+  font-size: .875rem;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
@@ -333,7 +446,12 @@
   box-shadow: 0 4px 6px -1px rgba(102, 126, 234, 0.3);
 }
 
-/* Responsive Design */
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #9ca3af;
+}
+
 @media (max-width: 768px) {
   .header-section {
     padding: 1.25rem;
@@ -352,17 +470,26 @@
     gap: 0.5rem;
   }
 
+  /* Hide table, show cards */
   .table-container {
-    overflow-x: auto;
+    display: none;
   }
 
-  .table-container table {
-    min-width: 800px;
+  .mobile-cards {
+    display: block;
   }
 
+  /* Modal Mobile Fix */
   .modal-box {
+    width: 95%;
     max-width: 95%;
-    margin: 1rem;
+    max-height: 90vh;
+    top: 5%;
+    transform: translate(-50%, 0) scale(0.96);
+  }
+
+  .modal-overlay.active .modal-box {
+    transform: translate(-50%, 0) scale(1);
   }
 
   .modal-header {
@@ -385,8 +512,17 @@
     padding: 1rem;
   }
 
+  .form-label {
+    font-size: .8rem;
+  }
+
+  .form-input, .form-select {
+    padding: .5rem .65rem;
+    font-size: .8rem;
+  }
+
   .modal-footer {
-    padding: 0.75rem 1rem;
+    padding: .75rem 1rem;
     flex-direction: column;
   }
 
@@ -395,53 +531,28 @@
     justify-content: center;
   }
 
-  .btn-action {
-    font-size: 0.75rem;
-    padding: 0.3rem 0.5rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .header-section h2 {
-    font-size: 1.25rem;
-  }
-
-  .header-section p {
-    font-size: 0.8rem;
-  }
-
-  .table-container thead th {
-    font-size: 0.7rem;
-    padding: 0.75rem 0.5rem;
-  }
-
-  .table-container tbody td {
-    font-size: 0.8rem;
-    padding: 0.75rem 0.5rem;
-  }
-
   .alert {
     padding: 0.75rem 1rem;
     font-size: 0.875rem;
   }
-}
 
-/* Protected Text */
-.text-protected {
-  font-size: 0.75rem;
-  color: #9ca3af;
-  font-style: italic;
-}
+  .pagination button {
+    padding: .4rem .75rem;
+    font-size: .8rem;
+  }
 
-/* Empty State */
-.empty-state {
-  text-align: center;
-  padding: 3rem 1rem;
-  color: #9ca3af;
+  .pagination .page-info {
+    font-size: .8rem;
+  }
+
+  .card-actions .btn-action {
+    font-size: .7rem;
+    padding: .3rem .5rem;
+  }
 }
 </style>
 
-<!-- Header Section -->
+<!-- HEADER -->
 <div class="header-section">
   <div style="display: flex; justify-content: space-between; align-items: center;">
     <div>
@@ -454,7 +565,7 @@
   </div>
 </div>
 
-<!-- Flash Messages -->
+<!-- FLASH -->
 <?php if (session()->getFlashdata('success')): ?>
   <div class="alert alert-success">
     <i class="fa fa-check-circle"></i> <?= session()->getFlashdata('success') ?>
@@ -467,9 +578,9 @@
   </div>
 <?php endif; ?>
 
-<!-- TABLE -->
+<!-- TABLE DESKTOP -->
 <div class="table-container">
-  <table style="width: 100%; border-collapse: collapse;">
+  <table>
     <thead>
       <tr>
         <th style="width: 60px;">#</th>
@@ -481,74 +592,158 @@
         <th style="width: 230px;">Aksi</th>
       </tr>
     </thead>
+    <tbody id="tableBody">
+      <?php if (!empty($operators)): ?>
+        <?php foreach ($operators as $index => $op): ?>
+        <tr class="table-row" data-index="<?= $index ?>">
+          <td><?= $index + 1 ?></td>
+          <td><strong><?= esc($op['username']) ?></strong></td>
+          <td><?= esc($op['nama_lengkap']) ?></td>
+          <td><?= ucfirst(esc($op['role'])) ?></td>
+          <td>
+            <?php if (($op['status'] ?? 'aktif') === 'aktif'): ?>
+              <span class="badge badge-success">Aktif</span>
+            <?php else: ?>
+              <span class="badge badge-warning">Nonaktif</span>
+            <?php endif; ?>
+          </td>
+          <td><?= date('d M Y', strtotime($op['created_at'])) ?></td>
+          <td>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center;">
+              <button class="btn-action btn-edit btnEdit"
+                data-id="<?= $op['id'] ?>"
+                data-username="<?= esc($op['username'], 'attr') ?>"
+                data-nama="<?= esc($op['nama_lengkap'], 'attr') ?>"
+                data-role="<?= esc($op['role'], 'attr') ?>">
+                <i class="fa fa-pen"></i> Edit
+              </button>
 
-    <tbody>
-    <?php if (!empty($operators)): $i = 1; foreach ($operators as $op): ?>
-      <tr>
-        <td><?= $i++ ?></td>
-        <td><strong><?= esc($op['username']) ?></strong></td>
-        <td><?= esc($op['nama_lengkap']) ?></td>
-        <td><?= ucfirst(esc($op['role'])) ?></td>
-        <td>
+              <?php if ($op['role'] !== 'admin'): ?>
+                <form method="POST" action="<?= base_url('/settings/operators/toggle-status/'.$op['id']) ?>" style="display: inline;">
+                  <?= csrf_field() ?>
+                  <button type="submit" class="btn-action <?= ($op['status'] === 'aktif') ? 'btn-toggle-active' : 'btn-toggle-inactive' ?>">
+                    <i class="fa fa-<?= ($op['status'] === 'aktif') ? 'pause' : 'play' ?>"></i>
+                    <?= ($op['status'] === 'aktif') ? 'Nonaktifkan' : 'Aktifkan' ?>
+                  </button>
+                </form>
+
+                <form method="POST" 
+                      action="<?= base_url('/settings/operators/delete/'.$op['id']) ?>"
+                      style="display: inline;"
+                      onsubmit="return confirm('Hapus operator ini? (soft delete)')">
+                  <?= csrf_field() ?>
+                  <button type="submit" class="btn-action btn-delete">
+                    <i class="fa fa-trash"></i> Hapus
+                  </button>
+                </form>
+              <?php else: ?>
+                <span class="text-protected">🔒 Protected</span>
+              <?php endif; ?>
+            </div>
+          </td>
+        </tr>
+        <?php endforeach; ?>
+      <?php else: ?>
+        <tr>
+          <td colspan="7">
+            <div class="empty-state">
+              <i class="fa fa-users" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+              <p>Belum ada operator yang terdaftar</p>
+            </div>
+          </td>
+        </tr>
+      <?php endif; ?>
+    </tbody>
+  </table>
+</div>
+
+<!-- MOBILE CARDS -->
+<div class="mobile-cards" id="mobileCards">
+  <?php if (!empty($operators)): ?>
+    <?php foreach ($operators as $index => $op): ?>
+    <div class="card-item" data-index="<?= $index ?>">
+      <div class="card-header">
+        <div>
+          <div class="card-title"><?= esc($op['username']) ?></div>
+          <div class="card-subtitle"><?= esc($op['nama_lengkap']) ?></div>
+        </div>
+        <div class="card-badge">
+          <div class="card-role"><?= ucfirst(esc($op['role'])) ?></div>
           <?php if (($op['status'] ?? 'aktif') === 'aktif'): ?>
             <span class="badge badge-success">Aktif</span>
           <?php else: ?>
             <span class="badge badge-warning">Nonaktif</span>
           <?php endif; ?>
-        </td>
-        <td><?= date('d M Y', strtotime($op['created_at'])) ?></td>
-        <td>
-          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-            <button class="btn-action btn-edit btnEdit"
-              data-id="<?= $op['id'] ?>"
-              data-username="<?= esc($op['username'], 'attr') ?>"
-              data-nama="<?= esc($op['nama_lengkap'], 'attr') ?>"
-              data-role="<?= esc($op['role'], 'attr') ?>">
-              <i class="fa fa-pen"></i> Edit
+        </div>
+      </div>
+      
+      <div class="card-details">
+        <div class="card-detail">
+          <span class="card-detail-label">Dibuat</span>
+          <span class="card-detail-value"><?= date('d M Y', strtotime($op['created_at'])) ?></span>
+        </div>
+      </div>
+
+      <div class="card-actions">
+        <button class="btn-action btn-edit btnEdit" style="flex: 1;"
+          data-id="<?= $op['id'] ?>"
+          data-username="<?= esc($op['username'], 'attr') ?>"
+          data-nama="<?= esc($op['nama_lengkap'], 'attr') ?>"
+          data-role="<?= esc($op['role'], 'attr') ?>">
+          <i class="fa fa-pen"></i> Edit
+        </button>
+
+        <?php if ($op['role'] !== 'admin'): ?>
+          <form method="POST" action="<?= base_url('/settings/operators/toggle-status/'.$op['id']) ?>" style="flex: 1;">
+            <?= csrf_field() ?>
+            <button type="submit" class="btn-action <?= ($op['status'] === 'aktif') ? 'btn-toggle-active' : 'btn-toggle-inactive' ?>" style="width: 100%;">
+              <i class="fa fa-<?= ($op['status'] === 'aktif') ? 'pause' : 'play' ?>"></i>
+              <?= ($op['status'] === 'aktif') ? 'Nonaktif' : 'Aktif' ?>
             </button>
+          </form>
 
-            <?php if ($op['role'] !== 'admin'): ?>
-              <form method="POST" action="<?= base_url('/settings/operators/toggle-status/'.$op['id']) ?>" style="display: inline;">
-                <?= csrf_field() ?>
-                <button type="submit" class="btn-action <?= ($op['status'] === 'aktif') ? 'btn-toggle-active' : 'btn-toggle-inactive' ?>">
-                  <i class="fa fa-<?= ($op['status'] === 'aktif') ? 'pause' : 'play' ?>"></i>
-                  <?= ($op['status'] === 'aktif') ? 'Nonaktifkan' : 'Aktifkan' ?>
-                </button>
-              </form>
-
-              <form method="POST" 
-                    action="<?= base_url('/settings/operators/delete/'.$op['id']) ?>"
-                    style="display: inline;"
-                    onsubmit="return confirm('Hapus operator ini? (soft delete)')">
-                <?= csrf_field() ?>
-                <button type="submit" class="btn-action btn-delete">
-                  <i class="fa fa-trash"></i> Hapus
-                </button>
-              </form>
-            <?php else: ?>
-              <span class="text-protected">🔒 Protected</span>
-            <?php endif; ?>
-          </div>
-        </td>
-      </tr>
-    <?php endforeach; else: ?>
-      <tr>
-        <td colspan="7">
-          <div class="empty-state">
-            <i class="fa fa-users" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i>
-            <p>Belum ada operator yang terdaftar</p>
-          </div>
-        </td>
-      </tr>
-    <?php endif; ?>
-    </tbody>
-  </table>
+          <form method="POST" 
+                action="<?= base_url('/settings/operators/delete/'.$op['id']) ?>"
+                style="flex: 1;"
+                onsubmit="return confirm('Hapus operator ini?')">
+            <?= csrf_field() ?>
+            <button type="submit" class="btn-action btn-delete" style="width: 100%;">
+              <i class="fa fa-trash"></i> Hapus
+            </button>
+          </form>
+        <?php else: ?>
+          <span class="text-protected" style="flex: 1; text-align: center;">🔒 Protected</span>
+        <?php endif; ?>
+      </div>
+    </div>
+    <?php endforeach; ?>
+  <?php else: ?>
+    <div class="empty-state">
+      <i class="fa fa-users" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+      <p>Belum ada operator yang terdaftar</p>
+    </div>
+  <?php endif; ?>
 </div>
+
+<!-- PAGINATION -->
+<?php if (!empty($operators)): ?>
+<div class="pagination">
+  <button id="btnPrev" onclick="changePage(-1)">
+    <i class="fa fa-chevron-left"></i> Prev
+  </button>
+  <span class="page-info">
+    Halaman <span id="currentPage">1</span> dari <span id="totalPages">1</span>
+  </span>
+  <button id="btnNext" onclick="changePage(1)">
+    Next <i class="fa fa-chevron-right"></i>
+  </button>
+</div>
+<?php endif; ?>
 
 <!-- MODAL -->
 <div id="modal" class="modal-overlay">
   <div class="modal-box">
-    <div class="modal-header" style="position: relative;">
+    <div class="modal-header">
       <h3 id="modalTitle">Tambah Operator</h3>
       <button type="button" class="modal-close" id="btnCloseModalX">
         <i class="fa fa-times"></i>
@@ -578,7 +773,7 @@
           </select>
         </div>
 
-        <div class="form-group" id="passwordField">
+        <div class="form-group">
           <label class="form-label">Password</label>
           <input type="password" name="password" id="op_password" class="form-input" placeholder="Masukkan password">
           <p style="font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem;">
@@ -598,6 +793,43 @@
 </div>
 
 <script>
+// Pagination
+let currentPage = 1;
+let itemsPerPage = window.innerWidth <= 768 ? 3 : 8;
+
+function updatePagination() {
+  const isMobile = window.innerWidth <= 768;
+  itemsPerPage = isMobile ? 3 : 8;
+  
+  const items = isMobile 
+    ? document.querySelectorAll('.card-item[data-index]')
+    : document.querySelectorAll('.table-row[data-index]');
+  
+  const totalItems = items.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  
+  if (currentPage > totalPages) currentPage = totalPages || 1;
+  
+  items.forEach((item, index) => {
+    const page = Math.floor(index / itemsPerPage) + 1;
+    item.style.display = page === currentPage ? '' : 'none';
+  });
+  
+  document.getElementById('currentPage').textContent = currentPage;
+  document.getElementById('totalPages').textContent = totalPages;
+  document.getElementById('btnPrev').disabled = currentPage === 1;
+  document.getElementById('btnNext').disabled = currentPage === totalPages;
+}
+
+function changePage(direction) {
+  currentPage += direction;
+  updatePagination();
+}
+
+window.addEventListener('resize', updatePagination);
+updatePagination();
+
+// Modal
 const modal = document.getElementById('modal');
 
 function closeModal() {
@@ -605,69 +837,49 @@ function closeModal() {
 }
 
 function openModal() {
-  modal.style.display = 'flex';
-  void modal.offsetWidth;
-  requestAnimationFrame(() => {
-    modal.classList.add('active');
-  });
+  modal.style.display = 'block';
+  requestAnimationFrame(() => modal.classList.add('active'));
 }
 
-// Open Create Modal
 document.getElementById('btnOpenCreate').addEventListener('click', () => {
   document.getElementById('modalTitle').textContent = 'Tambah Operator Baru';
   document.getElementById('modalForm').action = "<?= base_url('/settings/operators/create') ?>";
-  document.getElementById('op_id').value = '';
-  document.getElementById('op_username').value = '';
-  document.getElementById('op_nama').value = '';
+  ['op_id', 'op_username', 'op_nama', 'op_password'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
   document.getElementById('op_role').value = 'operator';
   document.getElementById('op_role').removeAttribute('disabled');
-  document.getElementById('op_password').value = '';
-  
   openModal();
 });
 
-// Open Edit Modal
 document.querySelectorAll('.btnEdit').forEach(btn => {
   btn.addEventListener('click', () => {
     const id = btn.dataset.id;
-    const username = btn.dataset.username;
-    const nama = btn.dataset.nama;
-    const role = btn.dataset.role;
-
     document.getElementById('modalTitle').textContent = 'Edit Operator';
     document.getElementById('op_id').value = id;
-    document.getElementById('op_username').value = username;
-    document.getElementById('op_nama').value = nama;
-    document.getElementById('op_role').value = role;
+    document.getElementById('op_username').value = btn.dataset.username;
+    document.getElementById('op_nama').value = btn.dataset.nama;
+    document.getElementById('op_role').value = btn.dataset.role;
 
-    if (role === 'admin') {
+    if (btn.dataset.role === 'admin') {
       document.getElementById('op_role').setAttribute('disabled', true);
     } else {
       document.getElementById('op_role').removeAttribute('disabled');
     }
 
     document.getElementById('modalForm').action = "<?= base_url('/settings/operators/update/') ?>" + id;
-    
     openModal();
   });
 });
 
-// Close Modal
 document.getElementById('btnCloseModal').addEventListener('click', closeModal);
 document.getElementById('btnCloseModalX').addEventListener('click', closeModal);
-
 document.getElementById('modal').addEventListener('click', (e) => {
-  if (e.target.id === 'modal') {
-    closeModal();
-  }
+  if (e.target.id === 'modal') closeModal();
 });
-
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && modal.classList.contains('active')) {
-    closeModal();
-  }
+  if (e.key === 'Escape' && modal.classList.contains('active')) closeModal();
 });
-
 modal.addEventListener('transitionend', (e) => {
   if (e.target === modal && !modal.classList.contains('active')) {
     modal.style.display = 'none';

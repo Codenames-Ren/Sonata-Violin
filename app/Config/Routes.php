@@ -16,7 +16,7 @@ $routes->group('', ['filter' => 'auth'], function($routes) {
 });
 
 $routes->group('paket', ['filter' => 'admin'], function($routes){
-    $routes->get('/', 'PaketController::index');
+    $routes->get('/', 'PaketController::paket');
 });
 
 $routes->group('settings', ['filter' => 'admin'], function($routes) {
@@ -28,7 +28,7 @@ $routes->group('settings', ['filter' => 'admin'], function($routes) {
 });
 
 $routes->group('paket', ['filter' => 'admin'], function($routes) {
-    $routes->get('/', 'PaketController::index');
+    $routes->get('/', 'PaketController::paket');
     $routes->post('create', 'PaketController::create');
     $routes->post('update/(:num)', 'PaketController::update/$1');
     $routes->post('delete/(:num)', 'PaketController::delete/$1');
