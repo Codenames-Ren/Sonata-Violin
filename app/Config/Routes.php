@@ -38,6 +38,14 @@ $routes->group('siswa', ['filter' => 'admin'], function($routes) {
     $routes->get('/', 'SiswaController::siswa');
     $routes->post('create', 'SiswaController::create');
     $routes->post('update/(:num)', 'SiswaController::update/$1');
-    $routes->post('delete/(:num', 'SiswaController::delete/$1');
+    $routes->post('delete/(:num)', 'SiswaController::delete/$1');
     $routes->post('toggle-status/(:num)', 'SiswaController::toggleStatus/$1');
+});
+
+$routes->group('instruktur', ['filter' => 'admin'], function($routes) {
+    $routes->get('/', 'InstrukturController::instruktur');
+    $routes->post('create', 'InstrukturController::create');
+    $routes->post('update/(:num)', 'InstrukturController::update/$1');
+    $routes->post('delete/(:num)', 'InstrukturController::delete/$1');
+    $routes->post('toggle-status/(:num)', 'InstrukturController::toggleStatus/$1');
 });

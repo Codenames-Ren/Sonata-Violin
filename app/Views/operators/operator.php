@@ -260,16 +260,22 @@
             </div>
 
             <!-- FOOTER BUTTONS -->
-            <div class="p-5 bg-gray-50 border-t-2 border-gray-200 flex justify-end gap-2">
-                <button id="btnCancelModal" type="button"
-                        class="px-5 py-2.5 bg-white border-2 border-gray-300 rounded-lg font-semibold hover:bg-gray-50 transition-all hover:-translate-y-0.5 hover:shadow-lg">
-                    Batal
-                </button>
+            <div class="p-4 md:p-5 bg-gray-50 border-t-2 border-gray-200 flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3">
 
-                <button type="submit"
-                        class="btn-hover px-5 py-2.5 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg font-semibold shadow-md hover:shadow-lg transition-all">
-                    <i class="fa fa-save mr-1"></i>Simpan Data
-                </button>
+                <div class="flex gap-2 order-2 sm:order-1">
+                    <button id="btnCancelModal" type="button"
+                            class="flex-1 sm:flex-none px-4 py-2 md:px-5 md:py-2.5 text-sm md:text-base bg-white border-2 border-gray-300 rounded-lg font-semibold hover:bg-gray-50 transition-all hover:-translate-y-0.5 hover:shadow-lg">
+                        Batal
+                    </button>
+                </div>
+
+                <div class="flex gap-2 order-1 sm:order-2">
+                    <button type="submit"
+                            class="btn-hover flex-1 sm:flex-none px-4 py-2 md:px-5 md:py-2.5 text-sm md:text-base bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg font-semibold shadow-md hover:shadow-lg transition-all">
+                        <i class="fa fa-save mr-1"></i>Simpan Data
+                    </button>
+                </div>
+
             </div>
         </form>
     </div>

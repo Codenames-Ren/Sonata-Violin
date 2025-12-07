@@ -63,9 +63,10 @@ class SiswaController extends BaseController
             'no_hp'      => $this->request->getPost('no_hp'),
             'tgl_lahir'  => $this->request->getPost('tgl_lahir'),
             'email'      => $this->request->getPost('email'),
-            'status'     => $this->request->getPost('status'),
             'updated_at' => date('Y-m-d H:i:s'),
         ];
+
+        unset($data['status']);
 
         $foto = $this->request->getFile('foto_profil');
 
