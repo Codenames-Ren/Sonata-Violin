@@ -15,9 +15,14 @@ class InstrukturController extends BaseController
 
     public function instruktur()
     {
-        $data['instruktur'] = $this->instruktur
-            ->where('deleted_at', null)
-            ->findAll();
+        $data = [
+            'instruktur' => $this->instruktur
+                        ->where('deleted_at', null)
+                        ->findAll(),
+
+            'page_title' => 'Manajemen Instruktur',
+            'page_subtitle' => 'Kelola data instruktur Sonata Violin'
+        ];
 
         return view('instruktur/instruktur', $data);
     }

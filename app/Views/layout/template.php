@@ -43,7 +43,7 @@ $menuGroups = [
   ? ['id'=>'management','label'=>'Management','icon'=>'fa-boxes-stacked','items'=>[
       ['/siswa','Siswa','fa-user-graduate'],
       ['/instruktur','Instruktur','fa-chalkboard-user'],
-      ['/ruangan','Ruang Kelas','fa-door-open'],
+      ['/ruang-kelas','Ruang Kelas','fa-door-open'],
       ['/paket','Paket Kursus','fa-box-open'],
   ]]
   : null,
@@ -206,7 +206,7 @@ $menuGroups = [
 
         <div>
           <h1 class="text-2xl font-bold text-slate-800"><?= $page_title ?? 'Dashboard'; ?></h1>
-          <p class="text-sm text-slate-500"><?= $page_subtitle ?? 'Track your progress and stay on target'; ?></p>
+          <p class="text-sm text-slate-500"><?= $page_subtitle ?? 'Pantau progres, jaga kelancaran operasional.'; ?></p>
         </div>
       </div>
 
@@ -278,7 +278,7 @@ function showFlyout(trigger, flyout) {
   });
 
   const rect = trigger.getBoundingClientRect();
-  flyout.style.top = rect.top + window.scrollY + "px";
+  flyout.style.top = rect.top + "px";
 
   flyout.classList.remove("opacity-0", "invisible", "-translate-x-2.5", "pointer-events-none");
   flyout.classList.add("opacity-100", "visible", "translate-x-0", "pointer-events-auto");

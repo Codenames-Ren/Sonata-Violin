@@ -49,3 +49,11 @@ $routes->group('instruktur', ['filter' => 'admin'], function($routes) {
     $routes->post('delete/(:num)', 'InstrukturController::delete/$1');
     $routes->post('toggle-status/(:num)', 'InstrukturController::toggleStatus/$1');
 });
+
+$routes->group('ruang-kelas', ['filter' => 'admin'], function($routes) {
+    $routes->get('/', 'RuangKelasController::ruangKelas');
+    $routes->post('create', 'RuangKelasController::create');
+    $routes->post('update/(:num)', 'RuangKelasController::update/$1');
+    $routes->post('delete/(:num)', 'RuangKelasController::delete/$1');
+    $routes->post('toggle-status/(:num)', 'RuangKelasController::toggleStatus/$1');
+});
