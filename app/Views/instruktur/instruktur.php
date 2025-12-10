@@ -320,7 +320,7 @@ button, input, select, textarea {
             <?= csrf_field() ?>
             <input type="hidden" id="instruktur_id" name="id">
 
-            <div class="p-6 space-y-6 max-h-[60vh] overflow-y-auto">
+            <div class="p-6 space-y-6 max-h-[45vh] overflow-y-auto">
 
                 <!-- STEP 1 -->
                 <div id="step1" class="wizard-page">
@@ -363,14 +363,14 @@ button, input, select, textarea {
                         <label class="font-semibold text-gray-700 mb-2 block">Email</label>
                         <input id="instruktur_email" name="email" type="email"
                                class="w-full border-2 border-gray-200 rounded-lg px-4 py-2.5 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
-                               placeholder="email@example.com">
+                               placeholder="email@example.com" required>
                     </div>
 
                     <div>
                         <label class="font-semibold text-gray-700 mb-2 block">No HP</label>
                         <input id="instruktur_nohp" name="no_hp"
                                class="w-full border-2 border-gray-200 rounded-lg px-4 py-2.5 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
-                               placeholder="08xxxxxxxxxx">
+                               placeholder="08xxxxxxxxxx" required>
                     </div>
 
                     <div>
@@ -378,14 +378,14 @@ button, input, select, textarea {
                         <textarea id="instruktur_alamat" name="alamat"
                                   class="w-full border-2 border-gray-200 rounded-lg px-4 py-2.5 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                                   rows="3"
-                                  placeholder="Alamat lengkap"></textarea>
+                                  placeholder="Alamat lengkap" required></textarea>
                     </div>
 
                     <div>
                         <label class="font-semibold text-gray-700 mb-2 block">Keahlian</label>
                         <input id="instruktur_keahlian" name="keahlian"
                                class="w-full border-2 border-gray-200 rounded-lg px-4 py-2.5 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
-                               placeholder="Contoh: Violin, Piano">
+                               placeholder="Contoh: Advanced Violinist" required>
                     </div>
                 </div>
 
@@ -684,6 +684,64 @@ button, input, select, textarea {
 
     btnNextStep.addEventListener("click", () => {
         if (currentStep < 3) {
+            // Validasi Step 1
+            if (currentStep === 1) {
+                const nama = document.getElementById("instruktur_nama").value.trim();
+                const tgl = document.getElementById("instruktur_tgl").value;
+                
+                if (!nama) {
+                    alert("Nama lengkap harus diisi!");
+                    document.getElementById("instruktur_nama").focus();
+                    return;
+                }
+                
+                if (!tgl) {
+                    alert("Tanggal lahir harus diisi!");
+                    document.getElementById("instruktur_tgl").focus();
+                    return;
+                }
+            }
+            
+            // Validasi Step 2
+            if (currentStep === 2) {
+                const email = document.getElementById("instruktur_email").value.trim();
+                const nohp = document.getElementById("instruktur_nohp").value.trim();
+                const alamat = document.getElementById("instruktur_alamat").value.trim();
+                const keahlian = document.getElementById("instruktur_keahlian").value.trim();
+                
+                if (!email) {
+                    alert("Email harus diisi!");
+                    document.getElementById("instruktur_email").focus();
+                    return;
+                }
+                
+                // Validasi format email
+                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailPattern.test(email)) {
+                    alert("Format email tidak valid!");
+                    document.getElementById("instruktur_email").focus();
+                    return;
+                }
+                
+                if (!nohp) {
+                    alert("No HP harus diisi!");
+                    document.getElementById("instruktur_nohp").focus();
+                    return;
+                }
+                
+                if (!alamat) {
+                    alert("Alamat harus diisi!");
+                    document.getElementById("instruktur_alamat").focus();
+                    return;
+                }
+                
+                if (!keahlian) {
+                    alert("Keahlian harus diisi!");
+                    document.getElementById("instruktur_keahlian").focus();
+                    return;
+                }
+            }
+            
             currentStep++;
             updateStepDisplay();
         }
@@ -702,7 +760,7 @@ button, input, select, textarea {
         if (id) {
             this.action = "<?= base_url('/instruktur/update/') ?>" + id;
         } else {
-            this.action = "<?= base_url('/instruktur/store') ?>";
+            this.action = "<?= base_url('/instruktur/create') ?>";
         }
     });
 

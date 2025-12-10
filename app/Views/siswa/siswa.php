@@ -356,14 +356,14 @@
                         <label class="font-semibold text-gray-700 mb-2 block">Email</label>
                         <input id="siswa_email" name="email" type="email"
                                class="w-full border-2 border-gray-200 rounded-lg px-4 py-2.5 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
-                               placeholder="email@example.com">
+                               placeholder="email@example.com" required>
                     </div>
 
                     <div>
                         <label class="font-semibold text-gray-700 mb-2 block">No HP</label>
                         <input id="siswa_nohp" name="no_hp"
                                class="w-full border-2 border-gray-200 rounded-lg px-4 py-2.5 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
-                               placeholder="08xxxxxxxxxx">
+                               placeholder="08xxxxxxxxxx" required>
                     </div>
 
                     <div>
@@ -371,7 +371,7 @@
                         <textarea id="siswa_alamat" name="alamat"
                                   class="w-full border-2 border-gray-200 rounded-lg px-4 py-2.5 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                                   rows="3"
-                                  placeholder="Alamat lengkap"></textarea>
+                                  placeholder="Alamat lengkap" required></textarea>
                     </div>
                 </div>
 
@@ -664,6 +664,57 @@
 
     btnNextStep.addEventListener("click", () => {
         if (currentStep < 3) {
+            // Validasi Step 1
+            if (currentStep === 1) {
+                const nama = document.getElementById("siswa_nama").value.trim();
+                const tgl = document.getElementById("siswa_tgl").value;
+                
+                if (!nama) {
+                    alert("Nama lengkap harus diisi!");
+                    document.getElementById("siswa_nama").focus();
+                    return;
+                }
+                
+                if (!tgl) {
+                    alert("Tanggal lahir harus diisi!");
+                    document.getElementById("siswa_tgl").focus();
+                    return;
+                }
+            }
+            
+            // Validasi Step 2
+            if (currentStep === 2) {
+                const email = document.getElementById("siswa_email").value.trim();
+                const nohp = document.getElementById("siswa_nohp").value.trim();
+                const alamat = document.getElementById("siswa_alamat").value.trim();
+                
+                if (!email) {
+                    alert("Email harus diisi!");
+                    document.getElementById("siswa_email").focus();
+                    return;
+                }
+                
+                // Validasi format email
+                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailPattern.test(email)) {
+                    alert("Format email tidak valid!");
+                    document.getElementById("siswa_email").focus();
+                    return;
+                }
+                
+                if (!nohp) {
+                    alert("No HP harus diisi!");
+                    document.getElementById("siswa_nohp").focus();
+                    return;
+                }
+                
+                if (!alamat) {
+                    alert("Alamat harus diisi!");
+                    document.getElementById("siswa_alamat").focus();
+                    return;
+                }
+            }
+            
             currentStep++;
             updateStepDisplay();
         }
@@ -682,7 +733,7 @@
         if (id) {
             this.action = "<?= base_url('/siswa/update/') ?>" + id;
         } else {
-            this.action = "<?= base_url('/siswa/store') ?>";
+            this.action = "<?= base_url('/siswa/create') ?>";
         }
     });
 

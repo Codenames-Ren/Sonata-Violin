@@ -57,3 +57,19 @@ $routes->group('ruang-kelas', ['filter' => 'admin'], function($routes) {
     $routes->post('delete/(:num)', 'RuangKelasController::delete/$1');
     $routes->post('toggle-status/(:num)', 'RuangKelasController::toggleStatus/$1');
 });
+
+$routes->group('pendaftaran', ['filter' => 'transaksi'], function($routes) {
+    $routes->get('/', 'PendaftaranController::index');
+
+    $routes->post('create', 'PendaftaranController::create');
+    $routes->post('update/(:num)', 'PendaftaranController::update/$1');
+
+    $routes->post('verifikasi/(:num)', 'PendaftaranController::verifikasi/$1');
+    $routes->post('batal/(:num)', 'PendaftaranController::batalkan/$1');
+    $routes->post('selesai/(:num)', 'PendaftaranController::selesai/$1');
+
+    $routes->post('delete/(:num)', 'PendaftaranController::delete/$1');
+});
+
+$routes->post('daftar', 'PendaftaranSiswaController::store');
+
