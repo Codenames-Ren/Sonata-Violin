@@ -17,6 +17,12 @@ class PaketModel extends Model
         'jumlah_pertemuan',
         'harga',
         'deskripsi',
+        'tanggal_mulai',
+        'tanggal_selesai',
+        'periode_mulai',
+        'periode_selesai',
+        'batch',
+        'status',
         'created_at',
         'updated_at'
     ];

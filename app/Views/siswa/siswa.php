@@ -142,12 +142,17 @@
             <td class="py-4 px-4 text-gray-600"><?= esc($s['alamat']) ?></td>
             <td class="py-4 px-4 text-center">
                 <?php 
-                    $status = $s['status'] ?? 'nonaktif';
+                    $status = strtolower($s['status'] ?? 'nonaktif');
 
-                    if ($status === 'aktif' || $status === '1' || $status === 1) {
+                    if ($status === 'aktif') {
                         $label = 'Aktif';
                         $class = 'bg-green-100 text-green-700';
-                    } else {
+                    } 
+                    elseif ($status === 'lulus') {
+                        $label = 'Lulus';
+                        $class = 'bg-yellow-100 text-yellow-700';
+                    }
+                    else {
                         $label = 'Nonaktif';
                         $class = 'bg-red-100 text-red-700';
                     }
@@ -202,11 +207,17 @@
 <!-- MOBILE CARDS -->
 <div id="mobileCards" class="md:hidden space-y-4">
     <?php if(!empty($siswa)): foreach($siswa as $s): 
-        $status = $s['status'] ?? 'nonaktif';
-        if ($status === 'aktif' || $status === '1' || $status === 1) {
+        $status = strtolower($s['status'] ?? 'nonaktif');
+
+        if ($status === 'aktif') {
             $label = 'Aktif';
             $class = 'bg-green-100 text-green-700';
-        } else {
+        } 
+        elseif ($status === 'lulus') {
+            $label = 'Lulus';
+            $class = 'bg-yellow-100 text-yellow-700';
+        }
+        else {
             $label = 'Nonaktif';
             $class = 'bg-red-100 text-red-700';
         }

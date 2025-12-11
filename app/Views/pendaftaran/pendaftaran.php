@@ -106,7 +106,7 @@
 <?php endif ?>
 
 <!-- DESKTOP TABLE -->
-<div class="hidden md:block bg-white shadow-lg rounded-xl overflow-hidden">
+<div class="hidden md:block bg-white shadow-lg rounded-xl overflow-visible">
     <table class="w-full table-auto">
         <thead class="bg-gradient-to-r from-gray-50 to-gray-100 text-gray-600 uppercase text-sm font-semibold border-b-2 border-gray-200">
         <tr>
@@ -134,6 +134,9 @@
             } elseif ($status === 'batal') {
                 $labelStatus = 'Batal';
                 $statusClass = 'bg-red-100 text-red-700';
+            } elseif ($status === 'mundur') {
+                $labelStatus = 'Mengundurkan Diri';
+                $statusClass = 'bg-orange-100 text-orange-700';
             } else {
                 $labelStatus = 'Pending';
                 $statusClass = 'bg-yellow-100 text-yellow-700';
@@ -142,7 +145,8 @@
         <tr class="table-row hover:bg-gray-50 transition-colors"
             data-nama="<?= strtolower(esc($p['nama'] ?? '')) ?>"
             data-email="<?= strtolower(esc($p['email'] ?? '')) ?>"
-            data-status="<?= strtolower(esc($p['status'] ?? '')) ?>">
+            data-status="<?= strtolower(esc($p['status'] ?? '')) ?>"
+            data-label="<?= strtolower($labelStatus) ?>">
 
             <td class="py-4 px-4 text-center font-medium text-gray-600"><?= $i++ ?></td>
 
@@ -187,15 +191,36 @@
 
                 <!-- SELESAIKAN (hanya kalau aktif) -->
                 <?php if($status === 'aktif'): ?>
-                <form method="POST" action="<?= base_url('/pendaftaran/selesai/'.$p['id']) ?>">
-                    <?= csrf_field() ?>
-                    <button class="btn-hover bg-blue-100 text-blue-700 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-blue-200 transition-all">
-                        Tandai Selesai
+                <div class="relative inline-block">
+
+                    <button type="button"
+                        class="btn-hover bg-blue-100 text-blue-700 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-blue-200 transition-all 
+                            dropdownToggle">
+                        Aksi ▼
                     </button>
-                </form>
+
+                    <div class="absolute hidden bg-white shadow-lg rounded-lg border border-gray-200 mt-1 w-40 z-20 dropdownMenu">
+
+                        <form method="POST" action="<?= base_url('/pendaftaran/selesai/'.$p['id']) ?>">
+                            <?= csrf_field() ?>
+                            <button class="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100">
+                                Selesai Belajar
+                            </button>
+                        </form>
+
+                        <form method="POST" action="<?= base_url('/pendaftaran/mundur/'.$p['id']) ?>">
+                            <?= csrf_field() ?>
+                            <button class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
+                                Mengundurkan Diri
+                            </button>
+                        </form>
+
+                    </div>
+                </div>
                 <?php endif; ?>
 
                 <!-- EDIT -->
+                <?php if($status === 'pending' || $status === 'batal'): ?>
                 <button class="btnEdit btn-hover bg-indigo-100 text-indigo-700 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-indigo-200 transition-all"
                     data-id="<?= $p['id'] ?>"
                     data-status="<?= $p['status'] ?>"
@@ -213,6 +238,7 @@
                     data-nominal="<?= esc($p['nominal'] ?? '', 'attr') ?>">
                     <i class="fa fa-pen mr-1"></i>Edit
                 </button>
+                <?php endif; ?>
 
                 <!-- DELETE (Only Admin) -->
                 <?php if(session()->get('role') === 'admin'): ?>
@@ -252,6 +278,9 @@
         } elseif ($status === 'batal') {
             $labelStatus = 'Batal';
             $statusClass = 'bg-red-100 text-red-700';
+        } elseif ($status === 'mundur') {
+            $labelStatus = 'Mengundurkan Diri';
+            $statusClass = 'bg-orange-100 text-orange-700';
         } else {
             $labelStatus = 'Pending';
             $statusClass = 'bg-yellow-100 text-yellow-700';
@@ -260,7 +289,8 @@
     <div class="card-item bg-white shadow-lg rounded-xl p-4 border border-gray-100 hover:shadow-xl transition-shadow"
          data-nama="<?= strtolower(esc($p['nama'] ?? '')) ?>"
          data-email="<?= strtolower(esc($p['email'] ?? '')) ?>"
-         data-status="<?= strtolower(esc($p['status'] ?? '')) ?>">
+         data-status="<?= strtolower(esc($p['status'] ?? '')) ?>"
+         data-label="<?= strtolower($labelStatus) ?>">
 
         <div class="flex gap-4">
             <div class="flex-1">
@@ -297,14 +327,34 @@
             <?php endif; ?>
 
             <?php if($status === 'aktif'): ?>
-            <form method="POST" action="<?= base_url('/pendaftaran/selesai/'.$p['id']) ?>" class="col-span-2">
-                <?= csrf_field() ?>
-                <button class="w-full px-2 py-2 rounded-lg text-xs font-semibold transition-all bg-blue-100 text-blue-700 hover:bg-blue-200">
-                    Tandai Selesai
-                </button>
-            </form>
-            <?php endif; ?>
+            <div class="col-span-2 relative">
 
+                <button type="button"
+                    class="w-full px-2 py-2 rounded-lg text-xs font-semibold bg-blue-100 text-blue-700 hover:bg-blue-200 dropdownToggle">
+                    Aksi ▼
+                </button>
+
+                <div class="absolute hidden bg-white shadow-lg rounded-lg border border-gray-200 mt-1 w-full z-20 dropdownMenu">
+
+                    <form method="POST" action="<?= base_url('/pendaftaran/selesai/'.$p['id']) ?>">
+                        <?= csrf_field() ?>
+                        <button class="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100">
+                            Selesai Belajar
+                        </button>
+                    </form>
+
+                    <form method="POST" action="<?= base_url('/pendaftaran/mundur/'.$p['id']) ?>">
+                        <?= csrf_field() ?>
+                        <button class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
+                            Mengundurkan Diri
+                        </button>
+                    </form>
+
+                </div>
+            </div>
+            <?php endif; ?>
+            
+            <?php if($status === 'pending' || $status === 'batal'): ?>
             <button class="btnEdit col-span-1 bg-indigo-100 text-indigo-700 px-2 py-2 rounded-lg text-xs font-semibold hover:bg-indigo-200 transition-all"
                 data-id="<?= $p['id'] ?>"
                 data-nama="<?= esc($p['nama'] ?? '', 'attr') ?>"
@@ -321,6 +371,7 @@
                 data-nominal="<?= esc($p['nominal'] ?? '', 'attr') ?>">
                 <i class="fa fa-pen"></i>
             </button>
+            <?php endif; ?>
 
             <?php if(session()->get('role') === 'admin'): ?>
             <form method="POST" action="<?= base_url('/pendaftaran/delete/'.$p['id']) ?>"
@@ -353,7 +404,7 @@
     </button>
 </div>
 
-<!-- MODAL MULTI STEP (4 STEP) -->
+<!-- MODAL MULTI STEP -->
 <div id="modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden flex items-start justify-center p-4 z-50">
 
     <div id="modalBox"
@@ -418,7 +469,7 @@
                             <label class="font-semibold text-gray-700 mb-2 block">No HP</label>
                             <input id="pd_nohp" name="no_hp" required
                                    class="w-full border-2 border-gray-200 rounded-lg px-4 py-2.5 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
-                                   placeholder="08xxxxxxxxxx">
+                                   placeholder="+62xxxxxxxxxx">
                         </div>
                     </div>
 
@@ -451,60 +502,79 @@
 
                     <div>
                         <label class="font-semibold text-gray-700 mb-2 block">Paket Kursus</label>
+
                         <select id="pd_paket_id" name="paket_id" required
-                                class="w-full border-2 border-gray-200 rounded-lg px-4 py-2.5 bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
+                            class="w-full border-2 border-gray-200 rounded-lg px-4 py-2.5 bg-white 
+                                focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
+
                             <option value="">-- Pilih Paket --</option>
 
-                            <?php if(!empty($paket)): foreach($paket as $pk): ?>
+                            <?php if (!empty($paket)): foreach ($paket as $pk): ?>
 
-                                <?php  
-                                    // Ekstrak angka durasi (contoh: "3 bulan", "2 Minggu", "6 Bulan") → 3 / 2 / 6
-                                    $durasiInt = 0;
-                                    if (!empty($pk['durasi'])) {
-                                        preg_match('/\d+/', $pk['durasi'], $m);
-                                        $durasiInt = intval($m[0] ?? 0);
-                                    }
+                                <?php
+                                    // Ambil angka durasi saja
+                                    $durasiInt = preg_replace('/[^0-9]/', '', $pk['durasi']);
                                 ?>
 
-                                <option 
+                                <option
                                     value="<?= $pk['id'] ?>"
-                                    data-durasi="<?= $durasiInt ?>" 
-                                    data-harga="<?= intval($pk['harga'] ?? 0) ?>">
-                                    
-                                    <?= esc($pk['nama_paket'] ?? $pk['nama']) ?>
 
-                                    <?php if(isset($pk['durasi'])): ?>
-                                        (Durasi: <?= esc($pk['durasi']) ?>)
-                                    <?php endif; ?>
+                                    data-level="<?= ucfirst(esc($pk['level'] ?? '')) ?>"
+                                    data-batch="<?= esc($pk['batch'] ?? '') ?>"
 
-                                    <?php if(isset($pk['harga'])): ?>
-                                        - Rp <?= number_format($pk['harga'], 0, ',', '.') ?>
-                                    <?php endif; ?>
+                                    data-mulai="<?= esc($pk['tanggal_mulai'] ?? '') ?>"
+                                    data-selesai="<?= esc($pk['tanggal_selesai'] ?? '') ?>"
+
+                                    data-durasi="<?= $durasiInt ?>"
+                                    data-harga="<?= intval($pk['harga'] ?? 0) ?>"
+                                >
+                                    <?= esc($pk['nama_paket']) ?> 
+                                    (<?= ucfirst($pk['level']) ?>)
+                                    - Rp <?= number_format($pk['harga'], 0, ',', '.') ?>
                                 </option>
 
                             <?php endforeach; endif; ?>
                         </select>
 
                         <p class="text-xs text-gray-500 mt-1">
-                            * Durasi paket akan digunakan untuk menghitung tanggal selesai otomatis.
+                            * Tanggal mulai, selesai, level & batch otomatis muncul setelah memilih paket.
                         </p>
                     </div>
 
+                    <!-- Level + Batch -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
                         <div>
-                            <label class="font-semibold text-gray-700 mb-2 block">Tanggal Mulai</label>
-                            <input id="pd_tanggal_mulai" name="tanggal_mulai" type="date" required
-                                class="w-full border-2 border-gray-200 rounded-lg px-4 py-2.5 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
+                            <label class="font-semibold text-gray-700 mb-2 block">Level</label>
+                            <input id="pd_level" type="text" readonly
+                                class="w-full border-2 border-gray-200 rounded-lg px-4 py-2.5 bg-gray-100 text-gray-700">
                         </div>
 
                         <div>
-                            <label class="font-semibold text-gray-700 mb-2 block">Tanggal Selesai</label>
-                            <input id="pd_tanggal_selesai" name="tanggal_selesai" type="date" readonly
-                                class="w-full border-2 border-gray-200 rounded-lg px-4 py-2.5 bg-gray-50 text-gray-600">
-                            <p class="text-xs text-gray-500 mt-1">
-                                * Otomatis dihitung dari tanggal mulai + durasi paket.
-                            </p>
+                            <label class="font-semibold text-gray-700 mb-2 block">Batch</label>
+                            <input id="pd_batch" type="text" readonly
+                                class="w-full border-2 border-gray-200 rounded-lg px-4 py-2.5 bg-gray-100 text-gray-700">
                         </div>
+
+                    </div>
+
+                    <!-- Tanggal Belajar -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                        <div>
+                            <label class="font-semibold text-gray-700 mb-2 block">Tanggal Mulai Belajar</label>
+                            <input id="pd_tanggal_mulai" name="tanggal_mulai" type="date" readonly
+                                class="w-full border-2 border-gray-200 rounded-lg px-4 py-2.5 
+                                    bg-gray-100 text-gray-700 cursor-not-allowed">
+                        </div>
+
+                        <div>
+                            <label class="font-semibold text-gray-700 mb-2 block">Tanggal Selesai Belajar</label>
+                            <input id="pd_tanggal_selesai" name="tanggal_selesai" type="date" readonly
+                                class="w-full border-2 border-gray-200 rounded-lg px-4 py-2.5 
+                                    bg-gray-100 text-gray-700 cursor-not-allowed">
+                        </div>
+
                     </div>
 
                 </div>
@@ -534,7 +604,7 @@
                                        accept="image/*,.pdf"
                                        class="w-full border-2 border-gray-200 rounded-lg p-2.5 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20">
                                 <p class="text-xs text-gray-500 mt-1">
-                                    Format: .jpg, .png, dan .pdf
+                                    Format: .jpg, dan .png
                                 </p>
                             </div>
                         </div>
@@ -586,6 +656,15 @@
                                 <span id="rev_paket" class="font-semibold text-gray-800"></span>
                             </div>
                             <div class="flex justify-between py-1 border-b border-gray-200 text-sm">
+                                <span class="text-gray-600">Level</span>
+                                <span id="rev_level" class="font-semibold text-gray-800"></span>
+                            </div>
+
+                            <div class="flex justify-between py-1 border-b border-gray-200 text-sm">
+                                <span class="text-gray-600">Batch</span>
+                                <span id="rev_batch" class="font-semibold text-gray-800"></span>
+                            </div>
+                            <div class="flex justify-between py-1 border-b border-gray-200 text-sm">
                                 <span class="text-gray-600">Tanggal Mulai</span>
                                 <span id="rev_tanggal_mulai" class="font-semibold text-gray-800"></span>
                             </div>
@@ -620,12 +699,12 @@
 
                 <div class="flex gap-2 order-2 sm:order-1">
                     <button type="button" id="btnCancelModal"
-                            class="flex-1 sm:flex-none px-4 py-2 md:px-5 md:py-2.5 text-sm md:text-base bg-white border-2 border-gray-300 rounded-lg font-semibold hover:bg-gray-50 transition-all">
+                            class="btn-hover flex-1 sm:flex-none px-4 py-2 md:px-5 md:py-2.5 text-sm md:text-base bg-white border-2 border-gray-300 rounded-lg font-semibold hover:bg-gray-50 transition-all">
                         Batal
                     </button>
 
                     <button id="btnPrevStep" type="button"
-                            class="hidden flex-1 sm:flex-none px-4 py-2 md:px-5 md:py-2.5 text-sm md:text-base bg-white border-2 border-gray-300 rounded-lg font-semibold hover:bg-gray-50 transition-all">
+                            class="btn-hover hidden flex-1 sm:flex-none px-4 py-2 md:px-5 md:py-2.5 text-sm md:text-base bg-white border-2 border-gray-300 rounded-lg font-semibold hover:bg-gray-50 transition-all">
                         <i class="fa fa-chevron-left mr-1"></i><span class="hidden sm:inline">Sebelumnya</span><span class="sm:hidden">Prev</span>
                     </button>
                 </div>
@@ -668,7 +747,8 @@
             const nama = el.dataset.nama || "";
             const email = el.dataset.email || "";
             const status = el.dataset.status || "";
-            return nama.includes(keyword) || email.includes(keyword) || status.includes(keyword);
+            const label  = el.dataset.label  || "";
+            return nama.includes(keyword) ||email.includes(keyword) || status.includes(keyword) || label.includes(keyword);
         };
 
         rows.forEach(row => row.style.display = filterFn(row) ? "" : "none");
@@ -761,8 +841,15 @@
         if (!isEditMode) {
             modalForm.reset();
             document.getElementById("pendaftaran_id").value = "";
+
             pd_fotoPreview.src = "<?= base_url('uploads/pendaftaran/default.png') ?>";
             pd_buktiPreview.src = "<?= base_url('uploads/bukti_pembayaran/default.png') ?>";
+
+            pd_level.value = "";
+            pd_batch.value = "";
+            pd_tanggal_mulai.value = "";
+            pd_tanggal_selesai.value = "";
+            nominal.value = "";
         }
 
         updateStepDisplay();
@@ -783,7 +870,7 @@
         }, 300);
     }
 
-    //WIZARD STEP DISPLAY
+    //WIZARD STEPS
     const wizardSteps = document.querySelectorAll(".wizard-step");
     const wizardPages = document.querySelectorAll(".wizard-page");
     const btnNextStep = document.getElementById("btnNextStep");
@@ -812,7 +899,7 @@
         if (currentStep === 4) updateReview();
     }
 
-    //VALIDASI TIAP STEP
+    //VALIDASI PER STEP
     btnNextStep.addEventListener("click", () => {
 
         if (currentStep === 1) {
@@ -825,7 +912,6 @@
 
         if (currentStep === 2) {
             if (!paketSelect.value) return alert("Paket wajib dipilih!");
-            if (!tglMulai.value) return alert("Tanggal mulai wajib diisi!");
         }
 
         if (currentStep === 3) {
@@ -845,37 +931,32 @@
         }
     });
 
-    //AUTO HITUNG TANGGAL SELESAI
+    //STEP 2 – AUTO FILL DATA PAKET
     const paketSelect = document.getElementById("pd_paket_id");
     const tglMulai = document.getElementById("pd_tanggal_mulai");
     const tglSelesai = document.getElementById("pd_tanggal_selesai");
     const nominal = document.getElementById("pd_nominal");
+    const pd_level = document.getElementById("pd_level");
+    const pd_batch = document.getElementById("pd_batch");
 
-    function formatDateInput(date) {
-        const pad = (n) => String(n).padStart(2, "0");
-        return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
-    }
-
-    function hitungTanggalSelesai() {
+    function loadPaketData() {
         const opt = paketSelect.options[paketSelect.selectedIndex];
-        if (!opt || !tglMulai.value) return;
+        if (!opt) return;
 
-        const durasi = Number(opt.dataset.durasi);
-        const mulai = new Date(tglMulai.value + "T00:00:00");
-        mulai.setMonth(mulai.getMonth() + durasi);
+        pd_level.value = opt.dataset.level || "";
+        pd_batch.value = opt.dataset.batch || "";
 
-        tglSelesai.value = formatDateInput(mulai);
+        if (opt.dataset.mulai) tglMulai.value = opt.dataset.mulai;
+        if (opt.dataset.selesai) tglSelesai.value = opt.dataset.selesai;
+
+        nominal.value = opt.dataset.harga || 0;
     }
 
     paketSelect.addEventListener("change", () => {
-        const harga = paketSelect.options[paketSelect.selectedIndex]?.dataset.harga;
-        if (harga) nominal.value = harga;
-        hitungTanggalSelesai();
+        loadPaketData();
     });
 
-    tglMulai.addEventListener("change", hitungTanggalSelesai);
-
-    //FOTO + BUKTI PREVIEW
+    //FOTO & BUKTI PREVIEW
     const pd_fotoInput = document.getElementById("pd_fotoInput");
     const pd_fotoPreview = document.getElementById("pd_fotoPreview");
     const pd_buktiInput = document.getElementById("pd_buktiInput");
@@ -892,7 +973,7 @@
     pd_fotoInput.addEventListener("change", () => previewFile(pd_fotoInput, pd_fotoPreview));
     pd_buktiInput.addEventListener("change", () => previewFile(pd_buktiInput, pd_buktiPreview));
 
-    //FORM ACTION
+    //FORM SUBMIT (CREATE / UPDATE)
     const modalForm = document.getElementById("modalForm");
 
     modalForm.addEventListener("submit", function () {
@@ -902,8 +983,7 @@
             : "<?= base_url('/pendaftaran/create') ?>";
     });
 
-
-    //EDIT BUTTON (FIX FOTO + BUKTI + STATUS PENDING ONLY)
+    //EDIT MODE
     document.querySelectorAll(".btnEdit").forEach(btn => {
         btn.addEventListener("click", function () {
 
@@ -919,10 +999,15 @@
             pd_nohp.value = this.dataset.nohp;
             pd_alamat.value = this.dataset.alamat;
             pd_tgl_lahir.value = this.dataset.tgl;
+
             paketSelect.value = this.dataset.paketId;
+            loadPaketData();
+
             tglMulai.value = this.dataset.tglMulai;
             tglSelesai.value = this.dataset.tglSelesai;
-            nominal.value = this.dataset.nominal;
+
+            const opt = paketSelect.options[paketSelect.selectedIndex];
+            nominal.value = opt?.dataset.harga || 0;
 
             pd_fotoPreview.src = this.dataset.foto
                 ? "<?= base_url('uploads/pendaftaran/') ?>" + this.dataset.foto
@@ -931,11 +1016,6 @@
             pd_buktiPreview.src = this.dataset.bukti
                 ? "<?= base_url('uploads/bukti_pembayaran/') ?>" + this.dataset.bukti
                 : "<?= base_url('uploads/bukti_pembayaran/default.png') ?>";
-
-            const opt = paketSelect.options[paketSelect.selectedIndex];
-                if (opt && opt.dataset.harga) {
-                    nominal.value = opt.dataset.harga;
-                }
 
             openModal("edit");
         });
@@ -948,15 +1028,42 @@
         rev_email.textContent = pd_email.value;
         rev_nohp.textContent = pd_nohp.value;
         rev_alamat.textContent = pd_alamat.value;
+
         rev_foto_preview.src = pd_fotoPreview.src;
-        rev_paket.textContent = paketSelect.options[paketSelect.selectedIndex]?.text || "-";
-        rev_tanggal_mulai.textContent = tglMulai.value;
-        rev_tanggal_selesai.textContent = tglSelesai.value;
+
+        const opt = paketSelect.options[paketSelect.selectedIndex];
+        rev_paket.textContent = opt ? opt.text : "-";
+
+        rev_level.textContent = pd_level.value || "-";
+        rev_batch.textContent = pd_batch.value || "-";
+
+        rev_tanggal_mulai.textContent = tglMulai.value || "-";
+        rev_tanggal_selesai.textContent = tglSelesai.value || "-";
+
         rev_nominal.textContent = "Rp " + Number(nominal.value || 0).toLocaleString("id-ID");
         rev_bukti.src = pd_buktiPreview.src;
     }
 
     updatePagination();
+
+    //DROPDOWN AKSI (SELESAI / MUNDUR)
+    document.querySelectorAll(".dropdownToggle").forEach(btn => {
+        btn.addEventListener("click", function (e) {
+            e.stopPropagation();
+
+            const menu = this.nextElementSibling;
+            menu.classList.toggle("hidden");
+
+            document.querySelectorAll(".dropdownMenu").forEach(m => {
+                if (m !== menu) m.classList.add("hidden");
+            });
+        });
+    });
+
+    document.addEventListener("click", () => {
+        document.querySelectorAll(".dropdownMenu").forEach(m => m.classList.add("hidden"));
+    });
+
 </script>
 
 <?= $this->endSection() ?>
