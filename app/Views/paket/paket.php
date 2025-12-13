@@ -414,7 +414,7 @@
             <!-- FOOTER -->
             <div class="p-4 md:p-5 bg-gray-50 border-t-2 border-gray-200 flex flex-col sm:flex-row justify-between gap-3">
 
-                <button id="btnCancelModal" type="button" class="px-4 py-2 bg-white border-2 border-gray-300 rounded-lg font-semibold hover:bg-gray-50">
+                <button id="btnCancelModal" type="button" class="btn-hover px-4 py-2 bg-white border-2 border-gray-300 rounded-lg font-semibold hover:bg-gray-50">
                     Batal
                 </button>
 

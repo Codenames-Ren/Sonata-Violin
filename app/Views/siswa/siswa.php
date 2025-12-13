@@ -110,7 +110,8 @@
     <table class="w-full table-auto">
         <thead class="bg-gradient-to-r from-gray-50 to-gray-100 text-gray-600 uppercase text-sm font-semibold border-b-2 border-gray-200">
         <tr>
-            <th class="py-4 px-4">#</th>
+            <th class="py-4 px-4">NO</th>
+            <th class="py-4 px-4">No Pendaftaran</th>
             <th class="py-4 px-4">Foto</th>
             <th class="py-4 px-4">Nama</th>
             <th class="py-4 px-4">Email</th>
@@ -123,13 +124,27 @@
 
         <tbody id="tableBody" class="divide-y divide-gray-100">
         <?php if(!empty($siswa)): $i=1; foreach($siswa as $s): ?>
+        <?php 
+            $status = strtolower($s['status']);
+            $linked = $s['linked'];
+
+            // DELETE RULES
+            $canDelete = ($status === 'nonaktif' && !$linked);
+
+            // TOGGLE RULES
+            $canToggle = ($status !== 'lulus');
+        ?>
         <tr class="table-row hover:bg-gray-50 transition-colors"
             data-name="<?= strtolower(esc($s['nama'])) ?>"
+            data-nomor-pendaftaran="<?= strtolower(esc($s['no_pendaftaran'] ?? '')) ?>"
             data-email="<?= strtolower(esc($s['email'])) ?>"
             data-nohp="<?= esc($s['no_hp']) ?>"
             data-alamat="<?= strtolower(esc($s['alamat'])) ?>">
 
             <td class="py-4 px-4 text-center font-medium text-gray-600"><?= $i++ ?></td>
+            <td class="py-4 px-4 font-medium text-gray-600 text-xs">
+                <?= esc($s['no_pendaftaran']) ?>
+            </td>
 
             <td class="py-4 px-4 text-center">
                 <img class="w-12 h-12 rounded-full object-cover border-2 border-gray-200 mx-auto"
@@ -140,21 +155,15 @@
             <td class="py-4 px-4 text-gray-600"><?= esc($s['email']) ?></td>
             <td class="py-4 px-4 text-gray-600"><?= esc($s['no_hp']) ?></td>
             <td class="py-4 px-4 text-gray-600"><?= esc($s['alamat']) ?></td>
+
             <td class="py-4 px-4 text-center">
                 <?php 
-                    $status = strtolower($s['status'] ?? 'nonaktif');
-
                     if ($status === 'aktif') {
-                        $label = 'Aktif';
-                        $class = 'bg-green-100 text-green-700';
-                    } 
-                    elseif ($status === 'lulus') {
-                        $label = 'Lulus';
-                        $class = 'bg-yellow-100 text-yellow-700';
-                    }
-                    else {
-                        $label = 'Nonaktif';
-                        $class = 'bg-red-100 text-red-700';
+                        $label = 'Aktif';  $class = 'bg-green-100 text-green-700';
+                    } elseif ($status === 'lulus') {
+                        $label = 'Lulus';  $class = 'bg-yellow-100 text-yellow-700';
+                    } else {
+                        $label = 'Nonaktif'; $class = 'bg-red-100 text-red-700';
                     }
                 ?>
                 <span class="px-3 py-1 rounded-full text-xs font-semibold <?= $class ?>">
@@ -163,36 +172,42 @@
             </td>
 
             <td class="py-4 px-4 flex justify-center gap-2">
-            <!-- TOGGLE STATUS -->
-            <form method="POST" action="<?= base_url('/siswa/toggle-status/'.$s['id']) ?>">
-                <?= csrf_field() ?>
-                <button class="btn-hover px-3 py-2 rounded-lg text-sm font-semibold transition-all
-                    <?= $status == 'aktif' ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' : 'bg-green-100 text-green-700 hover:bg-green-200' ?>">
-                    <?= $status == 'aktif' ? 'Nonaktifkan' : 'Aktifkan' ?>
-                </button>
-            </form>
 
-            <!-- EDIT -->
-            <button class="btnEdit btn-hover bg-indigo-100 text-indigo-700 px-3 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-200 transition-all"
-                    data-id="<?= $s['id'] ?>"
-                    data-nama="<?= esc($s['nama'], 'attr') ?>"
-                    data-email="<?= esc($s['email'], 'attr') ?>"
-                    data-nohp="<?= esc($s['no_hp'], 'attr') ?>"
-                    data-alamat="<?= esc($s['alamat'], 'attr') ?>"
-                    data-tgl="<?= esc($s['tgl_lahir'], 'attr') ?>"
-                    data-foto="<?= esc($s['foto_profil'], 'attr') ?>">
-                <i class="fa fa-pen mr-1"></i>Edit
-            </button>
+                <!-- TOGGLE STATUS -->
+                <?php if ($canToggle): ?>
+                <form method="POST" action="<?= base_url('/siswa/toggle-status/'.$s['id']) ?>">
+                    <?= csrf_field() ?>
+                    <button class="btn-hover px-3 py-2 rounded-lg text-sm font-semibold transition-all
+                        <?= $status == 'aktif' ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' : 'bg-green-100 text-green-700 hover:bg-green-200' ?>">
+                        <?= $status == 'aktif' ? 'Nonaktifkan' : 'Aktifkan' ?>
+                    </button>
+                </form>
+                <?php endif; ?>
 
-            <!-- DELETE -->
-            <form method="POST" action="<?= base_url('/siswa/delete/'.$s['id']) ?>"
-                onsubmit="return confirm('Hapus siswa ini?')">
-                <?= csrf_field() ?>
-                <button class="btn-hover bg-red-100 text-red-700 px-3 py-2 rounded-lg text-sm font-semibold hover:bg-red-200 transition-all">
-                    <i class="fa fa-trash mr-1"></i>Hapus
+                <!-- EDIT -->
+                <button class="btnEdit btn-hover bg-indigo-100 text-indigo-700 px-3 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-200 transition-all"
+                        data-id="<?= $s['id'] ?>"
+                        data-nama="<?= esc($s['nama'], 'attr') ?>"
+                        data-email="<?= esc($s['email'], 'attr') ?>"
+                        data-nohp="<?= esc($s['no_hp'], 'attr') ?>"
+                        data-alamat="<?= esc($s['alamat'], 'attr') ?>"
+                        data-tgl="<?= esc($s['tgl_lahir'], 'attr') ?>"
+                        data-foto="<?= esc($s['foto_profil'], 'attr') ?>">
+                    <i class="fa fa-pen mr-1"></i>Edit
                 </button>
-            </form>
-        </td>
+
+                <!-- DELETE -->
+                <?php if ($canDelete): ?>
+                <form method="POST" action="<?= base_url('/siswa/delete/'.$s['id']) ?>"
+                    onsubmit="return confirm('Hapus siswa ini?')">
+                    <?= csrf_field() ?>
+                    <button class="btn-hover bg-red-100 text-red-700 px-3 py-2 rounded-lg text-sm font-semibold hover:bg-red-200 transition-all">
+                        <i class="fa fa-trash mr-1"></i>Hapus
+                    </button>
+                </form>
+                <?php endif; ?>
+
+            </td>
         </tr>
         <?php endforeach; else: ?>
         <tr><td colspan="8" class="py-8 text-center text-gray-500">
@@ -206,26 +221,26 @@
 
 <!-- MOBILE CARDS -->
 <div id="mobileCards" class="md:hidden space-y-4">
-    <?php if(!empty($siswa)): foreach($siswa as $s): 
-        $status = strtolower($s['status'] ?? 'nonaktif');
+<?php if(!empty($siswa)): foreach($siswa as $s): 
+    $status = strtolower($s['status']);
+    $linked = $s['linked'];
 
-        if ($status === 'aktif') {
-            $label = 'Aktif';
-            $class = 'bg-green-100 text-green-700';
-        } 
-        elseif ($status === 'lulus') {
-            $label = 'Lulus';
-            $class = 'bg-yellow-100 text-yellow-700';
-        }
-        else {
-            $label = 'Nonaktif';
-            $class = 'bg-red-100 text-red-700';
-        }
-    ?>
+    $canDelete = ($status === 'nonaktif' && !$linked);
+    $canToggle = ($status !== 'lulus');
+
+    if ($status === 'aktif') {
+        $label = 'Aktif';  $class = 'bg-green-100 text-green-700';
+    } elseif ($status === 'lulus') {
+        $label = 'Lulus';  $class = 'bg-yellow-100 text-yellow-700';
+    } else {
+        $label = 'Nonaktif'; $class = 'bg-red-100 text-red-700';
+    }
+?>
     <div class="card-item bg-white shadow-lg rounded-xl p-4 border border-gray-100 hover:shadow-xl transition-shadow"
          data-name="<?= strtolower(esc($s['nama'])) ?>"
+         data-nomor-pendaftaran="<?= strtolower(esc($s['no_pendaftaran'] ?? '')) ?>"
          data-email="<?= strtolower(esc($s['email'])) ?>"
-         data-nohp="<?= strtolower(esc($s['no_hp'])) ?>"
+         data-nohp="<?= esc($s['no_hp']) ?>"
          data-alamat="<?= strtolower(esc($s['alamat'])) ?>">
 
         <div class="flex gap-4">
@@ -234,9 +249,13 @@
 
             <div class="flex-1">
                 <h3 class="font-bold text-gray-800 text-lg"><?= esc($s['nama']) ?></h3>
+                <p class="text-gray-700 font-semibold text-sm">
+                    <?= esc($s['no_pendaftaran']) ?>
+                </p>
                 <p class="text-gray-600 text-sm"><?= esc($s['email']) ?></p>
                 <p class="text-gray-600 text-sm"><?= esc($s['no_hp']) ?></p>
                 <p class="text-gray-600 text-sm"><?= esc($s['alamat']) ?></p>
+
                 <span class="inline-block mt-1 px-2 py-1 rounded-full text-xs font-semibold <?= $class ?>">
                     <?= $label ?>
                 </span>
@@ -244,15 +263,19 @@
         </div>
 
         <div class="grid grid-cols-3 gap-2 mt-4">
+
+            <?php if ($canToggle): ?>
             <form method="POST" action="<?= base_url('/siswa/toggle-status/'.$s['id']) ?>" class="col-span-3">
                 <?= csrf_field() ?>
                 <button class="w-full px-2 py-2 rounded-lg text-xs font-semibold transition-all
-                    <?= $status == 'aktif' ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' : 'bg-green-100 text-green-700 hover:bg-green-200' ?>">
-                    <?= $status == 'aktif' ? 'Nonaktifkan' : 'Aktifkan' ?>
+                    <?= $status=='aktif' ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' : 'bg-green-100 text-green-700 hover:bg-green-200' ?>">
+                    <?= $status=='aktif' ? 'Nonaktifkan' : 'Aktifkan' ?>
                 </button>
             </form>
+            <?php endif; ?>
 
-            <button class="btnEdit col-span-1 bg-indigo-100 text-indigo-700 px-2 py-2 rounded-lg text-xs font-semibold hover:bg-indigo-200 transition-all"
+            <!-- EDIT -->
+            <button class="btnEdit col-span-3 bg-indigo-100 text-indigo-700 px-2 py-2 rounded-lg text-xs font-semibold hover:bg-indigo-200 transition-all"
                     data-id="<?= $s['id'] ?>"
                     data-nama="<?= esc($s['nama'], 'attr') ?>"
                     data-email="<?= esc($s['email'], 'attr') ?>"
@@ -263,17 +286,21 @@
                 <i class="fa fa-pen"></i>
             </button>
 
-            <form method="POST" action="<?= base_url('/siswa/delete/'.$s['id']) ?>"
-                class="col-span-2" onsubmit="return confirm('Hapus siswa ini?')">
+            <!-- DELETE -->
+            <?php if ($canDelete): ?>
+            <form method="POST" action="<?= base_url('/siswa/delete/'.$s['id']) ?>" class="col-span-2"
+                onsubmit="return confirm('Hapus siswa ini?')">
                 <?= csrf_field() ?>
                 <button class="w-full bg-red-100 text-red-700 px-2 py-2 rounded-lg text-xs font-semibold hover:bg-red-200 transition-all">
                     <i class="fa fa-trash mr-1"></i>Hapus
                 </button>
             </form>
+            <?php endif; ?>
+
         </div>
 
     </div>
-    <?php endforeach; endif ?>
+<?php endforeach; endif; ?>
 </div>
 
 <!-- PAGINATION -->
@@ -434,12 +461,12 @@
 
                 <div class="flex gap-2 order-2 sm:order-1">
                     <button type="button" id="btnCancelModal"
-                            class="flex-1 sm:flex-none px-4 py-2 md:px-5 md:py-2.5 text-sm md:text-base bg-white border-2 border-gray-300 rounded-lg font-semibold hover:bg-gray-50 transition-all">
+                            class="btn-hover flex-1 sm:flex-none px-4 py-2 md:px-5 md:py-2.5 text-sm md:text-base bg-white border-2 border-gray-300 rounded-lg font-semibold hover:bg-gray-50 transition-all">
                         Batal
                     </button>
 
                     <button id="btnPrevStep" type="button"
-                            class="hidden flex-1 sm:flex-none px-4 py-2 md:px-5 md:py-2.5 text-sm md:text-base bg-white border-2 border-gray-300 rounded-lg font-semibold hover:bg-gray-50 transition-all">
+                            class="btn-hover hidden flex-1 sm:flex-none px-4 py-2 md:px-5 md:py-2.5 text-sm md:text-base bg-white border-2 border-gray-300 rounded-lg font-semibold hover:bg-gray-50 transition-all">
                         <i class="fa fa-chevron-left mr-1"></i><span class="hidden sm:inline">Sebelumnya</span><span class="sm:hidden">Prev</span>
                     </button>
                 </div>
@@ -470,40 +497,15 @@
 
     function applySearch() {
         const keyword = searchInput.value.toLowerCase().trim();
-
         btnClearSearch.classList.toggle("hidden", keyword.length === 0);
 
         const rows = document.querySelectorAll(".table-row");
         const cards = document.querySelectorAll(".card-item");
 
-        rows.forEach(row => {
-            const name = row.dataset.name;
-            const email = row.dataset.email;
-            const nohp = row.dataset.nohp;
-            const alamat = row.dataset.alamat;
+        rows.forEach(row => row.style.display = "");
+        cards.forEach(card => card.style.display = "");
 
-            const match = name.includes(keyword)
-                || email.includes(keyword)
-                || nohp.includes(keyword)
-                || alamat.includes(keyword);
-
-            row.style.display = match ? "" : "none";
-        });
-
-        cards.forEach(card => {
-            const name = card.dataset.name;
-            const email = card.dataset.email;
-            const nohp = card.dataset.nohp;
-            const alamat = card.dataset.alamat;
-
-            const match = name.includes(keyword)
-                || email.includes(keyword)
-                || nohp.includes(keyword)
-                || alamat.includes(keyword);
-
-            card.style.display = match ? "" : "none";
-        });
-
+        currentPage = 1;
         updatePagination();
     }
 
@@ -515,34 +517,56 @@
         applySearch();
     });
 
-    //PAGINATION
+    // PAGINATION
     let currentPage = 1;
     let totalPages = 1;
-    const itemsPerPage = 10;
 
     function getVisibleItems() {
         const isMobile = window.innerWidth < 768;
-
-        const rows = Array.from(document.querySelectorAll(".table-row"))
-            .filter(r => r.style.display !== "none");
-
-        const cards = Array.from(document.querySelectorAll(".card-item"))
-            .filter(c => c.style.display !== "none");
-
-        return isMobile ? cards : rows;
+        const rows = Array.from(document.querySelectorAll(".table-row"));
+        const cards = Array.from(document.querySelectorAll(".card-item"));
+        
+        const allItems = isMobile ? cards : rows;
+        const keyword = searchInput.value.toLowerCase().trim();
+        
+        if (keyword === '') {
+            return allItems;
+        }
+        
+        return allItems.filter(item => {
+            const name = item.dataset.name || '';
+            const email = item.dataset.email || '';
+            const nohp = item.dataset.nohp || '';
+            const alamat = item.dataset.alamat || '';
+            const noPendaftaran = item.dataset.nomorPendaftaran || '';
+            
+            return name.includes(keyword)
+                || email.includes(keyword)
+                || nohp.includes(keyword)
+                || alamat.includes(keyword)
+                || noPendaftaran.includes(keyword);
+        });
     }
 
     function updatePagination() {
-        const items = getVisibleItems();
-        totalPages = Math.ceil(items.length / itemsPerPage) || 1;
+        const isMobile = window.innerWidth < 768;
+        const allRows = Array.from(document.querySelectorAll(".table-row"));
+        const allCards = Array.from(document.querySelectorAll(".card-item"));
+        
+        allRows.forEach(row => row.style.display = "none");
+        allCards.forEach(card => card.style.display = "none");
+        
+        const visibleItems = getVisibleItems();
+        const perPage = isMobile ? 3 : 8;
 
-        if (currentPage > totalPages) {
-            currentPage = totalPages;
-        }
+        totalPages = Math.max(1, Math.ceil(visibleItems.length / perPage));
+        if (currentPage > totalPages) currentPage = totalPages;
 
-        items.forEach((item, index) => {
-            const pageNum = Math.floor(index / itemsPerPage) + 1;
-            item.style.display = pageNum === currentPage ? "" : "none";
+        const startIndex = (currentPage - 1) * perPage;
+        const endIndex = startIndex + perPage;
+        
+        visibleItems.slice(startIndex, endIndex).forEach(item => {
+            item.style.display = "";
         });
 
         document.getElementById("currentPage").textContent = currentPage;
@@ -553,20 +577,19 @@
     }
 
     document.getElementById("btnPrev").addEventListener("click", () => {
-        if (currentPage > 1) {
-            currentPage--;
-            updatePagination();
-        }
+        if (currentPage > 1) { currentPage--; updatePagination(); }
     });
 
     document.getElementById("btnNext").addEventListener("click", () => {
-        if (currentPage < totalPages) {
-            currentPage++;
-            updatePagination();
-        }
+        if (currentPage < totalPages) { currentPage++; updatePagination(); }
     });
 
-    window.addEventListener("resize", updatePagination);
+    window.addEventListener("resize", () => {
+        currentPage = 1;
+        updatePagination();
+    });
+
+    updatePagination();
 
     //MODAL MULTI STEP
     const modal = document.getElementById("modal");

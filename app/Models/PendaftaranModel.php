@@ -22,6 +22,7 @@ class PendaftaranModel extends Model
         'deleted_at',
 
         // DATA DIRI SISWA (HOLDING)
+        'no_pendaftaran',
         'nama',
         'alamat',
         'no_hp',

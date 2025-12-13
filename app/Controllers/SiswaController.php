@@ -3,24 +3,35 @@
 namespace App\Controllers;
 
 use App\Models\SiswaModel;
+use App\Models\PendaftaranModel;
+
 use CodeIgniter\HTTP\RequestInterface;
 
 class SiswaController extends BaseController
 {
     protected $siswa;
+    protected $pendaftaran;
     
     public function __construct()
     {
         $this->siswa = new SiswaModel();
+        $this->pendaftaran = new PendaftaranModel();
     }
 
     public function siswa()
     {
-        $data = [
-            'siswa' => $this->siswa
-                        ->where('deleted_at', null)
-                        ->findAll(),
+        $list = $this->siswa->where('deleted_at', null)->findAll();
 
+        foreach ($list as &$s) {
+
+            $s['linked'] = $this->pendaftaran
+                                ->where('siswa_id', $s['id'])
+                                ->whereIn('status', ['aktif','selesai','mundur'])
+                                ->countAllResults() > 0;
+        }
+
+        $data = [
+            'siswa' => $list,
             'page_title' => 'Manajemen Siswa',
             'page_subtitle' => 'Kelola data siswa Sonata Violin'
         ];
@@ -84,23 +95,55 @@ class SiswaController extends BaseController
     // SOFT DELETE
     public function delete($id)
     {
+        $siswa = $this->siswa->find($id);
+        if (!$siswa) {
+            return redirect()->back()->with('error', 'Siswa tidak ditemukan.');
+        }
+
+        if (in_array($siswa['status'], ['aktif', 'lulus'])) {
+            return redirect()->back()->with('error', 'Siswa aktif atau lulus tidak boleh dihapus.');
+        }
+
+        $linked = $this->pendaftaran
+                        ->where('siswa_id', $id)
+                        ->whereIn('status', ['aktif', 'selesai', 'mundur'])
+                        ->first();
+
+        if ($linked) {
+            return redirect()->back()->with('error', 'Siswa masih memiliki riwayat belajar. Tidak dapat dihapus.');
+        }
+
         $this->siswa->update($id, [
-            'deleted_at' => date('Y-m-d H:i:s'),
-            'status'     => 'nonaktif'
+            'deleted_at' => date('Y-m-d H:i:s')
         ]);
 
-        return redirect()->back()->with('success', 'Siswa berhasil dihapus (soft delete).');
+        return redirect()->back()->with('success', 'Siswa berhasil dihapus.');
     }
 
     public function toggleStatus($id)
     {
         $s = $this->siswa->find($id);
+        if (!$s) return redirect()->back()->with('error', 'Siswa tidak ditemukan.');
 
-        if (!$s) {
-            return redirect()->back()->with('error', 'Siswa tidak ditemukan.');
+        if ($s['status'] === 'lulus') {
+            return redirect()->back()->with('error', 'Siswa yang sudah lulus tidak dapat diaktifkan kembali.');
         }
 
-        $newStatus = $s['status'] === 'aktif' ? 'nonaktif' : 'aktif';
+        if ($s['status'] === 'aktif') {
+
+            $linked = $this->pendaftaran
+                            ->where('siswa_id', $id)
+                            ->where('status', 'aktif')
+                            ->first();
+
+            if ($linked) {
+                return redirect()->back()->with('error', 'Siswa masih terdaftar dalam kelas aktif.');
+            }
+
+            $newStatus = 'nonaktif';
+        } else {
+            $newStatus = 'aktif';
+        }
 
         $this->siswa->update($id, [
             'status'     => $newStatus,
@@ -109,5 +152,4 @@ class SiswaController extends BaseController
 
         return redirect()->back()->with('success', 'Status siswa berhasil diubah!');
     }
-
 }

@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\PendaftaranModel;
+use App\Models\PembayaranModel;
 use App\Models\SiswaModel;
 use App\Models\PaketModel;
 
@@ -16,17 +17,37 @@ class PendaftaranController extends BaseController
     public function __construct()
     {
         $this->pendaftaran = new PendaftaranModel();
+        $this->pembayaran  = new PembayaranModel();
         $this->siswa       = new SiswaModel();
         $this->paket       = new PaketModel();
         $this->db          = \Config\Database::connect();
+    }
+
+    private function generateNomorPendaftaran()
+    {
+        $tahun = date("Y");
+
+        $query = $this->db->query("
+            SELECT COUNT(*) AS total 
+            FROM pendaftaran 
+            WHERE YEAR(tanggal_daftar) = '$tahun'
+        ")->getRow();
+
+        $urutan = str_pad($query->total + 1, 4, "0", STR_PAD_LEFT);
+
+        return "SV-REG-$tahun-$urutan";
     }
 
     public function index()
     {
         $data = [
             'pendaftaran' => $this->pendaftaran
-                ->select('pendaftaran.*, paket_kursus.nama_paket')
+                ->select('pendaftaran.*, 
+                        paket_kursus.nama_paket,
+                        pembayaran.nominal,
+                        pembayaran.bukti_transaksi')
                 ->join('paket_kursus', 'paket_kursus.id = pendaftaran.paket_id', 'left')
+                ->join('pembayaran', 'pembayaran.pendaftaran_id = pendaftaran.id', 'left')
                 ->where('pendaftaran.deleted_at', null)
                 ->orderBy('pendaftaran.tanggal_daftar', 'DESC')
                 ->findAll(),
@@ -42,29 +63,34 @@ class PendaftaranController extends BaseController
         return view('pendaftaran/pendaftaran', $data);
     }
 
-    //CREATE
+    // CREATE
     public function create()
     {
         $paketId = $this->request->getPost('paket_id');
         $paket   = $this->paket->find($paketId);
-
         if (!$paket) return redirect()->back()->with('error', 'Paket tidak ditemukan.');
 
-        // Foto profil
+        // Generate nomor pendaftaran
+        $noDaftar = $this->generateNomorPendaftaran();
+
+        // Foto profil siswa (holding)
         $foto = $this->request->getFile('foto_profil');
         $namaFoto = null;
+
         if ($foto && $foto->isValid()) {
             $namaFoto = $foto->getRandomName();
             $foto->move('uploads/pendaftaran', $namaFoto);
         }
 
+        // Insert ke pendaftaran
         $this->pendaftaran->insert([
+            'no_pendaftaran' => $noDaftar,
             'paket_id'        => $paketId,
-            'tanggal_daftar'  => date('Y-m-d H:i:s'),
             'tanggal_mulai'   => $paket['tanggal_mulai'],
             'tanggal_selesai' => $paket['tanggal_selesai'],
             'status'          => 'pending',
 
+            // data siswa holding
             'nama'        => $this->request->getPost('nama'),
             'alamat'      => $this->request->getPost('alamat'),
             'no_hp'       => $this->request->getPost('no_hp'),
@@ -73,10 +99,35 @@ class PendaftaranController extends BaseController
             'foto_profil' => $namaFoto,
         ]);
 
-        return redirect()->back()->with('success', 'Pendaftaran berhasil ditambahkan.');
+        // Ambil ID pendaftaran baru
+        $idPendaftaran = $this->pendaftaran->getInsertID();
+
+        // Ambil nominal & bukti transaksi
+        $nominal = $this->request->getPost('nominal');
+        $bukti = $this->request->getFile('bukti_transaksi');
+
+        $namaBukti = null;
+
+        if ($bukti && $bukti->isValid()) {
+            $namaBukti = $bukti->getRandomName();
+            $bukti->move('uploads/bukti_pembayaran', $namaBukti);
+        }
+
+        // Insert ke tabel pembayaran
+        $this->pembayaran->insert([
+            'no_pendaftaran'  => $noDaftar,
+            'pendaftaran_id'  => $idPendaftaran,
+            'nominal'         => $nominal,
+            'bukti_transaksi' => $namaBukti,
+            'tanggal_upload'  => date('Y-m-d H:i:s'),
+            'status'          => 'pending',
+            'created_at'      => date('Y-m-d H:i:s'),
+        ]);
+
+        return redirect()->back()->with('success', 'Pendaftaran & pembayaran berhasil ditambahkan.');
     }
 
-    //UPDATE
+    // UPDATE
     public function update($id)
     {
         $p = $this->pendaftaran->find($id);
@@ -88,20 +139,59 @@ class PendaftaranController extends BaseController
 
         $paketId = $this->request->getPost('paket_id');
         $paket = $this->paket->find($paketId);
-
         if (!$paket) return redirect()->back()->with('error', 'Paket tidak valid.');
+
+        $fotoBaru = $this->request->getFile('foto_profil');
+        $namaFoto = $p['foto_profil']; // default pakai yang lama
+
+        if ($fotoBaru && $fotoBaru->isValid()) {
+            $namaFoto = $fotoBaru->getRandomName();
+            $fotoBaru->move('uploads/pendaftaran', $namaFoto);
+        }
 
         $this->pendaftaran->update($id, [
             'paket_id'        => $paketId,
             'tanggal_mulai'   => $paket['tanggal_mulai'],
             'tanggal_selesai' => $paket['tanggal_selesai'],
+            'nama'            => $this->request->getPost('nama'),
+            'alamat'          => $this->request->getPost('alamat'),
+            'no_hp'           => $this->request->getPost('no_hp'),
+            'email'           => $this->request->getPost('email'),
+            'tgl_lahir'       => $this->request->getPost('tgl_lahir'),
+            'foto_profil'     => $namaFoto, // ← FIX PENTING
             'updated_at'      => date('Y-m-d H:i:s')
         ]);
+
+        $nominal = $this->request->getPost('nominal');
+        $buktiBaru = $this->request->getFile('bukti_transaksi');
+
+        $existingPayment = $this->pembayaran
+            ->where('pendaftaran_id', $id)
+            ->first();
+
+        if ($existingPayment) {
+
+            $dataUpdate = [
+                'nominal' => $nominal,
+                'updated_at' => date('Y-m-d H:i:s')
+            ];
+
+            // Jika upload bukti baru
+            if ($buktiBaru && $buktiBaru->isValid()) {
+                $namaBuktiBaru = $buktiBaru->getRandomName();
+                $buktiBaru->move('uploads/bukti_pembayaran', $namaBuktiBaru);
+
+                $dataUpdate['bukti_transaksi'] = $namaBuktiBaru;
+                $dataUpdate['tanggal_upload'] = date('Y-m-d H:i:s');
+            }
+
+            $this->pembayaran->update($existingPayment['id'], $dataUpdate);
+        }
 
         return redirect()->back()->with('success', 'Data pendaftaran berhasil diperbarui.');
     }
 
-    //VERIFIKASI → JADI SISWA AKTIF
+    // VERIFIKASI
     public function verifikasi($id)
     {
         $p = $this->pendaftaran->find($id);
@@ -113,20 +203,18 @@ class PendaftaranController extends BaseController
 
         $this->db->transBegin();
 
-        // Transfer foto
+        // Copy foto
         $fotoBaru = null;
         if ($p['foto_profil']) {
             $src = FCPATH . 'uploads/pendaftaran/' . $p['foto_profil'];
             $dst = FCPATH . 'uploads/siswa/' . $p['foto_profil'];
-
-            if (file_exists($src)) {
-                copy($src, $dst);
-                $fotoBaru = $p['foto_profil'];
-            }
+            if (file_exists($src)) copy($src, $dst);
+            $fotoBaru = $p['foto_profil'];
         }
 
-        // Insert siswa baru
+        // Insert siswa
         $this->siswa->insert([
+            'no_pendaftaran' => $p['no_pendaftaran'],
             'nama'        => $p['nama'],
             'alamat'      => $p['alamat'],
             'no_hp'       => $p['no_hp'],
@@ -139,10 +227,10 @@ class PendaftaranController extends BaseController
 
         $idSiswa = $this->siswa->getInsertID();
 
+        // Update pendaftaran
         $this->pendaftaran->update($id, [
             'status'   => 'aktif',
             'siswa_id' => $idSiswa,
-            'updated_at' => date('Y-m-d H:i:s')
         ]);
 
         if ($this->db->transStatus() === false) {
@@ -151,29 +239,33 @@ class PendaftaranController extends BaseController
         }
 
         $this->db->transCommit();
-
         return redirect()->back()->with('success', 'Pendaftaran diverifikasi & siswa aktif.');
     }
 
-    //BATALKAN
-    public function batalkan($id)
+    // MUNDUR
+    public function mengundurkanDiri($id)
     {
         $p = $this->pendaftaran->find($id);
-
         if (!$p) return redirect()->back()->with('error', 'Data tidak ditemukan.');
-        if ($p['status'] !== 'pending') {
-            return redirect()->back()->with('error', 'Hanya pending yang bisa dibatalkan.');
+
+        if ($p['status'] !== 'aktif') {
+            return redirect()->back()->with('error', 'Hanya siswa aktif yang boleh mengundurkan diri.');
         }
 
         $this->pendaftaran->update($id, [
-            'status' => 'batal',
-            'updated_at' => date('Y-m-d H:i:s')
+            'status' => 'mundur'
         ]);
 
-        return redirect()->back()->with('success', 'Pendaftaran dibatalkan.');
+        if ($p['siswa_id']) {
+            $this->siswa->update($p['siswa_id'], [
+                'status' => 'nonaktif'
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Siswa mengundurkan diri.');
     }
 
-    //SELESAI / LULUS
+    // SELESAI
     public function selesai($id)
     {
         $p = $this->pendaftaran->find($id);
@@ -184,57 +276,27 @@ class PendaftaranController extends BaseController
         }
 
         $this->pendaftaran->update($id, [
-            'status' => 'selesai',
-            'updated_at' => date('Y-m-d H:i:s')
+            'status' => 'selesai'
         ]);
 
         if ($p['siswa_id']) {
             $this->siswa->update($p['siswa_id'], [
-                'status' => 'lulus',
-                'updated_at' => date('Y-m-d H:i:s')
+                'status' => 'lulus'
             ]);
         }
 
-        return redirect()->back()->with('success', 'Belajar selesai & status siswa = Lulus.');
+        return redirect()->back()->with('success', 'Siswa dinyatakan lulus.');
     }
 
-    //MENGUNDURKAN DIRI
-    public function mengundurkanDiri($id)
-    {
-        $p = $this->pendaftaran->find($id);
-        if (!$p) return redirect()->back()->with('error', 'Data tidak ditemukan.');
-
-        if (!in_array($p['status'], ['aktif'])) {
-            return redirect()->back()->with('error', 'Hanya siswa aktif yang boleh mengundurkan diri.');
-        }
-
-        $this->pendaftaran->update($id, [
-            'status' => 'mundur',
-            'updated_at' => date('Y-m-d H:i:s')
-        ]);
-
-        if ($p['siswa_id']) {
-            $this->siswa->update($p['siswa_id'], [
-                'status' => 'nonaktif',
-                'updated_at' => date('Y-m-d H:i:s')
-            ]);
-        }
-
-        return redirect()->back()->with('success', 'Siswa resmi mengundurkan diri.');
-    }
-
-    //DELETE (ADMIN ONLY)
+    // DELETE
     public function delete($id)
     {
-        if (session()->get('role') !== 'admin') {
+        if (session()->get('role') !== 'admin')
             return redirect()->back()->with('error', 'Akses ditolak.');
-        }
 
         $p = $this->pendaftaran->find($id);
-
         if (!$p) return redirect()->back()->with('error', 'Data tidak ditemukan.');
 
-        // Hanya boleh hapus PENDING atau BATAL
         if (!in_array($p['status'], ['pending', 'batal'])) {
             return redirect()->back()->with('error', 'Pendaftaran aktif / selesai / mundur tidak boleh dihapus.');
         }

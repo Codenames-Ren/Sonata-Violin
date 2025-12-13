@@ -75,7 +75,7 @@
             <div class="relative">
                 <input id="searchInput" type="search"
                        class="w-full rounded-lg px-4 py-2.5 shadow-sm border border-gray-200 focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
-                       placeholder="Cari nama, email, atau status..." autocomplete="off">
+                       placeholder="Cari no pendaftaran, nama, email dan status" autocomplete="off">
                 <button id="btnClearSearch"
                         class="absolute right-3 top-1/2 -translate-y-1/2 hidden text-gray-400 hover:text-gray-600 text-lg transition-colors">
                     ✕
@@ -110,7 +110,7 @@
     <table class="w-full table-auto">
         <thead class="bg-gradient-to-r from-gray-50 to-gray-100 text-gray-600 uppercase text-sm font-semibold border-b-2 border-gray-200">
         <tr>
-            <th class="py-4 px-4">#</th>
+            <th class="py-4 px-4">No. Pendaftaran</th>
             <th class="py-4 px-4">Nama</th>
             <th class="py-4 px-4">Email</th>
             <th class="py-4 px-4">Paket</th>
@@ -144,16 +144,19 @@
         ?>
         <tr class="table-row hover:bg-gray-50 transition-colors"
             data-nama="<?= strtolower(esc($p['nama'] ?? '')) ?>"
+            data-nomor-pendaftaran="<?= strtolower(esc($p['no_pendaftaran'] ?? '')) ?>"
             data-email="<?= strtolower(esc($p['email'] ?? '')) ?>"
             data-status="<?= strtolower(esc($p['status'] ?? '')) ?>"
             data-label="<?= strtolower($labelStatus) ?>">
 
-            <td class="py-4 px-4 text-center font-medium text-gray-600"><?= $i++ ?></td>
+            <td class="py-4 px-4 font-medium text-gray-600 text-xs">
+                <?= esc($p['no_pendaftaran']) ?>
+            </td>
 
-            <td class="py-4 px-4 font-semibold text-gray-800"><?= esc($p['nama'] ?? '-') ?></td>
-            <td class="py-4 px-4 text-gray-600"><?= esc($p['email'] ?? '-') ?></td>
+            <td class="py-4 px-4 font-semibold text-gray-800 text-sm"><?= esc($p['nama'] ?? '-') ?></td>
+            <td class="py-4 px-4 text-gray-600 text-sm"><?= esc($p['email'] ?? '-') ?></td>
 
-            <td class="py-4 px-4 text-gray-600">
+            <td class="py-4 px-4 text-gray-600 text-sm">
                 <?= esc($p['nama_paket'] ?? ('Paket - ' . ($p['paket_id'] ?? '-'))) ?>
             </td>
 
@@ -203,7 +206,7 @@
 
                         <form method="POST" action="<?= base_url('/pendaftaran/selesai/'.$p['id']) ?>">
                             <?= csrf_field() ?>
-                            <button class="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100">
+                            <button class="block w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-gray-100">
                                 Selesai Belajar
                             </button>
                         </form>
@@ -288,6 +291,7 @@
     ?>
     <div class="card-item bg-white shadow-lg rounded-xl p-4 border border-gray-100 hover:shadow-xl transition-shadow"
          data-nama="<?= strtolower(esc($p['nama'] ?? '')) ?>"
+         data-nomor-pendaftaran="<?= strtolower(esc($p['no_pendaftaran'] ?? '')) ?>"
          data-email="<?= strtolower(esc($p['email'] ?? '')) ?>"
          data-status="<?= strtolower(esc($p['status'] ?? '')) ?>"
          data-label="<?= strtolower($labelStatus) ?>">
@@ -295,9 +299,12 @@
         <div class="flex gap-4">
             <div class="flex-1">
                 <h3 class="font-bold text-gray-800 text-lg"><?= esc($p['nama'] ?? '-') ?></h3>
+                <p class="text-gray-700 font-semibold text-sm">
+                    <?= esc($p['no_pendaftaran']) ?>
+                </p>
                 <p class="text-gray-600 text-sm"><?= esc($p['email'] ?? '-') ?></p>
                 <p class="text-gray-600 text-sm">
-                    <?= esc($p['paket_nama'] ?? ('Paket #' . ($p['paket_id'] ?? '-'))) ?>
+                    <?= esc($p['nama_paket'] ?? ('Paket - ' . ($p['paket_id'] ?? '-'))) ?>
                 </p>
                 <p class="text-gray-500 text-xs mt-1">
                     Mulai: <?= !empty($p['tanggal_mulai']) ? esc($p['tanggal_mulai']) : '-' ?><br>
@@ -355,7 +362,7 @@
             <?php endif; ?>
             
             <?php if($status === 'pending' || $status === 'batal'): ?>
-            <button class="btnEdit col-span-1 bg-indigo-100 text-indigo-700 px-2 py-2 rounded-lg text-xs font-semibold hover:bg-indigo-200 transition-all"
+            <button class="btnEdit col-span-2 bg-indigo-100 text-indigo-700 px-2 py-2 rounded-lg text-xs font-semibold hover:bg-indigo-200 transition-all"
                 data-id="<?= $p['id'] ?>"
                 data-nama="<?= esc($p['nama'] ?? '', 'attr') ?>"
                 data-email="<?= esc($p['email'] ?? '', 'attr') ?>"
@@ -375,8 +382,8 @@
 
             <?php if(session()->get('role') === 'admin'): ?>
             <form method="POST" action="<?= base_url('/pendaftaran/delete/'.$p['id']) ?>"
-                  class="col-span-1"
-                  onsubmit="return confirm('Yakin ingin menghapus (arsip) data pendaftaran ini?')">
+                class="col-span-2"
+                onsubmit="return confirm('Yakin ingin menghapus (arsip) data pendaftaran ini?')">
                 <?= csrf_field() ?>
                 <button class="w-full bg-red-100 text-red-700 px-2 py-2 rounded-lg text-xs font-semibold hover:bg-red-200 transition-all">
                     <i class="fa fa-trash mr-1"></i>Hapus
@@ -745,15 +752,17 @@
 
         const filterFn = el => {
             const nama = el.dataset.nama || "";
+            const noPendaftaran = el.dataset.nomorPendaftaran || "";
             const email = el.dataset.email || "";
             const status = el.dataset.status || "";
             const label  = el.dataset.label  || "";
-            return nama.includes(keyword) ||email.includes(keyword) || status.includes(keyword) || label.includes(keyword);
+            return nama.includes(keyword) || email.includes(keyword) || status.includes(keyword) || label.includes(keyword) || noPendaftaran.includes(keyword);
         };
 
         rows.forEach(row => row.style.display = filterFn(row) ? "" : "none");
         cards.forEach(card => card.style.display = filterFn(card) ? "" : "none");
 
+        currentPage = 1; 
         updatePagination();
     }
 
@@ -764,31 +773,56 @@
         applySearch();
     });
 
-    //PAGINATION
+    // PAGINATION
     let currentPage = 1;
     let totalPages = 1;
 
-    function getItemsPerPage() {
-        return window.innerWidth < 768 ? 3 : 8;
-    }
-
     function getVisibleItems() {
         const isMobile = window.innerWidth < 768;
-        const rows = Array.from(document.querySelectorAll(".table-row")).filter(r => r.style.display !== "none");
-        const cards = Array.from(document.querySelectorAll(".card-item")).filter(c => c.style.display !== "none");
-        return isMobile ? cards : rows;
+        const rows = Array.from(document.querySelectorAll(".table-row"));
+        const cards = Array.from(document.querySelectorAll(".card-item"));
+        
+        const allItems = isMobile ? cards : rows;
+        const keyword = searchInput.value.toLowerCase().trim();
+        
+        if (keyword === '') {
+            return allItems;
+        }
+        
+        return allItems.filter(item => {
+            const nama = item.dataset.nama || '';
+            const noPendaftaran = item.dataset.nomorPendaftaran || '';
+            const email = item.dataset.email || '';
+            const status = item.dataset.status || '';
+            const label = item.dataset.label || '';
+            
+            return nama.includes(keyword)
+                || noPendaftaran.includes(keyword)
+                || email.includes(keyword)
+                || status.includes(keyword)
+                || label.includes(keyword);
+        });
     }
 
     function updatePagination() {
-        const items = getVisibleItems();
-        const perPage = getItemsPerPage();
-        totalPages = Math.ceil(items.length / perPage) || 1;
+        const isMobile = window.innerWidth < 768;
+        const allRows = Array.from(document.querySelectorAll(".table-row"));
+        const allCards = Array.from(document.querySelectorAll(".card-item"));
+        
+        allRows.forEach(row => row.style.display = "none");
+        allCards.forEach(card => card.style.display = "none");
+        
+        const visibleItems = getVisibleItems();
+        const perPage = isMobile ? 3 : 8;
 
+        totalPages = Math.max(1, Math.ceil(visibleItems.length / perPage));
         if (currentPage > totalPages) currentPage = totalPages;
 
-        items.forEach((item, index) => {
-            const pageNum = Math.floor(index / perPage) + 1;
-            item.style.display = pageNum === currentPage ? "" : "none";
+        const startIndex = (currentPage - 1) * perPage;
+        const endIndex = startIndex + perPage;
+        
+        visibleItems.slice(startIndex, endIndex).forEach(item => {
+            item.style.display = "";
         });
 
         document.getElementById("currentPage").textContent = currentPage;
@@ -799,20 +833,19 @@
     }
 
     document.getElementById("btnPrev").addEventListener("click", () => {
-        if (currentPage > 1) {
-            currentPage--;
-            updatePagination();
-        }
+        if (currentPage > 1) { currentPage--; updatePagination(); }
     });
 
     document.getElementById("btnNext").addEventListener("click", () => {
-        if (currentPage < totalPages) {
-            currentPage++;
-            updatePagination();
-        }
+        if (currentPage < totalPages) { currentPage++; updatePagination(); }
     });
 
-    window.addEventListener("resize", updatePagination);
+    window.addEventListener("resize", () => {
+        currentPage = 1;
+        updatePagination();
+    });
+
+    updatePagination();
 
     //MODAL OPEN / CLOSE
     const modal = document.getElementById("modal");

@@ -11,6 +11,7 @@ Class SiswaModel extends Model
     protected $returnType       =   'array';
 
     protected $allowedFields    =   [
+        'no_pendaftaran',
         'nama',
         'alamat',
         'no_hp',

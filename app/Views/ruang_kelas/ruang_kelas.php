@@ -270,7 +270,7 @@ button, input, select, textarea {
 
                 <div class="flex gap-2 order-2 sm:order-1">
                     <button type="button" id="btnCancelModal"
-                            class="flex-1 sm:flex-none px-4 py-2 md:px-5 md:py-2.5 text-sm md:text-base bg-white border-2 border-gray-300 rounded-lg font-semibold hover:bg-gray-50 transition-all">
+                            class="btn-hover flex-1 sm:flex-none px-4 py-2 md:px-5 md:py-2.5 text-sm md:text-base bg-white border-2 border-gray-300 rounded-lg font-semibold hover:bg-gray-50 transition-all">
                         Batal
                     </button>
                 </div>
@@ -294,7 +294,6 @@ button, input, select, textarea {
 
     function applySearch() {
         const keyword = searchInput.value.toLowerCase().trim();
-
         btnClearSearch.classList.toggle("hidden", keyword.length === 0);
 
         const rows = document.querySelectorAll(".table-row");
@@ -303,7 +302,6 @@ button, input, select, textarea {
         rows.forEach(row => {
             const nama = row.dataset.nama;
             const fasilitas = row.dataset.fasilitas;
-
             const match = nama.includes(keyword) || fasilitas.includes(keyword);
             row.style.display = match ? "" : "none";
         });
@@ -311,11 +309,11 @@ button, input, select, textarea {
         cards.forEach(card => {
             const nama = card.dataset.nama;
             const fasilitas = card.dataset.fasilitas;
-
             const match = nama.includes(keyword) || fasilitas.includes(keyword);
             card.style.display = match ? "" : "none";
         });
 
+        currentPage = 1;
         updatePagination();
     }
 
@@ -327,40 +325,49 @@ button, input, select, textarea {
         applySearch();
     });
 
-    //PAGINATION
+    // PAGINATION
     let currentPage = 1;
     let totalPages = 1;
-    
-    // Desktop max 8, Mobile max 3
-    function getItemsPerPage() {
-        return window.innerWidth < 768 ? 3 : 8;
-    }
 
     function getVisibleItems() {
         const isMobile = window.innerWidth < 768;
-
-        const rows = Array.from(document.querySelectorAll(".table-row"))
-            .filter(r => r.style.display !== "none");
-
-        const cards = Array.from(document.querySelectorAll(".card-item"))
-            .filter(c => c.style.display !== "none");
-
-        return isMobile ? cards : rows;
+        const rows = Array.from(document.querySelectorAll(".table-row"));
+        const cards = Array.from(document.querySelectorAll(".card-item"));
+        
+        const allItems = isMobile ? cards : rows;
+        const keyword = searchInput.value.toLowerCase().trim();
+        
+        if (keyword === '') {
+            return allItems;
+        }
+        
+        return allItems.filter(item => {
+            const nama = item.dataset.nama || '';
+            const fasilitas = item.dataset.fasilitas || '';
+            
+            return nama.includes(keyword) || fasilitas.includes(keyword);
+        });
     }
 
     function updatePagination() {
-        const items = getVisibleItems();
-        const itemsPerPage = getItemsPerPage();
+        const isMobile = window.innerWidth < 768;
+        const allRows = Array.from(document.querySelectorAll(".table-row"));
+        const allCards = Array.from(document.querySelectorAll(".card-item"));
         
-        totalPages = Math.ceil(items.length / itemsPerPage) || 1;
+        allRows.forEach(row => row.style.display = "none");
+        allCards.forEach(card => card.style.display = "none");
+        
+        const visibleItems = getVisibleItems();
+        const perPage = isMobile ? 3 : 8;
 
-        if (currentPage > totalPages) {
-            currentPage = totalPages;
-        }
+        totalPages = Math.max(1, Math.ceil(visibleItems.length / perPage));
+        if (currentPage > totalPages) currentPage = totalPages;
 
-        items.forEach((item, index) => {
-            const pageNum = Math.floor(index / itemsPerPage) + 1;
-            item.style.display = pageNum === currentPage ? "" : "none";
+        const startIndex = (currentPage - 1) * perPage;
+        const endIndex = startIndex + perPage;
+        
+        visibleItems.slice(startIndex, endIndex).forEach(item => {
+            item.style.display = "";
         });
 
         document.getElementById("currentPage").textContent = currentPage;
@@ -371,23 +378,19 @@ button, input, select, textarea {
     }
 
     document.getElementById("btnPrev").addEventListener("click", () => {
-        if (currentPage > 1) {
-            currentPage--;
-            updatePagination();
-        }
+        if (currentPage > 1) { currentPage--; updatePagination(); }
     });
 
     document.getElementById("btnNext").addEventListener("click", () => {
-        if (currentPage < totalPages) {
-            currentPage++;
-            updatePagination();
-        }
+        if (currentPage < totalPages) { currentPage++; updatePagination(); }
     });
 
     window.addEventListener("resize", () => {
         currentPage = 1;
         updatePagination();
     });
+
+    updatePagination();
 
     //MODAL CONTROL
     const modal = document.getElementById("modal");
