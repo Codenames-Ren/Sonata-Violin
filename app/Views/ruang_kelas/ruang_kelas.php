@@ -88,7 +88,7 @@ button, input, select, textarea {
     <table class="w-full table-auto">
         <thead class="bg-gradient-to-r from-gray-50 to-gray-100 text-gray-600 uppercase text-sm font-semibold border-b-2 border-gray-200">
         <tr>
-            <th class="py-4 px-4">#</th>
+            <th class="py-4 px-4">NO</th>
             <th class="py-4 px-4">Nama Ruang</th>
             <th class="py-4 px-4">Kapasitas</th>
             <th class="py-4 px-4">Fasilitas</th>
@@ -121,7 +121,7 @@ button, input, select, textarea {
                 <!-- TOGGLE STATUS -->
                 <form method="POST" action="<?= base_url('/ruang-kelas/toggle-status/'.$r['id']) ?>">
                     <?= csrf_field() ?>
-                    <button class="btn-hover px-3 py-2 rounded-lg text-sm font-semibold transition-all
+                    <button class="btn-hover text-sm px-3 py-2 rounded-lg text-sm font-semibold transition-all
                         <?= $r['status'] === 'aktif'
                             ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'
                             : 'bg-green-100 text-green-700 hover:bg-green-200' ?>">
@@ -130,7 +130,7 @@ button, input, select, textarea {
                 </form>
 
                 <!-- EDIT -->
-                <button class="btnEdit btn-hover bg-indigo-100 text-indigo-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-200 transition-all"
+                <button class="btnEdit btn-hover text-sm bg-indigo-100 text-indigo-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-200 transition-all"
                         data-id="<?= $r['id'] ?>"
                         data-nama="<?= esc($r['nama_ruang'],'attr') ?>"
                         data-kapasitas="<?= esc($r['kapasitas'],'attr') ?>"
@@ -142,7 +142,7 @@ button, input, select, textarea {
                 <form method="POST" action="<?= base_url('/ruang-kelas/delete/'.$r['id']) ?>"
                       onsubmit="return confirm('Hapus ruang kelas ini?')">
                     <?= csrf_field() ?>
-                    <button class="btn-hover bg-red-100 text-red-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-red-200 transition-all">
+                    <button class="btn-hover text-xs bg-red-100 text-red-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-red-200 transition-all">
                         <i class="fa fa-trash mr-1"></i>Hapus
                     </button>
                 </form>
@@ -176,33 +176,33 @@ button, input, select, textarea {
             <?= ucfirst($r['status']) ?>
         </span>
 
-        <div class="flex gap-2 mt-4">
-            <form method="POST" action="<?= base_url('/ruang-kelas/toggle-status/'.$r['id']) ?>" class="flex-1">
-                <?= csrf_field() ?>
-                <button class="w-full px-3 py-2 rounded-lg text-sm font-semibold transition-all
-                    <?= $r['status'] === 'aktif' 
-                        ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' 
-                        : 'bg-green-100 text-green-700 hover:bg-green-200' ?>">
-                    <?= $r['status'] === 'aktif' ? 'Nonaktifkan' : 'Aktifkan' ?>
-                </button>
-            </form>
-
-            <button class="btnEdit flex-1 bg-indigo-100 text-indigo-700 px-3 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-200 transition-all"
-                data-id="<?= $r['id'] ?>"
-                data-nama="<?= esc($r['nama_ruang'],'attr') ?>"
-                data-kapasitas="<?= esc($r['kapasitas'],'attr') ?>"
-                data-fasilitas="<?= esc($r['fasilitas'],'attr') ?>">
-                <i class="fa fa-pen mr-1"></i>Edit
+    <div class="grid grid-cols-3 gap-2 mt-4">
+        <form method="POST" action="<?= base_url('/ruang-kelas/toggle-status/'.$r['id']) ?>" class="col-span-3">
+            <?= csrf_field() ?>
+            <button class="w-full px-3 py-2 rounded-lg text-sm font-semibold transition-all
+                <?= $r['status'] === 'aktif' 
+                    ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' 
+                    : 'bg-green-100 text-green-700 hover:bg-green-200' ?>">
+                <?= $r['status'] === 'aktif' ? 'Nonaktifkan' : 'Aktifkan' ?>
             </button>
+        </form>
 
-            <form method="POST" action="<?= base_url('/ruang-kelas/delete/'.$r['id']) ?>"
-                  class="flex-1" onsubmit="return confirm('Hapus ruang kelas ini?')">
-                <?= csrf_field() ?>
-                <button class="w-full bg-red-100 text-red-700 px-3 py-2 rounded-lg text-sm font-semibold hover:bg-red-200 transition-all">
-                    <i class="fa fa-trash mr-1"></i>Hapus
-                </button>
-            </form>
-        </div>
+        <button class="btnEdit col-span-3 bg-indigo-100 text-indigo-700 px-3 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-200 transition-all"
+            data-id="<?= $r['id'] ?>"
+            data-nama="<?= esc($r['nama_ruang'],'attr') ?>"
+            data-kapasitas="<?= esc($r['kapasitas'],'attr') ?>"
+            data-fasilitas="<?= esc($r['fasilitas'],'attr') ?>">
+            <i class="fa fa-pen mr-1"></i>Edit
+        </button>
+
+        <form method="POST" action="<?= base_url('/ruang-kelas/delete/'.$r['id']) ?>"
+            class="col-span-3" onsubmit="return confirm('Hapus ruang kelas ini?')">
+            <?= csrf_field() ?>
+            <button class="w-full bg-red-100 text-red-700 px-3 py-2 rounded-lg text-sm font-semibold hover:bg-red-200 transition-all">
+                <i class="fa fa-trash mr-1"></i>Hapus
+            </button>
+        </form>
+    </div>
     </div>
 <?php endforeach; endif ?>
 </div>

@@ -107,7 +107,7 @@ button, input, select, textarea {
     <table class="w-full table-auto">
         <thead class="bg-gradient-to-r from-gray-50 to-gray-100 text-gray-600 uppercase text-sm font-semibold border-b-2 border-gray-200">
         <tr>
-            <th class="py-4 px-4">#</th>
+            <th class="py-4 px-4">NO</th>
             <th class="py-4 px-4">Foto</th>
             <th class="py-4 px-4">Nama</th>
             <th class="py-4 px-4">Email</th>
@@ -128,8 +128,9 @@ button, input, select, textarea {
             <td class="py-4 px-4 text-center font-medium text-gray-600"><?= $i++ ?></td>
 
             <td class="py-4 px-4 text-center">
-                <img class="w-12 h-12 rounded-full object-cover border-2 border-gray-200 mx-auto"
-                     src="<?= base_url('uploads/instruktur/' . ($iData['foto_profil'] ?? 'default.png')) ?>">
+                <img class="rounded-full object-cover border-2 border-gray-200 mx-auto"
+                    style="width: 64px; height: 64px; min-width: 64px; min-height: 64px;"
+                    src="<?= base_url('uploads/instruktur/' . ($iData['foto_profil'] ?? 'default.png')) ?>">
             </td>
 
             <td class="py-4 px-4 font-semibold text-gray-800"><?= esc($iData['nama']) ?></td>
@@ -159,7 +160,7 @@ button, input, select, textarea {
                 <!-- TOGGLE STATUS -->
                 <form method="POST" action="<?= base_url('/instruktur/toggle-status/'.$iData['id']) ?>">
                     <?= csrf_field() ?>
-                    <button class="btn-hover px-3 py-2 rounded-lg text-sm font-semibold transition-all
+                    <button class="btn-hover px-3 py-2 rounded-lg text-xs font-semibold transition-all
                         <?= $status == 'aktif' ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' : 'bg-green-100 text-green-700 hover:bg-green-200' ?>">
                         <?= $status == 'aktif' ? 'Nonaktifkan' : 'Aktifkan' ?>
                     </button>
@@ -167,7 +168,7 @@ button, input, select, textarea {
 
                 <!-- EDIT -->
                 <button 
-                    class="btnEdit btn-hover bg-indigo-100 text-indigo-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-200 transition-all"
+                    class="btnEdit btn-hover bg-indigo-100 text-indigo-700 px-4 py-2 rounded-lg text-xs font-semibold hover:bg-indigo-200 transition-all"
                     data-id="<?= $iData['id'] ?>"
                     data-nama="<?= esc($iData['nama'], 'attr') ?>"
                     data-email="<?= esc($iData['email'], 'attr') ?>"
@@ -185,7 +186,7 @@ button, input, select, textarea {
                 <form method="POST" action="<?= base_url('/instruktur/delete/'.$iData['id']) ?>"
                     onsubmit="return confirm('Yakin ingin menghapus Data instruktur?')">
                     <?= csrf_field() ?>
-                    <button class="btn-hover bg-red-100 text-red-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-red-200 transition-all">
+                    <button class="btn-hover bg-red-100 text-red-700 px-4 py-2 rounded-lg text-xs font-semibold hover:bg-red-200 transition-all">
                         <i class="fa fa-trash mr-1"></i>Hapus
                     </button>
                 </form>
@@ -237,35 +238,35 @@ button, input, select, textarea {
             </div>
         </div>
 
-        <div class="flex gap-2 mt-4">
-            <form method="POST" action="<?= base_url('/instruktur/toggle-status/'.$iData['id']) ?>" class="flex-1">
-                <?= csrf_field() ?>
-                <button class="w-full px-3 py-2 rounded-lg text-sm font-semibold transition-all
-                    <?= $status == 'aktif' ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' : 'bg-green-100 text-green-700 hover:bg-green-200' ?>">
-                    <?= $status == 'aktif' ? 'Nonaktifkan' : 'Aktifkan' ?>
-                </button>
-            </form>
-
-            <button class="btnEdit flex-1 bg-indigo-100 text-indigo-700 px-3 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-200 transition-all"
-                    data-id="<?= $iData['id'] ?>"
-                    data-nama="<?= esc($iData['nama'], 'attr') ?>"
-                    data-email="<?= esc($iData['email'], 'attr') ?>"
-                    data-nohp="<?= esc($iData['no_hp'], 'attr') ?>"
-                    data-alamat="<?= esc($iData['alamat'], 'attr') ?>"
-                    data-keahlian="<?= esc($iData['keahlian'], 'attr') ?>"
-                    data-tgl="<?= esc($iData['tgl_lahir'], 'attr') ?>"
-                    data-foto="<?= base_url('uploads/instruktur/' . ($iData['foto_profil'] ?? 'default.png')) ?>">
-                <i class="fa fa-pen mr-1"></i>Edit
+        <div class="grid grid-cols-3 gap-2 mt-4">
+        <form method="POST" action="<?= base_url('/instruktur/toggle-status/'.$iData['id']) ?>" class="col-span-3">
+            <?= csrf_field() ?>
+            <button class="w-full px-3 py-2 rounded-lg text-sm font-semibold transition-all
+                <?= $status == 'aktif' ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' : 'bg-green-100 text-green-700 hover:bg-green-200' ?>">
+                <?= $status == 'aktif' ? 'Nonaktifkan' : 'Aktifkan' ?>
             </button>
+        </form>
 
-            <form method="POST" action="<?= base_url('/instruktur/delete/'.$iData['id']) ?>"
-                  class="flex-1" onsubmit="return confirm('Yakin ingin menghapus Data instruktur?')">
-                <?= csrf_field() ?>
-                <button class="w-full bg-red-100 text-red-700 px-3 py-2 rounded-lg text-sm font-semibold hover:bg-red-200 transition-all">
-                    <i class="fa fa-trash mr-1"></i>Hapus
-                </button>
-            </form>
-        </div>
+        <button class="btnEdit col-span-3 bg-indigo-100 text-indigo-700 px-3 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-200 transition-all"
+                data-id="<?= $iData['id'] ?>"
+                data-nama="<?= esc($iData['nama'], 'attr') ?>"
+                data-email="<?= esc($iData['email'], 'attr') ?>"
+                data-nohp="<?= esc($iData['no_hp'], 'attr') ?>"
+                data-alamat="<?= esc($iData['alamat'], 'attr') ?>"
+                data-keahlian="<?= esc($iData['keahlian'], 'attr') ?>"
+                data-tgl="<?= esc($iData['tgl_lahir'], 'attr') ?>"
+                data-foto="<?= base_url('uploads/instruktur/' . ($iData['foto_profil'] ?? 'default.png')) ?>">
+            <i class="fa fa-pen mr-1"></i>Edit
+        </button>
+
+        <form method="POST" action="<?= base_url('/instruktur/delete/'.$iData['id']) ?>"
+            class="col-span-3" onsubmit="return confirm('Yakin ingin menghapus Data instruktur?')">
+            <?= csrf_field() ?>
+            <button class="w-full bg-red-100 text-red-700 px-3 py-2 rounded-lg text-sm font-semibold hover:bg-red-200 transition-all">
+                <i class="fa fa-trash mr-1"></i>Hapus
+            </button>
+        </form>
+    </div>
 
     </div>
     <?php endforeach; endif ?>

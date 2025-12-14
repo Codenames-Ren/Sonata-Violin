@@ -62,7 +62,7 @@
     <table class="w-full table-auto">
         <thead class="bg-gradient-to-r from-gray-50 to-gray-100 text-gray-600 uppercase text-sm font-semibold border-b-2 border-gray-200">
         <tr>
-            <th class="py-4 px-4">#</th>
+            <th class="py-4 px-4">NO</th>
             <th class="py-4 px-4">Nama Paket</th>
             <th class="py-4 px-4">Level</th>
             <th class="py-4 px-4">Durasi</th>
@@ -131,14 +131,14 @@
                 <!-- Switch -->
                 <form method="POST" action="<?= base_url('/paket/status/'.$p['id']) ?>">
                     <?= csrf_field() ?>
-                    <button class="btn-hover <?= $p['status']==='aktif' ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700' ?> px-4 py-2 rounded-lg text-sm font-semibold">
+                    <button class="btn-hover px-3 py-2 rounded-lg text-sm font-semibold transition-all <?= $p['status']==='aktif' ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700' ?> px-4 py-2 rounded-lg text-sm font-semibold">
                         <?= $p['status']==='aktif' ? 'Nonaktifkan' : 'Aktifkan' ?>
                     </button>
                 </form>
 
                 <!-- Edit -->
                 <button
-                    class="btnEdit bg-indigo-100 text-indigo-700 px-4 py-2 rounded-lg text-sm font-semibold btn-hover"
+                    class="btnEdit btn-hover bg-indigo-100 text-indigo-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-200 transition-all"
                     data-id="<?= $p['id'] ?>"
                     data-nama="<?= esc($p['nama_paket'], 'attr') ?>"
                     data-level="<?= esc($p['level'], 'attr') ?>"
@@ -162,7 +162,7 @@
                 <!-- Delete -->
                 <form method="POST" action="<?= base_url('/paket/delete/'.$p['id']) ?>" onsubmit="return confirm('Hapus paket ini?')">
                     <?= csrf_field() ?>
-                    <button class="bg-red-100 text-red-700 px-4 py-2 rounded-lg text-sm font-semibold btn-hover">
+                    <button class="btn-hover bg-red-100 text-red-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-red-200 transition-all">
                         <i class="fa fa-trash mr-1"></i>Hapus
                     </button>
                 </form>

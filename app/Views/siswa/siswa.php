@@ -110,7 +110,6 @@
     <table class="w-full table-auto">
         <thead class="bg-gradient-to-r from-gray-50 to-gray-100 text-gray-600 uppercase text-sm font-semibold border-b-2 border-gray-200">
         <tr>
-            <th class="py-4 px-4">NO</th>
             <th class="py-4 px-4">No Pendaftaran</th>
             <th class="py-4 px-4">Foto</th>
             <th class="py-4 px-4">Nama</th>
@@ -141,14 +140,14 @@
             data-nohp="<?= esc($s['no_hp']) ?>"
             data-alamat="<?= strtolower(esc($s['alamat'])) ?>">
 
-            <td class="py-4 px-4 text-center font-medium text-gray-600"><?= $i++ ?></td>
             <td class="py-4 px-4 font-medium text-gray-600 text-xs">
                 <?= esc($s['no_pendaftaran']) ?>
             </td>
 
             <td class="py-4 px-4 text-center">
-                <img class="w-12 h-12 rounded-full object-cover border-2 border-gray-200 mx-auto"
-                     src="<?= base_url('uploads/siswa/' . ($s['foto_profil'] ?: 'default.png')) ?>">
+                <img class="rounded-full object-cover border-2 border-gray-200 mx-auto"
+                style="width: 64px; height: 64px; min-width: 64px; min-height: 64px;"
+                src="<?= base_url('uploads/siswa/' . ($s['foto_profil'] ?: 'default.png')) ?>">
             </td>
 
             <td class="py-4 px-4 font-semibold text-gray-800"><?= esc($s['nama']) ?></td>
@@ -177,7 +176,7 @@
                 <?php if ($canToggle): ?>
                 <form method="POST" action="<?= base_url('/siswa/toggle-status/'.$s['id']) ?>">
                     <?= csrf_field() ?>
-                    <button class="btn-hover px-3 py-2 rounded-lg text-sm font-semibold transition-all
+                    <button class="btn-hover px-3 py-2 rounded-lg text-xs font-semibold transition-all
                         <?= $status == 'aktif' ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' : 'bg-green-100 text-green-700 hover:bg-green-200' ?>">
                         <?= $status == 'aktif' ? 'Nonaktifkan' : 'Aktifkan' ?>
                     </button>
@@ -185,7 +184,7 @@
                 <?php endif; ?>
 
                 <!-- EDIT -->
-                <button class="btnEdit btn-hover bg-indigo-100 text-indigo-700 px-3 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-200 transition-all"
+                <button class="btnEdit btn-hover bg-indigo-100 text-indigo-700 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-indigo-200 transition-all"
                         data-id="<?= $s['id'] ?>"
                         data-nama="<?= esc($s['nama'], 'attr') ?>"
                         data-email="<?= esc($s['email'], 'attr') ?>"
@@ -201,7 +200,7 @@
                 <form method="POST" action="<?= base_url('/siswa/delete/'.$s['id']) ?>"
                     onsubmit="return confirm('Hapus siswa ini?')">
                     <?= csrf_field() ?>
-                    <button class="btn-hover bg-red-100 text-red-700 px-3 py-2 rounded-lg text-sm font-semibold hover:bg-red-200 transition-all">
+                    <button class="btn-hover bg-red-100 text-red-700 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-red-200 transition-all">
                         <i class="fa fa-trash mr-1"></i>Hapus
                     </button>
                 </form>
@@ -288,7 +287,7 @@
 
             <!-- DELETE -->
             <?php if ($canDelete): ?>
-            <form method="POST" action="<?= base_url('/siswa/delete/'.$s['id']) ?>" class="col-span-2"
+            <form method="POST" action="<?= base_url('/siswa/delete/'.$s['id']) ?>" class="col-span-3"
                 onsubmit="return confirm('Hapus siswa ini?')">
                 <?= csrf_field() ?>
                 <button class="w-full bg-red-100 text-red-700 px-2 py-2 rounded-lg text-xs font-semibold hover:bg-red-200 transition-all">

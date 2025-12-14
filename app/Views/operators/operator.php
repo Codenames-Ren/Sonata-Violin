@@ -61,7 +61,7 @@
     <table class="w-full table-auto">
         <thead class="bg-gradient-to-r from-gray-50 to-gray-100 text-gray-600 uppercase text-sm font-semibold border-b-2 border-gray-200">
         <tr>
-            <th class="py-4 px-4">#</th>
+            <th class="py-4 px-4">NO</th>
             <th class="py-4 px-4">Username</th>
             <th class="py-4 px-4">Nama Lengkap</th>
             <th class="py-4 px-4">Role</th>
@@ -158,35 +158,33 @@
             <p class="font-semibold text-gray-800"><?= date('d M Y', strtotime($op['created_at'])) ?></p>
         </div>
 
-        <div class="flex gap-2 mt-4 pt-3 border-t border-gray-100">
-            <button class="btnEdit flex-1 bg-indigo-100 text-indigo-700 px-3 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-200 transition-all"
-                    data-id="<?= $op['id'] ?>"
-                    data-username="<?= esc($op['username'], 'attr') ?>"
-                    data-nama="<?= esc($op['nama_lengkap'], 'attr') ?>"
-                    data-role="<?= esc($op['role'], 'attr') ?>">
-                <i class="fa fa-pen mr-1"></i>Edit
+        <div class="grid grid-cols-3 gap-2 mt-4 pt-3 border-t border-gray-100">
+    <button class="btnEdit col-span-3 bg-indigo-100 text-indigo-700 px-3 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-200 transition-all"
+            data-id="<?= $op['id'] ?>"
+            data-username="<?= esc($op['username'], 'attr') ?>"
+            data-nama="<?= esc($op['nama_lengkap'], 'attr') ?>"
+            data-role="<?= esc($op['role'], 'attr') ?>">
+        <i class="fa fa-pen mr-1"></i>Edit
+    </button>
+    <?php if($op['role'] !== 'admin'): ?>
+        <form method="POST" action="<?= base_url('/settings/operators/toggle-status/'.$op['id']) ?>" class="col-span-3">
+            <?= csrf_field() ?>
+            <button type="submit" class="w-full <?= ($op['status'] === 'aktif') ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' : 'bg-green-100 text-green-700 hover:bg-green-200' ?> px-3 py-2 rounded-lg text-sm font-semibold transition-all">
+                <i class="fa fa-<?= ($op['status'] === 'aktif') ? 'pause' : 'play' ?> mr-1"></i><?= ($op['status'] === 'aktif') ? 'Nonaktif' : 'Aktif' ?>
             </button>
-
-            <?php if($op['role'] !== 'admin'): ?>
-                <form method="POST" action="<?= base_url('/settings/operators/toggle-status/'.$op['id']) ?>" class="flex-1">
-                    <?= csrf_field() ?>
-                    <button type="submit" class="w-full <?= ($op['status'] === 'aktif') ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' : 'bg-green-100 text-green-700 hover:bg-green-200' ?> px-3 py-2 rounded-lg text-sm font-semibold transition-all">
-                        <i class="fa fa-<?= ($op['status'] === 'aktif') ? 'pause' : 'play' ?> mr-1"></i><?= ($op['status'] === 'aktif') ? 'Nonaktif' : 'Aktif' ?>
-                    </button>
-                </form>
-
-                <form method="POST" action="<?= base_url('/settings/operators/delete/'.$op['id']) ?>" 
-                      class="flex-1" onsubmit="return confirm('Hapus operator ini?')">
-                    <?= csrf_field() ?>
-                    <button type="submit" class="w-full bg-red-100 text-red-700 px-3 py-2 rounded-lg text-sm font-semibold hover:bg-red-200 transition-all">
-                        <i class="fa fa-trash mr-1"></i>Hapus
-                    </button>
-                </form>
-            <?php else: ?>
-                <span class="flex-1 text-center text-gray-400 text-xs italic px-3 py-2">🔒 Protected</span>
-            <?php endif; ?>
-        </div>
-    </div>
+        </form>
+        <form method="POST" action="<?= base_url('/settings/operators/delete/'.$op['id']) ?>" 
+              class="col-span-3" onsubmit="return confirm('Hapus operator ini?')">
+            <?= csrf_field() ?>
+            <button type="submit" class="w-full bg-red-100 text-red-700 px-3 py-2 rounded-lg text-sm font-semibold hover:bg-red-200 transition-all">
+                <i class="fa fa-trash mr-1"></i>Hapus
+            </button>
+        </form>
+    <?php else: ?>
+        <span class="col-span-3 text-center text-gray-400 text-xs italic px-3 py-2">🔒 Protected</span>
+    <?php endif; ?>
+</div>
+</div>
     <?php endforeach; endif ?>
 </div>
 

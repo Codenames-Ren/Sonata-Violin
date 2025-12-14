@@ -73,5 +73,10 @@ $routes->group('pendaftaran', ['filter' => 'transaksi'], function($routes) {
 
 });
 
-$routes->post('daftar', 'PendaftaranSiswaController::store');
+$routes->post('daftar', 'PendaftaranSiswaController::create');
+
+$routes->get('pembayaran', 'PembayaranController::index');
+$routes->post('pembayaran/verify/(:num)', 'PembayaranController::verify/$1');
+$routes->post('pembayaran/reject/(:num)', 'PembayaranController::reject/$1');
+$routes->post('pembayaran/resubmit/(:num)', 'PembayaranController::resubmit/$1');
 

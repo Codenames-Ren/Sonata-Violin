@@ -195,10 +195,31 @@ class PendaftaranController extends BaseController
     public function verifikasi($id)
     {
         $p = $this->pendaftaran->find($id);
-        if (!$p) return redirect()->back()->with('error', 'Data tidak ditemukan.');
+        if (!$p) {
+            return redirect()->back()->with('error', 'Data tidak ditemukan.');
+        }
 
         if ($p['status'] !== 'pending') {
             return redirect()->back()->with('error', 'Pendaftaran sudah diproses.');
+        }
+
+        // CEK STATUS PEMBAYARAN
+        $pembayaran = $this->pembayaran
+            ->where('pendaftaran_id', $id)
+            ->first();
+
+        if (!$pembayaran) {
+            return redirect()->back()->with(
+                'error',
+                'Data pembayaran belum tersedia.'
+            );
+        }
+
+        if ($pembayaran['status'] !== 'verified') {
+            return redirect()->back()->with(
+                'error',
+                'Pendaftaran tidak bisa diverifikasi sebelum pembayaran diverifikasi.'
+            );
         }
 
         $this->db->transBegin();

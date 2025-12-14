@@ -51,7 +51,7 @@ $menuGroups = [
   ['id'=>'operations','label'=>'Operations','icon'=>'fa-briefcase','items'=>[
       ['/jadwal','Jadwal Kelas','fa-calendar-days'],
       ['/pendaftaran','Pendaftaran','fa-file-signature'],
-      ['/verifikasi','Verifikasi Pembayaran','fa-money-check-dollar'],
+      ['/pembayaran','Verifikasi Pembayaran','fa-money-check-dollar'],
       ['/absensi','Absensi','fa-user-check'],
   ]],
 
