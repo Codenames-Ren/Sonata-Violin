@@ -4,6 +4,7 @@
 <?= $this->section('content') ?>
 
 <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     tailwind.config = {
         theme: {
@@ -19,6 +20,32 @@
 </script>
 
 <style>
+    .swal2-container {
+        z-index: 99999 !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+    }
+
+    .swal2-popup {
+        margin: 0 !important;
+        position: absolute !important;
+        top: 35% !important;
+        left: 56% !important;
+        transform: translate(-50%, -50%) !important;
+
+    }
+
+    .swal2-container.swal2-backdrop-show {
+        background: rgba(0, 0, 0, 0.6) !important;
+    }
+
+    #modal.has-swal {
+        backdrop-filter: none !important;
+    }
+
     input[type="search"]::-webkit-search-cancel-button {
         -webkit-appearance: none;
     }
@@ -246,9 +273,9 @@
                 <!-- DELETE (Only Admin) -->
                 <?php if(session()->get('role') === 'admin'): ?>
                 <form method="POST" action="<?= base_url('/pendaftaran/delete/'.$p['id']) ?>"
-                      onsubmit="return confirm('Yakin ingin menghapus (arsip) data pendaftaran ini?')">
+                    class="formDelete">
                     <?= csrf_field() ?>
-                    <button class="btn-hover bg-red-100 text-red-700 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-red-200 transition-all">
+                    <button type="submit" class="btn-hover bg-red-100 text-red-700 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-red-200 transition-all">
                         <i class="fa fa-trash mr-1"></i>Hapus
                     </button>
                 </form>
@@ -382,10 +409,9 @@
 
             <?php if(session()->get('role') === 'admin'): ?>
             <form method="POST" action="<?= base_url('/pendaftaran/delete/'.$p['id']) ?>"
-                class="col-span-2"
-                onsubmit="return confirm('Yakin ingin menghapus (arsip) data pendaftaran ini?')">
+                class="col-span-2 formDelete">
                 <?= csrf_field() ?>
-                <button class="w-full bg-red-100 text-red-700 px-2 py-2 rounded-lg text-xs font-semibold hover:bg-red-200 transition-all">
+                <button type="submit" class="w-full bg-red-100 text-red-700 px-2 py-2 rounded-lg text-xs font-semibold hover:bg-red-200 transition-all">
                     <i class="fa fa-trash mr-1"></i>Hapus
                 </button>
             </form>
@@ -936,21 +962,161 @@
     btnNextStep.addEventListener("click", () => {
 
         if (currentStep === 1) {
-            if (!pd_nama.value.trim()) return alert("Nama wajib diisi!");
-            if (!pd_tgl_lahir.value) return alert("Tanggal lahir wajib diisi!");
-            if (!pd_email.value.trim()) return alert("Email wajib diisi!");
-            if (!pd_nohp.value.trim()) return alert("No HP wajib diisi!");
-            if (!pd_alamat.value.trim()) return alert("Alamat wajib diisi!");
+            if (!pd_nama.value.trim()) {
+                modal.classList.add('has-swal');
+                
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Oops...',
+                    text: 'Nama wajib diisi!',
+                    position: 'center', 
+                    showClass: {
+                        popup: 'swal2-show', 
+                        backdrop: 'swal2-backdrop-show'
+                    }
+                }).then(() => {
+                    modal.classList.remove('has-swal');
+                });
+                
+                return;
+            }
+
+            if (!pd_tgl_lahir.value) {
+                modal.classList.add('has-swal');
+                
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Oops...',
+                    text: 'Tanggal lahir wajib diisi!',
+                    position: 'center',
+                    showClass: {
+                        popup: 'swal2-show',
+                        backdrop: 'swal2-backdrop-show'
+                    }
+                }).then(() => {
+                    modal.classList.remove('has-swal');
+                });
+                
+                return;
+            }
+ 
+            if (!pd_email.value.trim()) {
+                modal.classList.add('has-swal');
+                
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Oops...',
+                    text: 'Email wajib diisi!',
+                    position: 'center',
+                    showClass: {
+                        popup: 'swal2-show',
+                        backdrop: 'swal2-backdrop-show'
+                    }
+                }).then(() => {
+                    modal.classList.remove('has-swal');
+                });
+                
+                return;
+            }
+
+            if (!pd_nohp.value.trim()) {
+                modal.classList.add('has-swal');
+                
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Oops...',
+                    text: 'No HP wajib diisi!',
+                    position: 'center',
+                    showClass: {
+                        popup: 'swal2-show',
+                        backdrop: 'swal2-backdrop-show'
+                    }
+                }).then(() => {
+                    modal.classList.remove('has-swal');
+                });
+                
+                return;
+            }
+
+            if (!pd_alamat.value.trim()) {
+                modal.classList.add('has-swal');
+                
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Oops...',
+                    text: 'Alamat wajib diisi!',
+                    position: 'center',
+                    showClass: {
+                        popup: 'swal2-show',
+                        backdrop: 'swal2-backdrop-show'
+                    }
+                }).then(() => {
+                    modal.classList.remove('has-swal');
+                });
+                
+                return;
+            }
         }
 
         if (currentStep === 2) {
-            if (!paketSelect.value) return alert("Paket wajib dipilih!");
+            if (!paketSelect.value) {
+                modal.classList.add('has-swal');
+                
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Oops...',
+                    text: 'Paket wajib dipilih!',
+                    position: 'center',
+                    showClass: {
+                        popup: 'swal2-show',
+                        backdrop: 'swal2-backdrop-show'
+                    }
+                }).then(() => {
+                    modal.classList.remove('has-swal');
+                });
+                
+                return;
+            }
         }
 
         if (currentStep === 3) {
-            if (!nominal.value || nominal.value <= 0) return alert("Nominal tidak valid!");
-            if (!pd_buktiInput.files.length && !isEditMode)
-                return alert("Bukti pembayaran wajib diupload!");
+            if (!nominal.value || nominal.value <= 0) {
+                modal.classList.add('has-swal');
+                
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Oops...',
+                    text: 'Nominal tidak valid!',
+                    position: 'center',
+                    showClass: {
+                        popup: 'swal2-show',
+                        backdrop: 'swal2-backdrop-show'
+                    }
+                }).then(() => {
+                    modal.classList.remove('has-swal');
+                });
+                
+                return;
+            }
+
+            if (!pd_buktiInput.files.length && !isEditMode) {
+                modal.classList.add('has-swal');
+                
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Oops...',
+                    text: 'Bukti pembayaran wajib diupload!',
+                    position: 'center',
+                    showClass: {
+                        popup: 'swal2-show',
+                        backdrop: 'swal2-backdrop-show'
+                    }
+                }).then(() => {
+                    modal.classList.remove('has-swal');
+                });
+                
+                return;
+            }
         }
 
         currentStep++;
@@ -1021,7 +1187,17 @@
         btn.addEventListener("click", function () {
 
             if (this.dataset.status !== "pending") {
-                alert("Pendaftaran yang sudah aktif tidak boleh diedit!");
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Tidak Bisa Edit!',
+                    text: 'Pendaftaran yang sudah aktif tidak boleh diedit!',
+                    position: 'center',
+                    showClass: {
+                        popup: 'swal2-show',
+                        backdrop: 'swal2-backdrop-show'
+                    }
+                });
+                
                 return;
             }
 
@@ -1095,6 +1271,32 @@
 
     document.addEventListener("click", () => {
         document.querySelectorAll(".dropdownMenu").forEach(m => m.classList.add("hidden"));
+    });
+
+    document.querySelectorAll('.formDelete').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            Swal.fire({
+                title: 'Yakin ingin hapus?',
+                text: "Data pendaftaran ini akan diarsipkan!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal',
+                position: 'center',
+                showClass: {
+                    popup: 'swal2-show',
+                    backdrop: 'swal2-backdrop-show'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
     });
 
 </script>

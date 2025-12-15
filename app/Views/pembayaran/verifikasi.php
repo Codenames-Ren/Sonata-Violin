@@ -433,10 +433,8 @@ button, input, select, textarea {
         rejectModal.classList.add("hidden");
     }
 
-    // Event listener untuk tombol Cancel
     btnCancelReject.addEventListener("click", closeRejectModal);
 
-    // Close modal ketika klik di backdrop
     rejectModal.addEventListener("click", e => {
         if (e.target === rejectModal) closeRejectModal();
     });
@@ -448,10 +446,9 @@ button, input, select, textarea {
         }
     });
 
-    // Event listener untuk semua tombol Tolak (Desktop + Mobile)
     function attachRejectButtons() {
         document.querySelectorAll("button[data-id]").forEach(btn => {
-            btn.removeEventListener("click", handleRejectClick); // Hapus listener lama
+            btn.removeEventListener("click", handleRejectClick); 
             btn.addEventListener("click", handleRejectClick);
         });
     }
@@ -462,7 +459,6 @@ button, input, select, textarea {
         openRejectModal(paymentId);
     }
 
-    // Jalankan saat pertama load
     attachRejectButtons();
 </script>
 

@@ -381,6 +381,7 @@
     <div class="container mx-auto px-6 lg:px-12">
         <div class="flex justify-between items-center h-20">
             <!-- Logo -->
+            <!-- <img src="<?= base_url('image/icon.png'); ?>" alt="logo" class="w-10 h-10 mr-[-630px]"> -->
             <a href="#home" class="text-2xl lg:text-3xl font-bold gradient-text tracking-tight">
                 SONATA VIOLIN
             </a>

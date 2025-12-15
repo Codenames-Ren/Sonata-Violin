@@ -2,6 +2,7 @@
 <?= $this->section('content') ?>
 
 <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     tailwind.config = {
         theme: {
@@ -17,6 +18,32 @@
 </script>
 
 <style>
+    .swal2-container {
+        z-index: 99999 !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+    }
+
+    .swal2-popup {
+        margin: 0 !important;
+        position: absolute !important;
+        top: 35% !important;
+        left: 56% !important;
+        transform: translate(-50%, -50%) !important;
+
+    }
+
+    .swal2-container.swal2-backdrop-show {
+        background: rgba(0, 0, 0, 0.6) !important;
+    }
+
+    #modal.has-swal {
+        backdrop-filter: none !important;
+    }
+
     button, input, select, textarea {
         transition: all 0.2s ease;
     }
@@ -160,7 +187,7 @@
                 </button>
 
                 <!-- Delete -->
-                <form method="POST" action="<?= base_url('/paket/delete/'.$p['id']) ?>" onsubmit="return confirm('Hapus paket ini?')">
+                <form method="POST" action="<?= base_url('/paket/delete/'.$p['id']) ?>" class="formDeletePaket">
                     <?= csrf_field() ?>
                     <button class="btn-hover bg-red-100 text-red-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-red-200 transition-all">
                         <i class="fa fa-trash mr-1"></i>Hapus
@@ -277,8 +304,7 @@
 
         </div>
 
-        <form method="POST" action="<?= base_url('/paket/delete/'.$p['id']) ?>" class="mt-2"
-              onsubmit="return confirm('Hapus paket ini?')">
+        <form method="POST" action="<?= base_url('/paket/delete/'.$p['id']) ?>" class="mt-2 formDeletePaket">
             <?= csrf_field() ?>
             <button class="w-full bg-red-100 text-red-700 px-3 py-2 rounded-lg text-sm font-semibold hover:bg-red-200">
                 <i class="fa fa-trash mr-1"></i>Hapus
@@ -328,7 +354,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="font-semibold text-gray-700 mb-2 block">Nama Paket</label>
-                        <input id="paket_nama" name="nama_paket" required class="w-full border-2 border-gray-200 rounded-lg px-4 py-2.5">
+                        <input id="paket_nama" name="nama_paket" class="w-full border-2 border-gray-200 rounded-lg px-4 py-2.5">
                     </div>
 
                     <div>
@@ -345,12 +371,12 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="font-semibold text-gray-700 mb-2 block">Durasi</label>
-                        <input id="paket_durasi" name="durasi" required class="w-full border-2 border-gray-200 rounded-lg px-4 py-2.5">
+                        <input id="paket_durasi" name="durasi" class="w-full border-2 border-gray-200 rounded-lg px-4 py-2.5">
                     </div>
 
                     <div>
                         <label class="font-semibold text-gray-700 mb-2 block">Jumlah Pertemuan</label>
-                        <input id="paket_pertemuan" name="jumlah_pertemuan" type="number" min="1" required class="w-full border-2 border-gray-200 rounded-lg px-4 py-2.5">
+                        <input id="paket_pertemuan" name="jumlah_pertemuan" type="number" min="1" class="w-full border-2 border-gray-200 rounded-lg px-4 py-2.5">
                     </div>
                 </div>
 
@@ -358,7 +384,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="font-semibold text-gray-700 mb-2 block">Harga (Rp)</label>
-                        <input id="paket_harga" name="harga" type="number" required class="w-full border-2 border-gray-200 rounded-lg px-4 py-2.5">
+                        <input id="paket_harga" name="harga" type="number" class="w-full border-2 border-gray-200 rounded-lg px-4 py-2.5">
                     </div>
 
                     <div>
@@ -589,6 +615,141 @@
             modalForm.action = "<?= base_url('/paket/update/') ?>" + id;
 
             openModal();
+        });
+    });
+
+    // FORM VALIDATION
+    modalForm.addEventListener("submit", function(e) {
+        e.preventDefault();
+        
+        const nama = document.getElementById("paket_nama").value.trim();
+        const durasi = document.getElementById("paket_durasi").value.trim();
+        const pertemuan = document.getElementById("paket_pertemuan").value.trim();
+        const harga = document.getElementById("paket_harga").value.trim();
+        
+        // Validasi Nama Paket
+        if (!nama) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Oops...',
+                text: 'Nama paket harus diisi!',
+                position: 'center',
+                showClass: {
+                    popup: 'swal2-show',
+                    backdrop: 'swal2-backdrop-show'
+                }
+            });
+            document.getElementById("paket_nama").focus();
+            return;
+        }
+        
+        // Validasi Durasi
+        if (!durasi) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Oops...',
+                text: 'Durasi harus diisi!',
+                position: 'center',
+                showClass: {
+                    popup: 'swal2-show',
+                    backdrop: 'swal2-backdrop-show'
+                }
+            });
+            document.getElementById("paket_durasi").focus();
+            return;
+        }
+        
+        // Validasi Jumlah Pertemuan
+        if (!pertemuan) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Oops...',
+                text: 'Jumlah pertemuan harus diisi!',
+                position: 'center',
+                showClass: {
+                    popup: 'swal2-show',
+                    backdrop: 'swal2-backdrop-show'
+                }
+            });
+            document.getElementById("paket_pertemuan").focus();
+            return;
+        }
+        
+        // Validasi Jumlah Pertemuan harus > 0
+        if (parseInt(pertemuan) <= 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Oops...',
+                text: 'Jumlah pertemuan harus lebih dari 0!',
+                position: 'center',
+                showClass: {
+                    popup: 'swal2-show',
+                    backdrop: 'swal2-backdrop-show'
+                }
+            });
+            document.getElementById("paket_pertemuan").focus();
+            return;
+        }
+        
+        // Validasi Harga
+        if (!harga) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Oops...',
+                text: 'Harga harus diisi!',
+                position: 'center',
+                showClass: {
+                    popup: 'swal2-show',
+                    backdrop: 'swal2-backdrop-show'
+                }
+            });
+            document.getElementById("paket_harga").focus();
+            return;
+        }
+        
+        // Validasi Harga harus > 0
+        if (parseInt(harga) <= 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Oops...',
+                text: 'Harga harus lebih dari 0!',
+                position: 'center',
+                showClass: {
+                    popup: 'swal2-show',
+                    backdrop: 'swal2-backdrop-show'
+                }
+            });
+            document.getElementById("paket_harga").focus();
+            return;
+        }
+        
+        this.submit();
+    });
+
+    // DELETE CONFIRMATION
+    document.querySelectorAll('.formDeletePaket').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            Swal.fire({
+                title: 'Yakin ingin hapus?',
+                text: "Data paket kursus ini akan dihapus permanen!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal',
+                position: 'center',
+                showClass: {
+                    popup: 'swal2-show',
+                    backdrop: 'swal2-backdrop-show'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
         });
     });
 </script>

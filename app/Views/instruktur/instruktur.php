@@ -4,6 +4,7 @@
 <?= $this->section('content') ?>
 
 <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 tailwind.config = {
     theme: {
@@ -19,41 +20,67 @@ tailwind.config = {
 </script>
 
 <style>
-input[type="search"]::-webkit-search-cancel-button {
-    -webkit-appearance: none;
-}
-button, input, select, textarea {
-    transition: all 0.2s ease;
-}
-.btn-hover:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.2);
-}
-.btn-hover:active {
-    transform: translateY(0);
-}
+    .swal2-container {
+        z-index: 99999 !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+    }
 
-.modal-content {
-    margin-top: 2rem;
-}
+    .swal2-popup {
+        margin: 0 !important;
+        position: absolute !important;
+        top: 35% !important;
+        left: 56% !important;
+        transform: translate(-50%, -50%) !important;
 
-.photo-preview-empty {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
-    border: 2px dashed #cbd5e0;
-}
+    }
 
-@media (max-width: 768px) {
-    .file-input-wrapper {
-        width: 100%;
+    .swal2-container.swal2-backdrop-show {
+        background: rgba(0, 0, 0, 0.6) !important;
+    }
+
+    #modal.has-swal {
+        backdrop-filter: none !important;
     }
     
-    .file-input-wrapper input[type="file"] {
-        font-size: 0.75rem;
+    input[type="search"]::-webkit-search-cancel-button {
+        -webkit-appearance: none;
     }
-}
+    button, input, select, textarea {
+        transition: all 0.2s ease;
+    }
+    .btn-hover:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.2);
+    }
+    .btn-hover:active {
+        transform: translateY(0);
+    }
+
+    .modal-content {
+        margin-top: 2rem;
+    }
+
+    .photo-preview-empty {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+        border: 2px dashed #cbd5e0;
+    }
+
+    @media (max-width: 768px) {
+        .file-input-wrapper {
+            width: 100%;
+        }
+        
+        .file-input-wrapper input[type="file"] {
+            font-size: 0.75rem;
+        }
+    }
 </style>
 
 <!-- HEADER -->
@@ -184,7 +211,7 @@ button, input, select, textarea {
 
                 <!-- DELETE -->
                 <form method="POST" action="<?= base_url('/instruktur/delete/'.$iData['id']) ?>"
-                    onsubmit="return confirm('Yakin ingin menghapus Data instruktur?')">
+                    class="formDeleteInstruktur">
                     <?= csrf_field() ?>
                     <button class="btn-hover bg-red-100 text-red-700 px-4 py-2 rounded-lg text-xs font-semibold hover:bg-red-200 transition-all">
                         <i class="fa fa-trash mr-1"></i>Hapus
@@ -260,7 +287,7 @@ button, input, select, textarea {
         </button>
 
         <form method="POST" action="<?= base_url('/instruktur/delete/'.$iData['id']) ?>"
-            class="col-span-3" onsubmit="return confirm('Yakin ingin menghapus Data instruktur?')">
+            class="col-span-3 formDeleteInstruktur">
             <?= csrf_field() ?>
             <button class="w-full bg-red-100 text-red-700 px-3 py-2 rounded-lg text-sm font-semibold hover:bg-red-200 transition-all">
                 <i class="fa fa-trash mr-1"></i>Hapus
@@ -710,13 +737,31 @@ button, input, select, textarea {
                 const tgl = document.getElementById("instruktur_tgl").value;
                 
                 if (!nama) {
-                    alert("Nama lengkap harus diisi!");
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Oops...',
+                        text: 'Nama lengkap harus diisi!',
+                        position: 'center',
+                        showClass: {
+                            popup: 'swal2-show',
+                            backdrop: 'swal2-backdrop-show'
+                        }
+                    });
                     document.getElementById("instruktur_nama").focus();
                     return;
                 }
                 
                 if (!tgl) {
-                    alert("Tanggal lahir harus diisi!");
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Oops...',
+                        text: 'Nama tanggal lahir harus diisi!',
+                        position: 'center',
+                        showClass: {
+                            popup: 'swal2-show',
+                            backdrop: 'swal2-backdrop-show'
+                        }
+                    });
                     document.getElementById("instruktur_tgl").focus();
                     return;
                 }
@@ -825,6 +870,33 @@ button, input, select, textarea {
             document.getElementById("fotoPreview").src = foto;
 
             openModal('edit');
+        });
+    });
+
+    // DELETE CONFIRMATION
+    document.querySelectorAll('.formDeleteInstruktur').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            Swal.fire({
+                title: 'Yakin ingin hapus?',
+                text: "Data instruktur ini akan dihapus permanen!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal',
+                position: 'center',
+                showClass: {
+                    popup: 'swal2-show',
+                    backdrop: 'swal2-backdrop-show'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
         });
     });
 

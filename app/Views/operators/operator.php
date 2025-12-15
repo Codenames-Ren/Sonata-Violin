@@ -2,6 +2,7 @@
 <?= $this->section('content') ?>
 
 <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     tailwind.config = {
         theme: {
@@ -17,6 +18,32 @@
 </script>
 
 <style>
+    .swal2-container {
+        z-index: 99999 !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+    }
+
+    .swal2-popup {
+        margin: 0 !important;
+        position: absolute !important;
+        top: 35% !important;
+        left: 57.5% !important;
+        transform: translate(-50%, -50%) !important;
+
+    }
+
+    .swal2-container.swal2-backdrop-show {
+        background: rgba(0, 0, 0, 0.6) !important;
+    }
+
+    #modal.has-swal {
+        backdrop-filter: none !important;
+    }
+
     button, input, select, textarea {
         transition: all 0.2s ease;
     }
@@ -110,7 +137,7 @@
                         </form>
 
                         <form method="POST" action="<?= base_url('/settings/operators/delete/'.$op['id']) ?>" 
-                              class="inline" onsubmit="return confirm('Hapus operator ini?')">
+                              class="inline formDeleteOperator">
                             <?= csrf_field() ?>
                             <button type="submit" class="bg-red-100 text-red-700 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-red-200 transition-all btn-hover">
                                 <i class="fa fa-trash mr-1"></i>Hapus
@@ -174,7 +201,7 @@
             </button>
         </form>
         <form method="POST" action="<?= base_url('/settings/operators/delete/'.$op['id']) ?>" 
-              class="col-span-3" onsubmit="return confirm('Hapus operator ini?')">
+              class="col-span-3 formDeleteOperator">
             <?= csrf_field() ?>
             <button type="submit" class="w-full bg-red-100 text-red-700 px-3 py-2 rounded-lg text-sm font-semibold hover:bg-red-200 transition-all">
                 <i class="fa fa-trash mr-1"></i>Hapus
@@ -225,14 +252,14 @@
             <div class="p-6 space-y-4 max-h-[65vh] overflow-y-auto">
                 <div>
                     <label class="font-semibold text-gray-700 mb-2 block">Username</label>
-                    <input id="op_username" name="username" required
+                    <input id="op_username" name="username" 
                            class="w-full border-2 border-gray-200 rounded-lg px-4 py-2.5 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                            placeholder="Masukkan username">
                 </div>
 
                 <div>
                     <label class="font-semibold text-gray-700 mb-2 block">Nama Lengkap</label>
-                    <input id="op_nama" name="nama_lengkap" required
+                    <input id="op_nama" name="nama_lengkap" 
                            class="w-full border-2 border-gray-200 rounded-lg px-4 py-2.5 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                            placeholder="Masukkan nama lengkap">
                 </div>
@@ -399,6 +426,163 @@
             document.getElementById("modalForm").action = "<?= base_url('/settings/operators/update/') ?>" + id;
             
             openModal();
+        });
+    });
+
+    // FORM VALIDATION
+    document.getElementById("modalForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        
+        const username = document.getElementById("op_username").value.trim();
+        const nama = document.getElementById("op_nama").value.trim();
+        const password = document.getElementById("op_password").value.trim();
+        const opId = document.getElementById("op_id").value;
+        
+        // Validasi Username
+        if (!username) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Oops...',
+                text: 'Username harus diisi!',
+                position: 'center',
+                showClass: {
+                    popup: 'swal2-show',
+                    backdrop: 'swal2-backdrop-show'
+                }
+            });
+            document.getElementById("op_username").focus();
+            return;
+        }
+        
+        // Validasi Username minimal 3 karakter
+        if (username.length < 3) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Oops...',
+                text: 'Username minimal 3 karakter!',
+                position: 'center',
+                showClass: {
+                    popup: 'swal2-show',
+                    backdrop: 'swal2-backdrop-show'
+                }
+            });
+            document.getElementById("op_username").focus();
+            return;
+        }
+        
+        // Validasi Nama Lengkap
+        if (!nama) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Oops...',
+                text: 'Nama lengkap harus diisi!',
+                position: 'center',
+                showClass: {
+                    popup: 'swal2-show',
+                    backdrop: 'swal2-backdrop-show'
+                }
+            });
+            document.getElementById("op_nama").focus();
+            return;
+        }
+        
+        // Validasi Password saat Create (harus diisi)
+        if (!opId && !password) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Oops...',
+                text: 'Password tidak boleh kosong!',
+                position: 'center',
+                showClass: {
+                    popup: 'swal2-show',
+                    backdrop: 'swal2-backdrop-show'
+                }
+            });
+            document.getElementById("op_password").focus();
+            return;
+        }
+        
+        // Validasi Password minimal 6 karakter (jika diisi)
+        if (password && password.length < 8) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Oops...',
+                text: 'Password minimal 8 karakter!',
+                position: 'center',
+                showClass: {
+                    popup: 'swal2-show',
+                    backdrop: 'swal2-backdrop-show'
+                }
+            });
+            document.getElementById("op_password").focus();
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('username', username);
+        formData.append('op_id', opId);
+
+        fetch('<?= base_url('/settings/operators/check-username') ?>', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (!data.available) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Username Sudah Dipakai!',
+                    text: 'Silakan gunakan username lain.',
+                    position: 'center',
+                    showClass: {
+                        popup: 'swal2-show',
+                        backdrop: 'swal2-backdrop-show'
+                    }
+                });
+                document.getElementById("op_username").focus();
+            } else {
+                document.getElementById("modalForm").submit();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Terjadi Kesalahan',
+                text: 'Gagal memvalidasi username. Silakan coba lagi.',
+                position: 'center'
+            });
+        });
+
+        return;
+        
+        this.submit();
+    });
+
+    // DELETE CONFIRMATION
+    document.querySelectorAll('.formDeleteOperator').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            Swal.fire({
+                title: 'Yakin ingin hapus?',
+                text: "Data operator ini akan dihapus permanen!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal',
+                position: 'center',
+                showClass: {
+                    popup: 'swal2-show',
+                    backdrop: 'swal2-backdrop-show'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
         });
     });
 </script>

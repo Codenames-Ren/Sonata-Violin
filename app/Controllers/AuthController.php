@@ -25,21 +25,30 @@ class AuthController extends BaseController
 
         $user = $this->operator
                     ->where('username', $username)
-                    ->where('deleted_at', null) // ⬅ CEK SOFT DELETE
+                    ->where('deleted_at', null) 
                     ->first();
 
         if (!$user) {
-            return redirect()->back()->with('error', 'Username tidak terdaftar!');
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Username tidak terdaftar!'
+            ]);
         }
 
         // CEK STATUS AKUN
         if ($user['status'] === 'nonaktif') {
-            return redirect()->back()->with('error', 'Akun ini telah dinonaktifkan.');
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Akun ini telah dinonaktifkan.'
+            ]);
         }
 
         // CEK PASSWORD
         if (!password_verify($password, $user['password'])) {
-            return redirect()->back()->with('error', 'Username atau Password salah!');
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Username atau Password salah!'
+            ]);
         }
 
         // SET SESSION
@@ -51,7 +60,11 @@ class AuthController extends BaseController
             'role'      => $user['role'],
         ]);
 
-        return redirect()->to('/dashboard');
+        // LOGIN BERHASIL - Return JSON
+        return $this->response->setJSON([
+            'success' => true,
+            'message' => 'Selamat datang, ' . $user['nama_lengkap'] . '!'
+        ]);
     }
 
     public function registerProcess()
@@ -61,7 +74,7 @@ class AuthController extends BaseController
             'nama_lengkap'  => $this->request->getPost('nama_lengkap'),
             'password'      => password_hash($this->request->getPost('password'), PASSWORD_DEFAULT),
             'role'          => 'operator',
-            'status'        => 'aktif', // ⬅ default wajib
+            'status'        => 'aktif',
             'created_at'    => date('Y-m-d H:i:s'),
             'deleted_at'    => null
         ];

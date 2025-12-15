@@ -31,6 +31,19 @@ class OperatorController extends BaseController
             return redirect()->back()->with('error', 'Password wajib untuk membuat akun admin.');
         }
 
+         $existingUser = $this->operator
+        ->where('username', $this->request->getPost('username'))
+        ->where('deleted_at', null)
+        ->first();
+    
+        if ($existingUser) {
+            return redirect()->back()->with('error', 'Username sudah digunakan! Gunakan username lain.');
+        }
+
+        if ($this->request->getPost('role') === 'admin' && empty($this->request->getPost('password'))) {
+            return redirect()->back()->with('error', 'Password wajib untuk membuat akun admin.');
+        }
+
         $this->operator->insert([
             'username'      => $this->request->getPost('username'),
             'nama_lengkap'  => $this->request->getPost('nama_lengkap'),
@@ -44,12 +57,46 @@ class OperatorController extends BaseController
         return redirect()->back()->with('success', 'Operator berhasil ditambahkan!');
     }
 
+    public function checkUsername()
+    {
+        $username = $this->request->getPost('username');
+        $opId = $this->request->getPost('op_id');
+
+        $query = $this->operator
+            ->where('username', $username)
+            ->where('deleted_at', null);
+
+        if (!empty($opId)) {
+            $query->where('id_operator !=', $opId);
+        }
+
+        $exists = $query->first();
+
+        return $this->response->setJSON([
+            'available' => !$exists
+        ]);
+    }
+
     public function update($id)
     {
         $op = $this->operator->find($id);
 
         if (!$op) {
             return redirect()->back()->with('error', 'Operator tidak ditemukan.');
+        }
+
+         $existingUser = $this->operator
+        ->where('username', $this->request->getPost('username'))
+        ->where('id_operator !=', $id)
+        ->where('deleted_at', null)
+        ->first();
+        
+        if ($existingUser) {
+            return redirect()->back()->with('error', 'Username sudah digunakan! Gunakan username lain.');
+        }
+
+        if ($op['role'] === 'admin' && $this->request->getPost('role') !== 'admin') {
+            return redirect()->back()->with('error', 'Admin tidak boleh diubah menjadi operator.');
         }
 
         if ($op['role'] === 'admin' && $this->request->getPost('role') !== 'admin') {

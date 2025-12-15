@@ -4,6 +4,7 @@
 <?= $this->section('content') ?>
 
 <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 tailwind.config = {
     theme: {
@@ -19,23 +20,49 @@ tailwind.config = {
 </script>
 
 <style>
-input[type="search"]::-webkit-search-cancel-button {
-    -webkit-appearance: none;
-}
-button, input, select, textarea {
-    transition: all 0.2s ease;
-}
-.btn-hover:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.2);
-}
-.btn-hover:active {
-    transform: translateY(0);
-}
+    .swal2-container {
+        z-index: 99999 !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+    }
 
-.modal-content {
-    margin-top: 2rem;
-}
+    .swal2-popup {
+        margin: 0 !important;
+        position: absolute !important;
+        top: 35% !important;
+        left: 57.5% !important;
+        transform: translate(-50%, -50%) !important;
+
+    }
+
+    .swal2-container.swal2-backdrop-show {
+        background: rgba(0, 0, 0, 0.6) !important;
+    }
+
+    #modal.has-swal {
+        backdrop-filter: none !important;
+    }
+
+    input[type="search"]::-webkit-search-cancel-button {
+        -webkit-appearance: none;
+    }
+    button, input, select, textarea {
+        transition: all 0.2s ease;
+    }
+    .btn-hover:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.2);
+    }
+    .btn-hover:active {
+        transform: translateY(0);
+    }
+
+    .modal-content {
+        margin-top: 2rem;
+    }
 </style>
 
 <!-- HEADER -->
@@ -140,7 +167,7 @@ button, input, select, textarea {
 
                 <!-- DELETE -->
                 <form method="POST" action="<?= base_url('/ruang-kelas/delete/'.$r['id']) ?>"
-                      onsubmit="return confirm('Hapus ruang kelas ini?')">
+                      class="formDeleteRuang">
                     <?= csrf_field() ?>
                     <button class="btn-hover text-xs bg-red-100 text-red-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-red-200 transition-all">
                         <i class="fa fa-trash mr-1"></i>Hapus
@@ -196,7 +223,7 @@ button, input, select, textarea {
         </button>
 
         <form method="POST" action="<?= base_url('/ruang-kelas/delete/'.$r['id']) ?>"
-            class="col-span-3" onsubmit="return confirm('Hapus ruang kelas ini?')">
+            class="col-span-3 formDeleteRuang">
             <?= csrf_field() ?>
             <button class="w-full bg-red-100 text-red-700 px-3 py-2 rounded-lg text-sm font-semibold hover:bg-red-200 transition-all">
                 <i class="fa fa-trash mr-1"></i>Hapus
@@ -244,14 +271,14 @@ button, input, select, textarea {
             <div class="p-6 space-y-4">
                 <div>
                     <label class="font-semibold text-gray-700 mb-2 block">Nama Ruang</label>
-                    <input id="nama_ruang" name="nama_ruang" required
+                    <input id="nama_ruang" name="nama_ruang"
                            class="w-full border-2 border-gray-200 rounded-lg px-4 py-2.5 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                            placeholder="Masukkan nama ruang">
                 </div>
 
                 <div>
                     <label class="font-semibold text-gray-700 mb-2 block">Kapasitas</label>
-                    <input id="kapasitas" name="kapasitas" type="number" required
+                    <input id="kapasitas" name="kapasitas" type="number" 
                            class="w-full border-2 border-gray-200 rounded-lg px-4 py-2.5 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                            placeholder="Masukkan kapasitas">
                 </div>
@@ -466,6 +493,104 @@ button, input, select, textarea {
 
             modalForm.action = "<?= base_url('/ruang-kelas/update/') ?>" + id;
             openModal("edit");
+        });
+    });
+
+    // FORM VALIDATION
+    modalForm.addEventListener("submit", function(e) {
+        e.preventDefault();
+        
+        const nama = inputNama.value.trim();
+        const kapasitas = inputKapasitas.value.trim();
+        const fasilitas = inputFasilitas.value.trim();
+        
+        if (!nama) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Oops...',
+                text: 'Nama ruang harus diisi!',
+                position: 'center',
+                showClass: {
+                    popup: 'swal2-show',
+                    backdrop: 'swal2-backdrop-show'
+                }
+            });
+            inputNama.focus();
+            return;
+        }
+        
+        if (!kapasitas) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Oops...',
+                text: 'Kapasitas harus diisi!',
+                position: 'center',
+                showClass: {
+                    popup: 'swal2-show',
+                    backdrop: 'swal2-backdrop-show'
+                }
+            });
+            inputKapasitas.focus();
+            return;
+        }
+        
+        if (parseInt(kapasitas) <= 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Oops...',
+                text: 'Kapasitas harus lebih dari 0!',
+                position: 'center',
+                showClass: {
+                    popup: 'swal2-show',
+                    backdrop: 'swal2-backdrop-show'
+                }
+            });
+            inputKapasitas.focus();
+            return;
+        }
+        
+        if (!fasilitas) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Oops...',
+                text: 'Fasilitas harus diisi!',
+                position: 'center',
+                showClass: {
+                    popup: 'swal2-show',
+                    backdrop: 'swal2-backdrop-show'
+                }
+            });
+            inputFasilitas.focus();
+            return;
+        }
+        
+        this.submit();
+    });
+
+    // DELETE CONFIRMATION
+    document.querySelectorAll('.formDeleteRuang').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            Swal.fire({
+                title: 'Yakin ingin hapus?',
+                text: "Data ruang kelas ini akan dihapus permanen!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal',
+                position: 'center',
+                showClass: {
+                    popup: 'swal2-show',
+                    backdrop: 'swal2-backdrop-show'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
         });
     });
 

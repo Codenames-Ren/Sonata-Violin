@@ -4,6 +4,7 @@
 <?= $this->section('content') ?>
 
 <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     tailwind.config = {
         theme: {
@@ -19,6 +20,32 @@
 </script>
 
 <style>
+    .swal2-container {
+        z-index: 99999 !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+    }
+
+    .swal2-popup {
+        margin: 0 !important;
+        position: absolute !important;
+        top: 35% !important;
+        left: 56% !important;
+        transform: translate(-50%, -50%) !important;
+
+    }
+
+    .swal2-container.swal2-backdrop-show {
+        background: rgba(0, 0, 0, 0.6) !important;
+    }
+
+    #modal.has-swal {
+        backdrop-filter: none !important;
+    }
+
     input[type="search"]::-webkit-search-cancel-button {
         -webkit-appearance: none;
     }
@@ -198,9 +225,9 @@
                 <!-- DELETE -->
                 <?php if ($canDelete): ?>
                 <form method="POST" action="<?= base_url('/siswa/delete/'.$s['id']) ?>"
-                    onsubmit="return confirm('Hapus siswa ini?')">
+                    class="formDeleteSiswa">
                     <?= csrf_field() ?>
-                    <button class="btn-hover bg-red-100 text-red-700 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-red-200 transition-all">
+                    <button type="submit" class="btn-hover bg-red-100 text-red-700 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-red-200 transition-all">
                         <i class="fa fa-trash mr-1"></i>Hapus
                     </button>
                 </form>
@@ -287,10 +314,10 @@
 
             <!-- DELETE -->
             <?php if ($canDelete): ?>
-            <form method="POST" action="<?= base_url('/siswa/delete/'.$s['id']) ?>" class="col-span-3"
-                onsubmit="return confirm('Hapus siswa ini?')">
+            <form method="POST" action="<?= base_url('/siswa/delete/'.$s['id']) ?>" 
+                class="col-span-3 formDeleteSiswa">
                 <?= csrf_field() ?>
-                <button class="w-full bg-red-100 text-red-700 px-2 py-2 rounded-lg text-xs font-semibold hover:bg-red-200 transition-all">
+                <button type="submit" class="w-full bg-red-100 text-red-700 px-2 py-2 rounded-lg text-xs font-semibold hover:bg-red-200 transition-all">
                     <i class="fa fa-trash mr-1"></i>Hapus
                 </button>
             </form>
@@ -697,19 +724,36 @@
 
     btnNextStep.addEventListener("click", () => {
         if (currentStep < 3) {
-            // Validasi Step 1
             if (currentStep === 1) {
                 const nama = document.getElementById("siswa_nama").value.trim();
                 const tgl = document.getElementById("siswa_tgl").value;
                 
                 if (!nama) {
-                    alert("Nama lengkap harus diisi!");
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Oops...',
+                        text: 'Nama lengkap harus diisi!',
+                        position: 'center',
+                        showClass: {
+                            popup: 'swal2-show',
+                            backdrop: 'swal2-backdrop-show'
+                        }
+                    });
                     document.getElementById("siswa_nama").focus();
                     return;
                 }
                 
                 if (!tgl) {
-                    alert("Tanggal lahir harus diisi!");
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Oops...',
+                        text: 'Tanggal lahir harus diisi!',
+                        position: 'center',
+                        showClass: {
+                            popup: 'swal2-show',
+                            backdrop: 'swal2-backdrop-show'
+                        }
+                    });
                     document.getElementById("siswa_tgl").focus();
                     return;
                 }
@@ -722,7 +766,16 @@
                 const alamat = document.getElementById("siswa_alamat").value.trim();
                 
                 if (!email) {
-                    alert("Email harus diisi!");
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Oops...',
+                        text: 'Email harus diisi!',
+                        position: 'center',
+                        showClass: {
+                            popup: 'swal2-show',
+                            backdrop: 'swal2-backdrop-show'
+                        }
+                    });
                     document.getElementById("siswa_email").focus();
                     return;
                 }
@@ -730,19 +783,46 @@
                 // Validasi format email
                 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 if (!emailPattern.test(email)) {
-                    alert("Format email tidak valid!");
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Oops...',
+                        text: 'Format email tidak valid!',
+                        position: 'center',
+                        showClass: {
+                            popup: 'swal2-show',
+                            backdrop: 'swal2-backdrop-show'
+                        }
+                    });
                     document.getElementById("siswa_email").focus();
                     return;
                 }
                 
                 if (!nohp) {
-                    alert("No HP harus diisi!");
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Oops...',
+                        text: 'No HP harus diisi!',
+                        position: 'center',
+                        showClass: {
+                            popup: 'swal2-show',
+                            backdrop: 'swal2-backdrop-show'
+                        }
+                    });
                     document.getElementById("siswa_nohp").focus();
                     return;
                 }
                 
                 if (!alamat) {
-                    alert("Alamat harus diisi!");
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Oops...',
+                        text: 'Alamat harus diisi!',
+                        position: 'center',
+                        showClass: {
+                            popup: 'swal2-show',
+                            backdrop: 'swal2-backdrop-show'
+                        }
+                    });
                     document.getElementById("siswa_alamat").focus();
                     return;
                 }
@@ -812,6 +892,32 @@
             document.getElementById("fotoPreview").src = fotoUrl;
 
             openModal('edit');
+        });
+    });
+
+    document.querySelectorAll('.formDeleteSiswa').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            Swal.fire({
+                title: 'Yakin ingin hapus?',
+                text: "Data siswa ini akan dihapus permanen!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal',
+                position: 'center',
+                showClass: {
+                    popup: 'swal2-show',
+                    backdrop: 'swal2-backdrop-show'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
         });
     });
 
