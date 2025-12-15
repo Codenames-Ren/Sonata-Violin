@@ -5,7 +5,7 @@ use CodeIgniter\Router\RouteCollection;
 /**
  * @var RouteCollection $routes
  */
-$routes->get('/', 'Home::index');
+$routes->get('/', 'HomeController::index');
 $routes->get('/login', 'AuthController::index');
 $routes->post('/login', 'AuthController::loginProcess');
 $routes->post('/register', 'AuthController::registerProcess');
