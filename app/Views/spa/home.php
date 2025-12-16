@@ -524,7 +524,7 @@
                             <div class="space-y-2 mb-6">
                                 <div class="flex items-center text-sm">
                                     <i class="fas fa-check-circle text-primary mr-3"></i>
-                                    <span><?= esc($pk['jumlah_pertemuan']) ?> Sessions / Month</span>
+                                    <span><?= esc($pk['jumlah_pertemuan']) ?>x Sessions</span>
                                 </div>
                                 <div class="flex items-center text-sm">
                                     <i class="fas fa-check-circle text-primary mr-3"></i>
@@ -645,7 +645,8 @@
                 About <span class="gradient-text">Sonata Violin</span>
             </h2>
             <p class="text-xl text-white/70 leading-relaxed mb-12">
-                Sonata Violin adalah lembaga kursus biola profesional yang didedikasikan untuk membantu siswa dari semua level mengembangkan keterampilan musik mereka. Dengan pengajar berpengalaman dan kurikulum yang dirancang khusus, kami memastikan pengalaman belajar yang menyenangkan dan efektif.
+                Sonata Violin is a professional violin course institution dedicated to helping students of all levels develop their musical skills. 
+                With experienced instructors and a specially designed curriculum, we ensure a fun and effective learning experience.
             </p>
 
             <div class="grid md:grid-cols-3 gap-8 mt-16">
@@ -1047,7 +1048,7 @@
 
     // Create and inject modal HTML into page
     const modalHTML = `
-        <div id="registerModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-start justify-center p-4 z-50">
+        <div id="registerModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-start justify-center p-16 z-50">
             <div id="modalBox" class="modal-content bg-gradient-to-br from-slate-800 to-slate-900 w-full max-w-3xl rounded-3xl shadow-2xl overflow-hidden transform transition-all duration-300 opacity-0 scale-95">
                 
                 <!-- HEADER -->
