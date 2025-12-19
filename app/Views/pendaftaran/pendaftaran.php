@@ -269,17 +269,6 @@
                     <i class="fa fa-pen mr-1"></i>Edit
                 </button>
                 <?php endif; ?>
-
-                <!-- DELETE (Only Admin) -->
-                <?php if(session()->get('role') === 'admin'): ?>
-                <form method="POST" action="<?= base_url('/pendaftaran/delete/'.$p['id']) ?>"
-                    class="formDelete">
-                    <?= csrf_field() ?>
-                    <button type="submit" class="btn-hover bg-red-100 text-red-700 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-red-200 transition-all">
-                        <i class="fa fa-trash mr-1"></i>Hapus
-                    </button>
-                </form>
-                <?php endif; ?>
             </td>
 
         </tr>
@@ -405,16 +394,6 @@
                 data-nominal="<?= esc($p['nominal'] ?? '', 'attr') ?>">
                 <i class="fa fa-pen"></i>
             </button>
-            <?php endif; ?>
-
-            <?php if(session()->get('role') === 'admin'): ?>
-            <form method="POST" action="<?= base_url('/pendaftaran/delete/'.$p['id']) ?>"
-                class="col-span-2 formDelete">
-                <?= csrf_field() ?>
-                <button type="submit" class="w-full bg-red-100 text-red-700 px-2 py-2 rounded-lg text-xs font-semibold hover:bg-red-200 transition-all">
-                    <i class="fa fa-trash mr-1"></i>Hapus
-                </button>
-            </form>
             <?php endif; ?>
         </div>
 
@@ -1271,32 +1250,6 @@
 
     document.addEventListener("click", () => {
         document.querySelectorAll(".dropdownMenu").forEach(m => m.classList.add("hidden"));
-    });
-
-    document.querySelectorAll('.formDelete').forEach(form => {
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            Swal.fire({
-                title: 'Yakin ingin hapus?',
-                text: "Data pendaftaran ini akan diarsipkan!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#ef4444',
-                cancelButtonColor: '#6b7280',
-                confirmButtonText: 'Ya, Hapus!',
-                cancelButtonText: 'Batal',
-                position: 'center',
-                showClass: {
-                    popup: 'swal2-show',
-                    backdrop: 'swal2-backdrop-show'
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    form.submit();
-                }
-            });
-        });
     });
 
 </script>

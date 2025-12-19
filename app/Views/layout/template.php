@@ -36,30 +36,75 @@
 $uri = service('uri')->getPath();
 $role = session('role');
 
-$menuGroups = [
-  ['id'=>'dashboard','label'=>'Dashboard','icon'=>'fa-home','items'=>null,'link'=>'/dashboard'],
+$menuGroups = [];
 
-  $role === 'admin'
-  ? ['id'=>'management','label'=>'Management','icon'=>'fa-boxes-stacked','items'=>[
+// DASHBOARD (ADMIN & OPERATOR ONLY)
+if (in_array($role, ['admin', 'operator'])) {
+  $menuGroups[] = [
+    'id'=>'dashboard',
+    'label'=>'Dashboard',
+    'icon'=>'fa-home',
+    'items'=>null,
+    'link'=>'/dashboard'
+  ];
+}
+
+//  MANAGEMENT (ADMIN ONLY)
+if ($role === 'admin') {
+  $menuGroups[] = [
+    'id'=>'management',
+    'label'=>'Management',
+    'icon'=>'fa-boxes-stacked',
+    'items'=>[
       ['/siswa','Siswa','fa-user-graduate'],
       ['/instruktur','Instruktur','fa-chalkboard-user'],
       ['/ruang-kelas','Ruang Kelas','fa-door-open'],
       ['/paket','Paket Kursus','fa-box-open'],
-  ]]
-  : null,
+    ]
+  ];
+}
 
-  ['id'=>'operations','label'=>'Operations','icon'=>'fa-briefcase','items'=>[
+// OPERATIONS
+if (in_array($role, ['admin', 'operator'])) {
+  $menuGroups[] = [
+    'id'=>'operations',
+    'label'=>'Operations',
+    'icon'=>'fa-briefcase',
+    'items'=>[
       ['/jadwal','Jadwal Kelas','fa-calendar-days'],
       ['/pendaftaran','Pendaftaran','fa-file-signature'],
       ['/pembayaran','Verifikasi Pembayaran','fa-money-check-dollar'],
       ['/absensi','Absensi','fa-user-check'],
-  ]],
+    ]
+  ];
+}
 
-  ['id'=>'reports','label'=>'Reports','icon'=>'fa-chart-pie','items'=>[
+//  INSTRUKTUR MENU (KHUSUS)
+if ($role === 'instruktur') {
+  $menuGroups[] = [
+    'id'=>'instruktur',
+    'label'=>'Pengajaran',
+    'icon'=>'fa-chalkboard',
+    'items'=>[
+      ['/jadwal','Jadwal Kelas','fa-calendar-days'],
+      ['/absensi','Absensi','fa-user-check'],
+      ['/progress','Progress Kursus','fa-chart-line'],
+    ]
+  ];
+}
+
+// REPORTS (ADMIN & OPERATOR)
+if (in_array($role, ['admin', 'operator'])) {
+  $menuGroups[] = [
+    'id'=>'reports',
+    'label'=>'Reports',
+    'icon'=>'fa-chart-pie',
+    'items'=>[
       ['/progress','Progress Kursus','fa-chart-line'],
       ['/laporan','Laporan','fa-file-pdf'],
-  ]],
-];
+    ]
+  ];
+}
 ?>
 
 <!-- MOBILE OVERLAY -->
@@ -81,7 +126,9 @@ $menuGroups = [
     </div>
     <div>
       <span class="text-white font-bold text-lg block leading-tight">Sonata Violin</span>
-      <span class="text-cyan-400 text-xs font-medium">Admin Panel</span>
+      <span class="text-cyan-400 text-xs font-medium">
+        <?= ucfirst($role); ?> Panel
+      </span>
     </div>
   </div>
 
@@ -205,8 +252,11 @@ $menuGroups = [
         </button>
 
         <div>
-          <h1 class="text-2xl font-bold text-slate-800"><?= $page_title ?? 'Dashboard'; ?></h1>
-          <p class="text-sm text-slate-500"><?= $page_subtitle ?? 'Pantau progres, jaga kelancaran operasional.'; ?></p>
+          <h1 class="text-2xl font-bold text-slate-800"><?= $page_title ?? ($role === 'instruktur' ? 'Jadwal Kelas' : 'Dashboard') ?></h1>
+          <p class="text-sm text-slate-500"><?= $page_subtitle ?? ($role === 'instruktur'
+            ? 'Jadwal mengajar sesuai kelas yang diampu.'
+            : 'Pantau progres, jaga kelancaran operasional.') ?>
+          </p>
         </div>
       </div>
 

@@ -15,11 +15,21 @@ class OperatorModel extends Model
         'password',
         'nama_lengkap',
         'role',
-        'status',     
+        'instruktur_id',
+        'status',
         'created_at',
-        'deleted_at'  
+        'deleted_at'
     ];
 
-    protected $useSoftDeletes   = true; 
+    protected $useSoftDeletes   = true;
     protected $useTimestamps    = false;
+
+    // Helper list operator + nama instruktur
+    public function getWithInstruktur()
+    {
+        return $this->select('operator.*, instruktur.nama AS nama_instruktur')
+            ->join('instruktur', 'instruktur.id = operator.instruktur_id', 'left')
+            ->where('operator.deleted_at', null)
+            ->findAll();
+    }
 }

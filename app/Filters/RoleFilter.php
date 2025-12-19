@@ -12,18 +12,31 @@ class RoleFilter implements FilterInterface
     {
         $role = session('role');
 
-        // Jika belum login
+        // Belum login
         if (!$role) {
             return redirect()->to('/login');
         }
 
+        $path = service('uri')->getPath();
+
+        // Instruktor dilarang ke dashboard
+        if ($role === 'instruktur' && $path === 'dashboard') {
+            return redirect()->to('/jadwal');
+        }
+
         // Jika route butuh role tertentu
         if ($arguments && !in_array($role, $arguments)) {
+            // Redirect sesuai role
+            if ($role === 'instruktur') {
+                return redirect()->to('/jadwal')->with('error', 'Akses ditolak.');
+            }
+
             return redirect()->to('/dashboard')->with('error', 'Akses ditolak.');
         }
     }
 
     public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
     {
+
     }
 }

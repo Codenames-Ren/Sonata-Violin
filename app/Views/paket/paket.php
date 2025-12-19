@@ -86,124 +86,129 @@
 
 <!-- DESKTOP TABLE -->
 <div class="hidden md:block bg-white shadow-lg rounded-xl overflow-hidden">
-    <table class="w-full table-auto">
-        <thead class="bg-gradient-to-r from-gray-50 to-gray-100 text-gray-600 uppercase text-sm font-semibold border-b-2 border-gray-200">
-        <tr>
-            <th class="py-4 px-4">NO</th>
-            <th class="py-4 px-4">Nama Paket</th>
-            <th class="py-4 px-4">Level</th>
-            <th class="py-4 px-4">Durasi</th>
-            <th class="py-4 px-4">Pertemuan</th>
-            <th class="py-4 px-4">Periode Daftar</th>
-            <th class="py-4 px-4">Periode Belajar</th>
-            <th class="py-4 px-4">Batch</th>
-            <th class="py-4 px-4">Harga</th>
-            <th class="py-4 px-4">Status</th>
-            <th class="py-4 px-4">Aksi</th>
-        </tr>
-        </thead>
+    <!-- Wrapper untuk horizontal scroll -->
+    <div class="overflow-x-auto">
+        <table class="w-full table-auto">
+            <thead class="bg-gradient-to-r from-gray-50 to-gray-100 text-gray-600 uppercase text-sm font-semibold border-b-2 border-gray-200">
+            <tr>
+                <th class="py-4 px-4 whitespace-nowrap">NO</th>
+                <th class="py-4 px-4 whitespace-nowrap">Nama Paket</th>
+                <th class="py-4 px-4 whitespace-nowrap">Level</th>
+                <th class="py-4 px-4 whitespace-nowrap">Durasi</th>
+                <th class="py-4 px-4 whitespace-nowrap">Pertemuan</th>
+                <th class="py-4 px-4 whitespace-nowrap">Periode Daftar</th>
+                <th class="py-4 px-4 whitespace-nowrap">Periode Belajar</th>
+                <th class="py-4 px-4 whitespace-nowrap">Batch</th>
+                <th class="py-4 px-4 whitespace-nowrap">Harga</th>
+                <th class="py-4 px-4 whitespace-nowrap">Status</th>
+                <th class="py-4 px-4 whitespace-nowrap min-w-[280px]">Aksi</th>
+            </tr>
+            </thead>
 
-        <tbody id="tableBody" class="divide-y divide-gray-100">
-        <?php if(!empty($paket)): $i=1; foreach($paket as $p): ?>
-        <tr class="table-row hover:bg-gray-50 transition-colors" data-index="<?= $i-1 ?>">
+            <tbody id="tableBody" class="divide-y divide-gray-100">
+            <?php if(!empty($paket)): $i=1; foreach($paket as $p): ?>
+            <tr class="table-row hover:bg-gray-50 transition-colors" data-index="<?= $i-1 ?>">
 
-            <td class="py-4 px-4 text-center font-medium text-gray-600"><?= $i++ ?></td>
+                <td class="py-4 px-4 text-center font-medium text-gray-600"><?= $i++ ?></td>
 
-            <td class="py-4 px-4 font-semibold text-gray-800"><?= esc($p['nama_paket']) ?></td>
+                <td class="py-4 px-4 font-semibold text-gray-800 whitespace-nowrap"><?= esc($p['nama_paket']) ?></td>
 
-            <td class="py-4 px-4 text-center">
-            <?php 
-                $levelColors = [
-                    'beginner' => 'bg-green-100 text-green-700',
-                    'intermediate' => 'bg-orange-100 text-orange-700',
-                    'advanced' => 'bg-blue-100 text-blue-700'
-                ];
-                $colorClass = $levelColors[$p['level']] ?? 'bg-gray-100 text-gray-700';
-            ?>
-            <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold <?= $colorClass ?>">
-                <?= esc(ucfirst($p['level'])) ?>
-            </span>
-            </td>
+                <td class="py-4 px-4 text-center">
+                <?php 
+                    $levelColors = [
+                        'beginner' => 'bg-green-100 text-green-700',
+                        'intermediate' => 'bg-orange-100 text-orange-700',
+                        'advanced' => 'bg-blue-100 text-blue-700'
+                    ];
+                    $colorClass = $levelColors[$p['level']] ?? 'bg-gray-100 text-gray-700';
+                ?>
+                <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold <?= $colorClass ?>">
+                    <?= esc(ucfirst($p['level'])) ?>
+                </span>
+                </td>
 
-            <td class="py-4 px-4 text-center text-gray-600"><?= esc($p['durasi']) ?></td>
+                <td class="py-4 px-4 text-center text-gray-600 whitespace-nowrap"><?= esc($p['durasi']) ?></td>
 
-            <td class="py-4 px-4 text-center text-gray-600"><?= esc($p['jumlah_pertemuan']) ?>x</td>
+                <td class="py-4 px-4 text-center text-gray-600"><?= esc($p['jumlah_pertemuan']) ?>x</td>
 
-            <td class="py-4 px-4 text-center text-gray-600">
-                <?= esc($p['periode_mulai']) ?> - <?= esc($p['periode_selesai']) ?>
-            </td>
+                <td class="py-4 px-4 text-center text-gray-600 whitespace-nowrap">
+                    <?= esc($p['periode_mulai']) ?> - <?= esc($p['periode_selesai']) ?>
+                </td>
 
-            <td class="py-4 px-4 text-center text-gray-600">
-                <?= esc($p['tanggal_mulai']) ?> - <?= esc($p['tanggal_selesai']) ?>
-            </td>
+                <td class="py-4 px-4 text-center text-gray-600 whitespace-nowrap">
+                    <?= esc($p['tanggal_mulai']) ?> - <?= esc($p['tanggal_selesai']) ?>
+                </td>
 
-            <td class="py-4 px-4 text-center text-gray-600">
-                <?= esc($p['batch'] ?: '-') ?>
-            </td>
+                <td class="py-4 px-4 text-center text-gray-600">
+                    <?= esc($p['batch'] ?: '-') ?>
+                </td>
 
-            <td class="py-4 px-4 text-center font-semibold text-primary">
-                Rp <?= number_format($p['harga'],0,',','.') ?>
-            </td>
+                <td class="py-4 px-4 text-center font-semibold text-primary whitespace-nowrap">
+                    Rp <?= number_format($p['harga'],0,',','.') ?>
+                </td>
 
-            <td class="py-4 px-4 text-center">
-                <?php if($p['status'] === 'aktif'): ?>
-                    <span class="px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">Aktif</span>
-                <?php else: ?>
-                    <span class="px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700">Nonaktif</span>
-                <?php endif; ?>
-            </td>
+                <td class="py-4 px-4 text-center">
+                    <?php if($p['status'] === 'aktif'): ?>
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">Aktif</span>
+                    <?php else: ?>
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700">Nonaktif</span>
+                    <?php endif; ?>
+                </td>
 
-            <td class="py-4 px-4 flex justify-center gap-2 flex-wrap">
+                <!-- BAGIAN BUTTON YANG DIPERBAIKI -->
+                <td class="py-4 px-4">
+                    <div class="flex flex-wrap justify-center gap-2 min-w-[280px]">
 
-                <!-- Switch -->
-                <form method="POST" action="<?= base_url('/paket/status/'.$p['id']) ?>">
-                    <?= csrf_field() ?>
-                    <button class="btn-hover px-3 py-2 rounded-lg text-sm font-semibold transition-all <?= $p['status']==='aktif' ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700' ?> px-4 py-2 rounded-lg text-sm font-semibold">
-                        <?= $p['status']==='aktif' ? 'Nonaktifkan' : 'Aktifkan' ?>
-                    </button>
-                </form>
+                        <!-- Switch -->
+                        <form method="POST" action="<?= base_url('/paket/status/'.$p['id']) ?>" class="w-auto">
+                            <?= csrf_field() ?>
+                            <button class="btn-hover px-3 py-2 rounded-lg text-sm font-semibold transition-all whitespace-nowrap <?= $p['status']==='aktif' ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' : 'bg-green-100 text-green-700 hover:bg-green-200' ?>">
+                                <?= $p['status']==='aktif' ? 'Nonaktifkan' : 'Aktifkan' ?>
+                            </button>
+                        </form>
 
-                <!-- Edit -->
-                <button
-                    class="btnEdit btn-hover bg-indigo-100 text-indigo-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-200 transition-all"
-                    data-id="<?= $p['id'] ?>"
-                    data-nama="<?= esc($p['nama_paket'], 'attr') ?>"
-                    data-level="<?= esc($p['level'], 'attr') ?>"
-                    data-durasi="<?= esc($p['durasi'], 'attr') ?>"
-                    data-pertemuan="<?= esc($p['jumlah_pertemuan'], 'attr') ?>"
-                    data-harga="<?= esc($p['harga'], 'attr') ?>"
-                    data-deskripsi="<?= esc($p['deskripsi'], 'attr') ?>"
+                        <!-- Edit -->
+                        <button
+                            class="btnEdit btn-hover bg-indigo-100 text-indigo-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-200 transition-all whitespace-nowrap"
+                            data-id="<?= $p['id'] ?>"
+                            data-nama="<?= esc($p['nama_paket'], 'attr') ?>"
+                            data-level="<?= esc($p['level'], 'attr') ?>"
+                            data-durasi="<?= esc($p['durasi'], 'attr') ?>"
+                            data-pertemuan="<?= esc($p['jumlah_pertemuan'], 'attr') ?>"
+                            data-harga="<?= esc($p['harga'], 'attr') ?>"
+                            data-deskripsi="<?= esc($p['deskripsi'], 'attr') ?>"
+                            data-permulai="<?= esc($p['periode_mulai'], 'attr') ?>"
+                            data-perselesai="<?= esc($p['periode_selesai'], 'attr') ?>"
+                            data-mulai="<?= esc($p['tanggal_mulai'], 'attr') ?>"
+                            data-selesai="<?= esc($p['tanggal_selesai'], 'attr') ?>"
+                            data-batch="<?= esc($p['batch'], 'attr') ?>"
+                            data-status="<?= esc($p['status'], 'attr') ?>"
+                        >
+                            <i class="fa fa-pen mr-1"></i>Edit
+                        </button>
 
-                    data-permulai="<?= esc($p['periode_mulai'], 'attr') ?>"
-                    data-perselesai="<?= esc($p['periode_selesai'], 'attr') ?>"
+                        <!-- Delete -->
+                        <form method="POST" action="<?= base_url('/paket/delete/'.$p['id']) ?>" class="formDeletePaket w-auto">
+                            <?= csrf_field() ?>
+                            <button class="btn-hover bg-red-100 text-red-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-red-200 transition-all whitespace-nowrap">
+                                <i class="fa fa-trash mr-1"></i>Hapus
+                            </button>
+                        </form>
 
-                    data-mulai="<?= esc($p['tanggal_mulai'], 'attr') ?>"
-                    data-selesai="<?= esc($p['tanggal_selesai'], 'attr') ?>"
+                    </div>
+                </td>
+                <!-- END BAGIAN BUTTON YANG DIPERBAIKI -->
 
-                    data-batch="<?= esc($p['batch'], 'attr') ?>"
-                    data-status="<?= esc($p['status'], 'attr') ?>"
-                >
-                    <i class="fa fa-pen mr-1"></i>Edit
-                </button>
-
-                <!-- Delete -->
-                <form method="POST" action="<?= base_url('/paket/delete/'.$p['id']) ?>" class="formDeletePaket">
-                    <?= csrf_field() ?>
-                    <button class="btn-hover bg-red-100 text-red-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-red-200 transition-all">
-                        <i class="fa fa-trash mr-1"></i>Hapus
-                    </button>
-                </form>
-
-            </td>
-        </tr>
-        <?php endforeach; else: ?>
-        <tr><td colspan="11" class="py-8 text-center text-gray-500">
-            <i class="fa fa-box-open text-4xl mb-3 opacity-20"></i>
-            <p>Belum ada paket kursus.</p>
-        </td></tr>
-        <?php endif ?>
-        </tbody>
-    </table>
+            </tr>
+            <?php endforeach; else: ?>
+            <tr><td colspan="11" class="py-8 text-center text-gray-500">
+                <i class="fa fa-box-open text-4xl mb-3 opacity-20"></i>
+                <p>Belum ada paket kursus.</p>
+            </td></tr>
+            <?php endif ?>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <!-- MOBILE CARDS -->

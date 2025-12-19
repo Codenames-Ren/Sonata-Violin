@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\OperatorModel;
+use App\Models\InstrukturModel;
 
 class OperatorController extends BaseController
 {
@@ -15,7 +16,13 @@ class OperatorController extends BaseController
 
     public function operators()
     {
+        $instrukturModel = new InstrukturModel();
+
         $data['operators'] = $this->operator
+            ->where('deleted_at', null)
+            ->findAll();
+
+        $data['instrukturs'] = $instrukturModel
             ->where('deleted_at', null)
             ->findAll();
 
@@ -27,34 +34,49 @@ class OperatorController extends BaseController
 
     public function create()
     {
-        if ($this->request->getPost('role') === 'admin' && empty($this->request->getPost('password'))) {
-            return redirect()->back()->with('error', 'Password wajib untuk membuat akun admin.');
-        }
+        $role = $this->request->getPost('role');
 
-         $existingUser = $this->operator
-        ->where('username', $this->request->getPost('username'))
-        ->where('deleted_at', null)
-        ->first();
-    
+        // Cek username unik
+        $existingUser = $this->operator
+            ->where('username', $this->request->getPost('username'))
+            ->where('deleted_at', null)
+            ->first();
+
         if ($existingUser) {
-            return redirect()->back()->with('error', 'Username sudah digunakan! Gunakan username lain.');
+            return redirect()->back()->with('error', 'Username sudah digunakan!');
         }
 
-        if ($this->request->getPost('role') === 'admin' && empty($this->request->getPost('password'))) {
-            return redirect()->back()->with('error', 'Password wajib untuk membuat akun admin.');
+        // Password wajib
+        if (empty($this->request->getPost('password'))) {
+            return redirect()->back()->with('error', 'Password wajib diisi.');
         }
 
-        $this->operator->insert([
+        $data = [
             'username'      => $this->request->getPost('username'),
             'nama_lengkap'  => $this->request->getPost('nama_lengkap'),
             'password'      => password_hash($this->request->getPost('password'), PASSWORD_DEFAULT),
-            'role'          => $this->request->getPost('role'),
+            'role'          => $role,
             'status'        => 'aktif',
             'created_at'    => date('Y-m-d H:i:s'),
             'deleted_at'    => null
-        ]);
+        ];
 
-        return redirect()->back()->with('success', 'Operator berhasil ditambahkan!');
+        // 🔐 KHUSUS INSTRUKTUR
+        if ($role === 'instruktur') {
+            $instrukturId = $this->request->getPost('instruktur_id');
+
+            if (empty($instrukturId)) {
+                return redirect()->back()->with('error', 'Instruktur wajib dipilih.');
+            }
+
+            $data['instruktur_id'] = $instrukturId;
+        } else {
+            $data['instruktur_id'] = null;
+        }
+
+        $this->operator->insert($data);
+
+        return redirect()->back()->with('success', 'Akun berhasil ditambahkan!');
     }
 
     public function checkUsername()
@@ -67,7 +89,7 @@ class OperatorController extends BaseController
             ->where('deleted_at', null);
 
         if (!empty($opId)) {
-            $query->where('id_operator !=', $opId);
+            $query->where('id !=', $opId);
         }
 
         $exists = $query->first();
@@ -82,40 +104,44 @@ class OperatorController extends BaseController
         $op = $this->operator->find($id);
 
         if (!$op) {
-            return redirect()->back()->with('error', 'Operator tidak ditemukan.');
+            return redirect()->back()->with('error', 'Akun tidak ditemukan.');
         }
 
-         $existingUser = $this->operator
-        ->where('username', $this->request->getPost('username'))
-        ->where('id_operator !=', $id)
-        ->where('deleted_at', null)
-        ->first();
-        
+        $username = $this->request->getPost('username');
+        $role     = $this->request->getPost('role');
+        $password = $this->request->getPost('password');
+
+        // Cek username unik (kecuali dirinya sendiri)
+        $existingUser = $this->operator
+            ->where('username', $username)
+            ->where('id !=', $id)
+            ->where('deleted_at', null)
+            ->first();
+
         if ($existingUser) {
-            return redirect()->back()->with('error', 'Username sudah digunakan! Gunakan username lain.');
+            return redirect()->back()->with('error', 'Username sudah digunakan!');
         }
 
-        if ($op['role'] === 'admin' && $this->request->getPost('role') !== 'admin') {
-            return redirect()->back()->with('error', 'Admin tidak boleh diubah menjadi operator.');
+        // Admin tidak boleh turun role
+        if ($op['role'] === 'admin' && $role !== 'admin') {
+            return redirect()->back()->with('error', 'Role admin tidak boleh diubah.');
         }
 
-        if ($op['role'] === 'admin' && $this->request->getPost('role') !== 'admin') {
-            return redirect()->back()->with('error', 'Admin tidak boleh diubah menjadi operator.');
-        }
-
+        // Data update dasar
         $updateData = [
-            'username'     => $this->request->getPost('username'),
+            'username'     => $username,
             'nama_lengkap' => $this->request->getPost('nama_lengkap'),
-            'role'         => $this->request->getPost('role'),
+            'role'         => $role,
         ];
 
-        if (!empty($this->request->getPost('password'))) {
-            $updateData['password'] = password_hash($this->request->getPost('password'), PASSWORD_DEFAULT);
+        // Update password hanya jika diisi
+        if (!empty($password)) {
+            $updateData['password'] = password_hash($password, PASSWORD_DEFAULT);
         }
 
         $this->operator->update($id, $updateData);
 
-        return redirect()->back()->with('success', 'Data operator berhasil diperbarui!');
+        return redirect()->back()->with('success', 'Data akun berhasil diperbarui.');
     }
 
     public function delete($id)

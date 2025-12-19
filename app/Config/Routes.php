@@ -70,7 +70,6 @@ $routes->group('pendaftaran', ['filter' => 'transaksi'], function($routes) {
     $routes->post('batal/(:num)', 'PendaftaranController::batalkan/$1');
     $routes->post('selesai/(:num)', 'PendaftaranController::selesai/$1');
 
-    $routes->post('delete/(:num)', 'PendaftaranController::delete/$1');
     $routes->post('mundur/(:num)', 'PendaftaranController::mengundurkanDiri/$1');
 
 });

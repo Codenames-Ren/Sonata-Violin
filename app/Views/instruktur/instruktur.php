@@ -182,42 +182,46 @@ tailwind.config = {
                 </span>
             </td>
 
-            <td class="py-4 px-4 flex justify-center gap-2">
+            <!-- BAGIAN BUTTON YANG DIPERBAIKI -->
+            <td class="py-4 px-4">
+                <div class="flex flex-wrap justify-center gap-2">
 
-                <!-- TOGGLE STATUS -->
-                <form method="POST" action="<?= base_url('/instruktur/toggle-status/'.$iData['id']) ?>">
-                    <?= csrf_field() ?>
-                    <button class="btn-hover px-3 py-2 rounded-lg text-xs font-semibold transition-all
-                        <?= $status == 'aktif' ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' : 'bg-green-100 text-green-700 hover:bg-green-200' ?>">
-                        <?= $status == 'aktif' ? 'Nonaktifkan' : 'Aktifkan' ?>
+                    <!-- TOGGLE STATUS -->
+                    <form method="POST" action="<?= base_url('/instruktur/toggle-status/'.$iData['id']) ?>" class="w-auto">
+                        <?= csrf_field() ?>
+                        <button class="btn-hover px-3 py-2 rounded-lg text-xs font-semibold transition-all whitespace-nowrap
+                            <?= $status == 'aktif' ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' : 'bg-green-100 text-green-700 hover:bg-green-200' ?>">
+                            <?= $status == 'aktif' ? 'Nonaktifkan' : 'Aktifkan' ?>
+                        </button>
+                    </form>
+
+                    <!-- EDIT -->
+                    <button 
+                        class="btnEdit btn-hover bg-indigo-100 text-indigo-700 px-4 py-2 rounded-lg text-xs font-semibold hover:bg-indigo-200 transition-all whitespace-nowrap"
+                        data-id="<?= $iData['id'] ?>"
+                        data-nama="<?= esc($iData['nama'], 'attr') ?>"
+                        data-email="<?= esc($iData['email'], 'attr') ?>"
+                        data-nohp="<?= esc($iData['no_hp'], 'attr') ?>"
+                        data-alamat="<?= esc($iData['alamat'], 'attr') ?>"
+                        data-keahlian="<?= esc($iData['keahlian'], 'attr') ?>"
+                        data-tgl="<?= esc($iData['tgl_lahir'], 'attr') ?>"
+                        data-foto="<?= base_url('uploads/instruktur/' . ($iData['foto_profil'] ?? 'default.png')) ?>"
+                    >
+                        <i class="fa fa-pen mr-1"></i>Edit
                     </button>
-                </form>
 
-                <!-- EDIT -->
-                <button 
-                    class="btnEdit btn-hover bg-indigo-100 text-indigo-700 px-4 py-2 rounded-lg text-xs font-semibold hover:bg-indigo-200 transition-all"
-                    data-id="<?= $iData['id'] ?>"
-                    data-nama="<?= esc($iData['nama'], 'attr') ?>"
-                    data-email="<?= esc($iData['email'], 'attr') ?>"
-                    data-nohp="<?= esc($iData['no_hp'], 'attr') ?>"
-                    data-alamat="<?= esc($iData['alamat'], 'attr') ?>"
-                    data-keahlian="<?= esc($iData['keahlian'], 'attr') ?>"
-                    data-tgl="<?= esc($iData['tgl_lahir'], 'attr') ?>"
-                    data-foto="<?= base_url('uploads/instruktur/' . ($iData['foto_profil'] ?? 'default.png')) ?>"
-                >
-                    <i class="fa fa-pen mr-1"></i>Edit
-                </button>
+                    <!-- DELETE -->
+                    <form method="POST" action="<?= base_url('/instruktur/delete/'.$iData['id']) ?>"
+                        class="formDeleteInstruktur w-auto">
+                        <?= csrf_field() ?>
+                        <button class="btn-hover bg-red-100 text-red-700 px-4 py-2 rounded-lg text-xs font-semibold hover:bg-red-200 transition-all whitespace-nowrap">
+                            <i class="fa fa-trash mr-1"></i>Hapus
+                        </button>
+                    </form>
 
-
-                <!-- DELETE -->
-                <form method="POST" action="<?= base_url('/instruktur/delete/'.$iData['id']) ?>"
-                    class="formDeleteInstruktur">
-                    <?= csrf_field() ?>
-                    <button class="btn-hover bg-red-100 text-red-700 px-4 py-2 rounded-lg text-xs font-semibold hover:bg-red-200 transition-all">
-                        <i class="fa fa-trash mr-1"></i>Hapus
-                    </button>
-                </form>
+                </div>
             </td>
+            <!-- END BAGIAN BUTTON YANG DIPERBAIKI -->
 
         </tr>
         <?php endforeach; else: ?>

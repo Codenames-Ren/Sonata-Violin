@@ -308,24 +308,4 @@ class PendaftaranController extends BaseController
 
         return redirect()->back()->with('success', 'Siswa dinyatakan lulus.');
     }
-
-    // DELETE
-    public function delete($id)
-    {
-        if (session()->get('role') !== 'admin')
-            return redirect()->back()->with('error', 'Akses ditolak.');
-
-        $p = $this->pendaftaran->find($id);
-        if (!$p) return redirect()->back()->with('error', 'Data tidak ditemukan.');
-
-        if (!in_array($p['status'], ['pending', 'batal'])) {
-            return redirect()->back()->with('error', 'Pendaftaran aktif / selesai / mundur tidak boleh dihapus.');
-        }
-
-        $this->pendaftaran->update($id, [
-            'deleted_at' => date('Y-m-d H:i:s')
-        ]);
-
-        return redirect()->back()->with('success', 'Pendaftaran diarsipkan.');
-    }
 }

@@ -105,9 +105,22 @@
             <td class="py-4 px-4 font-semibold text-gray-800"><?= esc($op['username']) ?></td>
             <td class="py-4 px-4 text-gray-600"><?= esc($op['nama_lengkap']) ?></td>
             <td class="py-4 px-4 text-center">
-            <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold <?= $op['role'] === 'admin' ? 'bg-blue-100 text-blue-700' : 'bg-orange-100 text-orange-700' ?>">
-                <?= ucfirst(esc($op['role'])) ?>
-            </span>
+                <?php if ($op['role'] === 'admin'): ?>
+                    <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold
+                                bg-red-100 text-red-700">
+                        Admin
+                    </span>
+                <?php elseif ($op['role'] === 'instruktur'): ?>
+                    <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold
+                                bg-blue-100 text-blue-700">
+                        Instruktur
+                    </span>
+                <?php else: ?>
+                    <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold
+                                bg-orange-100 text-orange-700">
+                        Operator
+                    </span>
+                <?php endif; ?>
             </td>
             <td class="py-4 px-4 text-center">
                 <?php if(($op['status'] ?? 'aktif') === 'aktif'): ?>
@@ -120,11 +133,12 @@
             
             <td class="py-4 px-4">
                 <div class="flex justify-center gap-2 flex-wrap">
-                    <button class="btnEdit bg-indigo-100 text-indigo-700 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-indigo-200 transition-all btn-hover"
-                            data-id="<?= $op['id'] ?>"
-                            data-username="<?= esc($op['username'], 'attr') ?>"
-                            data-nama="<?= esc($op['nama_lengkap'], 'attr') ?>"
-                            data-role="<?= esc($op['role'], 'attr') ?>">
+                <button class="btnEdit bg-indigo-100 text-indigo-700 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-indigo-200 transition-all btn-hover"
+                    data-id="<?= $op['id'] ?>"
+                    data-username="<?= esc($op['username'], 'attr') ?>"
+                    data-nama="<?= esc($op['nama_lengkap'], 'attr') ?>"
+                    data-role="<?= esc($op['role'], 'attr') ?>"
+                    data-instruktur_id="<?= esc($op['instruktur_id'] ?? '', 'attr') ?>">
                         <i class="fa fa-pen mr-1"></i>Edit
                     </button>
 
@@ -169,9 +183,17 @@
                 <p class="text-gray-600 text-sm mt-1"><?= esc($op['nama_lengkap']) ?></p>
             </div>
             <div class="flex flex-col items-end gap-2">
-            <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold <?= $op['role'] === 'admin' ? 'bg-blue-100 text-blue-700' : 'bg-orange-100 text-orange-700' ?>">
+            <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold
+            <?php
+                echo $op['role'] === 'admin'
+                    ? 'bg-red-100 text-red-700'
+                    : ($op['role'] === 'instruktur'
+                        ? 'bg-blue-100 text-blue-700'
+                        : 'bg-orange-100 text-orange-700');
+            ?>">
                 <?= ucfirst(esc($op['role'])) ?>
             </span>
+
                 <?php if(($op['status'] ?? 'aktif') === 'aktif'): ?>
                     <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">Aktif</span>
                 <?php else: ?>
@@ -186,11 +208,12 @@
         </div>
 
         <div class="grid grid-cols-3 gap-2 mt-4 pt-3 border-t border-gray-100">
-    <button class="btnEdit col-span-3 bg-indigo-100 text-indigo-700 px-3 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-200 transition-all"
+        <button class="btnEdit col-span-3 bg-indigo-100 text-indigo-700 px-3 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-200 transition-all"
             data-id="<?= $op['id'] ?>"
             data-username="<?= esc($op['username'], 'attr') ?>"
             data-nama="<?= esc($op['nama_lengkap'], 'attr') ?>"
-            data-role="<?= esc($op['role'], 'attr') ?>">
+            data-role="<?= esc($op['role'], 'attr') ?>"
+            data-instruktur_id="<?= esc($op['instruktur_id'] ?? '', 'attr') ?>">
         <i class="fa fa-pen mr-1"></i>Edit
     </button>
     <?php if($op['role'] !== 'admin'): ?>
@@ -247,7 +270,7 @@
         <!-- FORM -->
         <form id="modalForm" method="POST" action="<?= base_url('/settings/operators/create') ?>">
             <?= csrf_field() ?>
-            <input type="hidden" id="op_id" name="id">
+            <input type="hidden" id="op_id" name="op_id">
 
             <div class="p-6 space-y-4 max-h-[65vh] overflow-y-auto">
                 <div>
@@ -267,10 +290,40 @@
                 <div>
                     <label class="font-semibold text-gray-700 mb-2 block">Role</label>
                     <select id="op_role" name="role"
-                            class="w-full border-2 border-gray-200 rounded-lg px-4 py-2.5 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
+                            class="w-full border-2 border-gray-200 rounded-lg px-4 py-2.5
+                                focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                            required>
                         <option value="operator">Operator</option>
+                        <option value="instruktur">Instruktur</option>
                         <option value="admin">Admin</option>
                     </select>
+
+                    <p class="text-xs text-gray-500 mt-2">
+                        <i class="fa fa-info-circle"></i>
+                        Instruktur hanya memiliki akses jadwal, absensi kelas sendiri, dan progress kursus.
+                    </p>
+                </div>
+                <div id="instrukturWrapper" class="hidden">
+                    <label class="font-semibold text-gray-700 mb-2 block">
+                        Pilih Instruktur
+                    </label>
+
+                    <select name="instruktur_id"
+                            id="op_instruktur"
+                            class="w-full border-2 border-gray-200 rounded-lg px-4 py-2.5
+                                focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
+                        <option value="">-- Pilih Instruktur --</option>
+                        <?php foreach ($instrukturs as $i): ?>
+                            <option value="<?= $i['id'] ?>">
+                                <?= esc($i['nama']) ?>
+                            </option>
+                        <?php endforeach ?>
+                    </select>
+
+                    <p class="text-xs text-gray-500 mt-2">
+                        <i class="fa fa-info-circle"></i>
+                        Akun instruktur hanya boleh terhubung ke satu data master instruktur.
+                    </p>
                 </div>
 
                 <div>
@@ -364,6 +417,24 @@
     // MODAL CONTROL + ANIMATION
     const modal = document.getElementById("modal");
     const modalBox = document.getElementById("modalBox");
+    const roleSelect = document.getElementById("op_role");
+    const instrukturWrapper = document.getElementById("instrukturWrapper");
+    const instrukturSelect = document.getElementById("op_instruktur");
+
+    function toggleInstruktur(role) {
+        if (role === 'instruktur') {
+            instrukturWrapper.classList.remove('hidden');
+            instrukturSelect.setAttribute('required', true);
+        } else {
+            instrukturWrapper.classList.add('hidden');
+            instrukturSelect.removeAttribute('required');
+            instrukturSelect.value = '';
+        }
+    }
+
+    roleSelect.addEventListener('change', function () {
+        toggleInstruktur(this.value);
+    });
 
     function openModal() {
         modal.classList.remove("hidden");
@@ -398,6 +469,8 @@
     // OPEN CREATE MODAL
     document.getElementById("btnOpenCreate").addEventListener("click", () => {
         document.getElementById("modalForm").reset();
+        toggleInstruktur(roleSelect.value);
+        instrukturSelect.value = '';
         document.getElementById("op_id").value = "";
         document.getElementById("modalTitle").textContent = "Tambah Operator Baru";
         document.getElementById("modalForm").action = "<?= base_url('/settings/operators/create') ?>";
@@ -405,15 +478,24 @@
         openModal();
     });
 
+    let originalUsername = "";
+
     // EDIT BUTTON HANDLER
     document.querySelectorAll(".btnEdit").forEach(btn => {
         btn.addEventListener("click", function() {
             const id = this.dataset.id;
+
+            originalUsername = this.dataset.username;
             
             document.getElementById("op_id").value = id;
             document.getElementById("op_username").value = this.dataset.username;
             document.getElementById("op_nama").value = this.dataset.nama;
             document.getElementById("op_role").value = this.dataset.role;
+            toggleInstruktur(this.dataset.role);
+            if (this.dataset.role === 'instruktur') {
+                instrukturSelect.value = this.dataset.instruktur_id || '';
+            }
+
             document.getElementById("op_password").value = "";
             
             if (this.dataset.role === 'admin') {
@@ -437,6 +519,11 @@
         const nama = document.getElementById("op_nama").value.trim();
         const password = document.getElementById("op_password").value.trim();
         const opId = document.getElementById("op_id").value;
+
+        if (opId && username === originalUsername) {
+            this.submit();
+            return;
+        }
         
         // Validasi Username
         if (!username) {
@@ -483,6 +570,18 @@
                 }
             });
             document.getElementById("op_nama").focus();
+            return;
+        }
+
+        const role = roleSelect.value;
+        if (role === 'instruktur' && !instrukturSelect.value) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Oops...',
+                text: 'Instruktur wajib dipilih!',
+                position: 'center'
+            });
+            instrukturSelect.focus();
             return;
         }
         
