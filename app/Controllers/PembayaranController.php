@@ -3,14 +3,20 @@
 namespace App\Controllers;
 
 use App\Models\PembayaranModel;
+use App\Services\EmailService;
+use App\Models\PendaftaranModel;
 
 class PembayaranController extends BaseController
 {
     protected $pembayaran;
+    protected $emailService;
+    protected $pendaftaran;
 
     public function __construct()
     {
         $this->pembayaran = new PembayaranModel();
+        $this->pendaftaran   = new PendaftaranModel();
+        $this->emailService  = new EmailService();
     }
 
     // LIST PEMBAYARAN
@@ -54,6 +60,25 @@ class PembayaranController extends BaseController
             'updated_at' => date('Y-m-d H:i:s')
         ]);
 
+        // AMBIL DATA PENDAFTARAN
+        $pendaftaran = $this->pendaftaran->find($p['pendaftaran_id']);
+
+        if ($pendaftaran) {
+            try {
+                // FIX: Kirim sebagai ARRAY sesuai EmailService
+                $this->emailService->pembayaranDiverifikasi([
+                    'email' => $pendaftaran['email'],
+                    'nama' => $pendaftaran['nama'],
+                    'no_pendaftaran' => $p['no_pendaftaran']
+                ]);
+            } catch (\Throwable $e) {
+                log_message(
+                    'error',
+                    'Email pembayaran diverifikasi gagal: ' . $e->getMessage()
+                );
+            }
+        }
+
         return redirect()->back()->with('success', 'Pembayaran diverifikasi.');
     }
 
@@ -70,12 +95,8 @@ class PembayaranController extends BaseController
         }
 
         $catatan = $this->request->getPost('catatan');
-
         if (!$catatan) {
-            return redirect()->back()->with(
-                'error',
-                'Catatan penolakan wajib diisi.'
-            );
+            return redirect()->back()->with('error', 'Catatan penolakan wajib diisi.');
         }
 
         $this->pembayaran->update($id, [
@@ -83,6 +104,26 @@ class PembayaranController extends BaseController
             'catatan'    => $catatan,
             'updated_at' => date('Y-m-d H:i:s')
         ]);
+
+        // AMBIL DATA PENDAFTARAN
+        $pendaftaran = $this->pendaftaran->find($p['pendaftaran_id']);
+
+        if ($pendaftaran) {
+            try {
+                // FIX: Kirim sebagai ARRAY sesuai EmailService
+                $this->emailService->pembayaranDitolak([
+                    'email' => $pendaftaran['email'],
+                    'nama' => $pendaftaran['nama'],
+                    'no_pendaftaran' => $p['no_pendaftaran'],
+                    'catatan' => $catatan
+                ]);
+            } catch (\Throwable $e) {
+                log_message(
+                    'error',
+                    'Email pembayaran ditolak gagal: ' . $e->getMessage()
+                );
+            }
+        }
 
         return redirect()->back()->with('success', 'Pembayaran ditolak dengan catatan.');
     }

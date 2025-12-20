@@ -6,6 +6,7 @@ use App\Models\PendaftaranModel;
 use App\Models\PembayaranModel;
 use App\Models\SiswaModel;
 use App\Models\PaketModel;
+use App\Services\EmailService;
 
 class PendaftaranController extends BaseController
 {
@@ -13,6 +14,7 @@ class PendaftaranController extends BaseController
     protected $siswa;
     protected $paket;
     protected $db;
+    protected $emailService;
 
     public function __construct()
     {
@@ -21,6 +23,7 @@ class PendaftaranController extends BaseController
         $this->siswa       = new SiswaModel();
         $this->paket       = new PaketModel();
         $this->db          = \Config\Database::connect();
+        $this->emailService = new EmailService();
     }
 
     private function generateNomorPendaftaran()
@@ -123,6 +126,20 @@ class PendaftaranController extends BaseController
             'status'          => 'pending',
             'created_at'      => date('Y-m-d H:i:s'),
         ]);
+
+        // KIRIM NOTIF EMAIL
+        try {
+        $this->emailService->pendaftaranBerhasil([
+            'email'          => $this->request->getPost('email'),
+            'nama'           => $this->request->getPost('nama'),
+            'no_pendaftaran' => $noDaftar,
+            'nama_paket'     => $paket['nama_paket'],
+            'batch'          => $paket['batch'],
+            'harga'          => $paket['harga'],
+        ]);
+    } catch (\Throwable $e) {
+        log_message('error', 'Email pendaftaran admin gagal: ' . $e->getMessage());
+    }
 
         return redirect()->back()->with('success', 'Pendaftaran & pembayaran berhasil ditambahkan.');
     }

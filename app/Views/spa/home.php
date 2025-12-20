@@ -1697,72 +1697,63 @@
         });
     }
 
-    // Form submission handler dengan delay
+    // Form submission handler - FIRE AND FORGET
     registerForm.addEventListener('submit', function(e) {
         e.preventDefault();
         
         const submitBtn = document.getElementById('btnSubmit');
+        const submitBtnMobile = document.getElementById('btnSubmitMobile');
         const originalText = submitBtn.innerHTML;
+        const originalTextMobile = submitBtnMobile.innerHTML;
+        
         submitBtn.disabled = true;
+        submitBtnMobile.disabled = true;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Submitting...';
+        submitBtnMobile.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Submitting...';
         
         const formData = new FormData(this);
+        
+        closeModal();
+        
+        setTimeout(() => {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                html: `
+                    <p class="mb-2">Pendaftaran berhasil!</p>
+                    <p class="text-sm text-white/70">Data akan diverifikasi oleh admin. Email konfirmasi sedang dikirim.</p>
+                `,
+                background: '#1e293b',
+                color: '#ffffff',
+                iconColor: '#10b981',
+                confirmButtonColor: '#8B5CF6',
+                confirmButtonText: 'OK',
+                backdrop: `rgba(0,0,0,0.8)`,
+                customClass: {
+                    popup: 'rounded-3xl border-2 border-primary/20',
+                    title: 'text-2xl font-bold',
+                    htmlContainer: 'text-white/80',
+                    confirmButton: 'rounded-xl px-8 py-3 font-bold'
+                },
+                allowOutsideClick: false,
+                allowEscapeKey: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '<?= base_url('/') ?>';
+                }
+            });
+        }, 400);
         
         fetch('<?= base_url('daftar') ?>', {
             method: 'POST',
             body: formData
         })
-        .then(response => {
-            return response.text();
-        })
+        .then(response => response.text())
         .then(html => {
-            closeModal();
-            
-            setTimeout(() => {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success!',
-                    text: 'Pendaftaran berhasil! Data akan diverifikasi oleh admin.',
-                    background: '#1e293b',
-                    color: '#ffffff',
-                    iconColor: '#10b981',
-                    confirmButtonColor: '#8B5CF6',
-                    confirmButtonText: 'OK',
-                    backdrop: `rgba(0,0,0,0.8)`,
-                    customClass: {
-                        popup: 'rounded-3xl border-2 border-primary/20',
-                        title: 'text-2xl font-bold',
-                        htmlContainer: 'text-white/80',
-                        confirmButton: 'rounded-xl px-8 py-3 font-bold'
-                    },
-                    allowOutsideClick: false,
-                    allowEscapeKey: false
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.href = '<?= base_url('/') ?>';
-                    }
-                });
-            }, 400);
+            console.log('Data berhasil dikirim ke server');
         })
         .catch(error => {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = originalText;
-            
-            Swal.fire({
-                icon: 'error',
-                title: 'Error!',
-                text: 'Terjadi kesalahan. Silakan coba lagi.',
-                background: '#1e293b',
-                color: '#ffffff',
-                iconColor: '#ef4444',
-                confirmButtonColor: '#8B5CF6',
-                confirmButtonText: 'OK',
-                backdrop: `rgba(0,0,0,0.8)`,
-                customClass: {
-                    popup: 'rounded-3xl border-2 border-red-500/20',
-                    confirmButton: 'rounded-xl px-8 py-3 font-bold'
-                }
-            });
+            console.error('Submit error:', error);
         });
     });
 

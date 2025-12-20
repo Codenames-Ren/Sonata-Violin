@@ -1154,11 +1154,46 @@
     //FORM SUBMIT (CREATE / UPDATE)
     const modalForm = document.getElementById("modalForm");
 
-    modalForm.addEventListener("submit", function () {
+    //FORM SUBMIT (CREATE / UPDATE) - FIRE AND FORGET
+    modalForm.addEventListener("submit", function(e) {
+        e.preventDefault();
+        
         const id = document.getElementById("pendaftaran_id").value;
-        this.action = id
+        const url = id
             ? "<?= base_url('/pendaftaran/update/') ?>" + id
             : "<?= base_url('/pendaftaran/create') ?>";
+        
+        const formData = new FormData(this);
+        
+        closeModal();
+        
+        setTimeout(() => {
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                html: `
+                    <p class="mb-2">${id ? 'Data berhasil diperbarui!' : 'Pendaftaran berhasil ditambahkan!'}</p>
+                    <p class="text-sm text-gray-500">Email konfirmasi sedang dikirim...</p>
+                `,
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true
+            }).then(() => {
+                location.reload();
+            });
+        }, 300);
+        
+        fetch(url, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.text())
+        .then(html => {
+            console.log('Data berhasil dikirim ke server');
+        })
+        .catch(error => {
+            console.error('Submit error:', error);
+        });
     });
 
     //EDIT MODE

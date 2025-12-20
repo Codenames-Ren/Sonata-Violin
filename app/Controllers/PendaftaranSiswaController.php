@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Models\PendaftaranModel;
 use App\Models\PembayaranModel;
 use App\Models\PaketModel;
+use App\Services\EmailService;
 
 class PendaftaranSiswaController extends BaseController
 {
@@ -12,6 +13,7 @@ class PendaftaranSiswaController extends BaseController
     protected $pembayaran;
     protected $paket;
     protected $db;
+    protected $emailService;
 
     public function __construct()
     {
@@ -19,6 +21,7 @@ class PendaftaranSiswaController extends BaseController
         $this->pembayaran  = new PembayaranModel();
         $this->paket       = new PaketModel();
         $this->db          = \Config\Database::connect();
+        $this->emailService = new EmailService();
     }
 
     private function generateNomorPendaftaran()
@@ -42,7 +45,6 @@ class PendaftaranSiswaController extends BaseController
         $paket   = $this->paket->find($paketId);
 
         if (!$paket || $paket['status'] !== 'aktif') {
-            // 👇 UBAH YANG INI
             session()->setFlashdata('error', 'Paket tidak valid.');
             return redirect()->to('/');
         }
@@ -101,12 +103,25 @@ class PendaftaranSiswaController extends BaseController
 
         if ($this->db->transStatus() === false) {
             $this->db->transRollback();
-            // 👇 UBAH YANG INI
             session()->setFlashdata('error', 'Pendaftaran gagal diproses.');
             return redirect()->to('/');
         }
 
         $this->db->transCommit();
+ 
+        // KIRIM NOTIFIKASI EMAIL KETIKA PENDAFTARAN BERHASIL
+        try {
+            $this->emailService->pendaftaranBerhasil([
+                'email'          => $this->request->getPost('email'),
+                'nama'           => $this->request->getPost('nama'),
+                'no_pendaftaran' => $noPendaftaran,
+                'nama_paket'     => $paket['nama_paket'],
+                'batch'          => $paket['batch'],
+                'harga'          => $paket['harga'],
+            ]);
+        } catch (\Throwable $e) {
+            log_message('error', 'Gagal kirim email pendaftaran: ' . $e->getMessage());
+        }
 
         session()->setFlashdata('success', 'Pendaftaran berhasil! Nomor pendaftaran Anda: ' . $noPendaftaran . '. Data akan diverifikasi oleh admin.');
         return redirect()->to('/');
