@@ -133,155 +133,164 @@
 <?php endif ?>
 
 <!-- DESKTOP TABLE -->
-<div class="hidden md:block bg-white shadow-lg rounded-xl overflow-visible">
-    <table class="w-full table-auto">
-        <thead class="bg-gradient-to-r from-gray-50 to-gray-100 text-gray-600 uppercase text-sm font-semibold border-b-2 border-gray-200">
-        <tr>
-            <th class="py-4 px-4">No. Pendaftaran</th>
-            <th class="py-4 px-4">Nama</th>
-            <th class="py-4 px-4">Email</th>
-            <th class="py-4 px-4">Paket</th>
-            <th class="py-4 px-4">Mulai</th>
-            <th class="py-4 px-4">Selesai</th>
-            <th class="py-4 px-4">Status</th>
-            <th class="py-4 px-4">Aksi</th>
-        </tr>
-        </thead>
+<div class="hidden md:block bg-white shadow-lg rounded-xl overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full table-auto">
+            <thead class="bg-gradient-to-r from-gray-50 to-gray-100 text-gray-600 uppercase text-sm font-semibold border-b-2 border-gray-200">
+            <tr>
+                <th class="py-4 px-4 whitespace-nowrap">No. Pendaftaran</th>
+                <th class="py-4 px-4 whitespace-nowrap">Nama</th>
+                <th class="py-4 px-4 whitespace-nowrap">Email</th>
+                <th class="py-4 px-4 whitespace-nowrap">Paket</th>
+                <th class="py-4 px-4 whitespace-nowrap">Mulai</th>
+                <th class="py-4 px-4 whitespace-nowrap">Selesai</th>
+                <th class="py-4 px-4 whitespace-nowrap">Status</th>
+                <th class="py-4 px-4 whitespace-nowrap">Aksi</th>
+            </tr>
+            </thead>
 
-        <tbody id="tableBody" class="divide-y divide-gray-100">
-        <?php if(!empty($pendaftaran)): $i=1; foreach($pendaftaran as $p): ?>
-        <?php
-            $status = $p['status'] ?? 'pending';
-            if ($status === 'aktif') {
-                $labelStatus = 'Aktif';
-                $statusClass = 'bg-green-100 text-green-700';
-            } elseif ($status === 'selesai') {
-                $labelStatus = 'Selesai';
-                $statusClass = 'bg-blue-100 text-blue-700';
-            } elseif ($status === 'batal') {
-                $labelStatus = 'Batal';
-                $statusClass = 'bg-red-100 text-red-700';
-            } elseif ($status === 'mundur') {
-                $labelStatus = 'Mengundurkan Diri';
-                $statusClass = 'bg-orange-100 text-orange-700';
-            } else {
-                $labelStatus = 'Pending';
-                $statusClass = 'bg-yellow-100 text-yellow-700';
-            }
-        ?>
-        <tr class="table-row hover:bg-gray-50 transition-colors"
-            data-nama="<?= strtolower(esc($p['nama'] ?? '')) ?>"
-            data-nomor-pendaftaran="<?= strtolower(esc($p['no_pendaftaran'] ?? '')) ?>"
-            data-email="<?= strtolower(esc($p['email'] ?? '')) ?>"
-            data-status="<?= strtolower(esc($p['status'] ?? '')) ?>"
-            data-label="<?= strtolower($labelStatus) ?>">
+            <tbody id="tableBody" class="divide-y divide-gray-100">
+            <?php if(!empty($pendaftaran)): $i=1; foreach($pendaftaran as $p): ?>
+            <?php
+                $status = $p['status'] ?? 'pending';
+                if ($status === 'aktif') {
+                    $labelStatus = 'Aktif';
+                    $statusClass = 'bg-green-100 text-green-700';
+                } elseif ($status === 'selesai') {
+                    $labelStatus = 'Selesai';
+                    $statusClass = 'bg-blue-100 text-blue-700';
+                } elseif ($status === 'batal') {
+                    $labelStatus = 'Batal';
+                    $statusClass = 'bg-red-100 text-red-700';
+                } elseif ($status === 'mundur') {
+                    $labelStatus = 'Mengundurkan Diri';
+                    $statusClass = 'bg-orange-100 text-orange-700';
+                } else {
+                    $labelStatus = 'Pending';
+                    $statusClass = 'bg-yellow-100 text-yellow-700';
+                }
+            ?>
+            <tr class="table-row hover:bg-gray-50 transition-colors"
+                data-nama="<?= strtolower(esc($p['nama'] ?? '')) ?>"
+                data-nomor-pendaftaran="<?= strtolower(esc($p['no_pendaftaran'] ?? '')) ?>"
+                data-email="<?= strtolower(esc($p['email'] ?? '')) ?>"
+                data-status="<?= strtolower(esc($p['status'] ?? '')) ?>"
+                data-label="<?= strtolower($labelStatus) ?>">
 
-            <td class="py-4 px-4 font-medium text-gray-600 text-xs">
-                <?= esc($p['no_pendaftaran']) ?>
-            </td>
+                <td class="py-4 px-4 font-medium text-gray-600 text-xs whitespace-nowrap">
+                    <?= esc($p['no_pendaftaran']) ?>
+                </td>
 
-            <td class="py-4 px-4 font-semibold text-gray-800 text-sm"><?= esc($p['nama'] ?? '-') ?></td>
-            <td class="py-4 px-4 text-gray-600 text-sm"><?= esc($p['email'] ?? '-') ?></td>
+                <td class="py-4 px-4 font-semibold text-gray-800 text-sm whitespace-nowrap"><?= esc($p['nama'] ?? '-') ?></td>
+                <td class="py-4 px-4 text-gray-600 text-sm whitespace-nowrap"><?= esc($p['email'] ?? '-') ?></td>
 
-            <td class="py-4 px-4 text-gray-600 text-sm">
-                <?= esc($p['nama_paket'] ?? ('Paket - ' . ($p['paket_id'] ?? '-'))) ?>
-            </td>
+                <td class="py-4 px-4 text-gray-600 text-sm whitespace-nowrap">
+                    <?= esc($p['nama_paket'] ?? ('Paket - ' . ($p['paket_id'] ?? '-'))) ?>
+                </td>
 
-            <td class="py-4 px-4 text-gray-600 text-sm">
-                <?= !empty($p['tanggal_mulai']) ? esc($p['tanggal_mulai']) : '-' ?>
-            </td>
+                <td class="py-4 px-4 text-gray-600 text-sm whitespace-nowrap">
+                    <?= !empty($p['tanggal_mulai']) ? esc($p['tanggal_mulai']) : '-' ?>
+                </td>
 
-            <td class="py-4 px-4 text-gray-600 text-sm">
-                <?= !empty($p['tanggal_selesai']) ? esc($p['tanggal_selesai']) : '-' ?>
-            </td>
+                <td class="py-4 px-4 text-gray-600 text-sm whitespace-nowrap">
+                    <?= !empty($p['tanggal_selesai']) ? esc($p['tanggal_selesai']) : '-' ?>
+                </td>
 
-            <td class="py-4 px-4 text-center">
-                <span class="px-3 py-1 rounded-full text-xs font-semibold <?= $statusClass ?>">
-                    <?= $labelStatus ?>
-                </span>
-            </td>
+                <td class="py-4 px-4 text-center whitespace-nowrap">
+                    <span class="px-3 py-1 rounded-full text-xs font-semibold <?= $statusClass ?>">
+                        <?= $labelStatus ?>
+                    </span>
+                </td>
 
-            <td class="py-4 px-4 flex justify-center gap-2 flex-wrap">
-                <!-- VERIFIKASI (hanya kalau pending) -->
-                <?php if($status === 'pending'): ?>
-                <form method="POST" action="<?= base_url('/pendaftaran/verifikasi/'.$p['id']) ?>">
-                    <?= csrf_field() ?>
-                    <button class="btn-hover bg-green-100 text-green-700 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-green-200 transition-all">
-                        Verifikasi
-                    </button>
-                </form>
-
-                <form method="POST" action="<?= base_url('/pendaftaran/batal/'.$p['id']) ?>">
-                    <?= csrf_field() ?>
-                    <button class="btn-hover bg-yellow-100 text-yellow-700 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-yellow-200 transition-all">
-                        Batalkan
-                    </button>
-                </form>
-                <?php endif; ?>
-
-                <!-- SELESAIKAN (hanya kalau aktif) -->
-                <?php if($status === 'aktif'): ?>
-                <div class="relative inline-block">
-
-                    <button type="button"
-                        class="btn-hover bg-blue-100 text-blue-700 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-blue-200 transition-all 
-                            dropdownToggle">
-                        Aksi ▼
-                    </button>
-
-                    <div class="absolute hidden bg-white shadow-lg rounded-lg border border-gray-200 mt-1 w-40 z-20 dropdownMenu">
-
-                        <form method="POST" action="<?= base_url('/pendaftaran/selesai/'.$p['id']) ?>">
+                <td class="py-4 px-4 whitespace-nowrap">
+                    <div class="flex justify-center gap-2">
+                        <!-- VERIFIKASI (hanya kalau pending) -->
+                        <?php if($status === 'pending'): ?>
+                        <form method="POST" action="<?= base_url('/pendaftaran/verifikasi/'.$p['id']) ?>">
                             <?= csrf_field() ?>
-                            <button class="block w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-gray-100">
-                                Selesai Belajar
+                            <button class="btn-hover bg-green-100 text-green-700 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-green-200 transition-all whitespace-nowrap">
+                                Verifikasi
                             </button>
                         </form>
 
-                        <form method="POST" action="<?= base_url('/pendaftaran/mundur/'.$p['id']) ?>">
+                        <form method="POST" action="<?= base_url('/pendaftaran/batal/'.$p['id']) ?>">
                             <?= csrf_field() ?>
-                            <button class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
-                                Mengundurkan Diri
+                            <button class="btn-hover bg-yellow-100 text-yellow-700 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-yellow-200 transition-all whitespace-nowrap">
+                                Batalkan
                             </button>
                         </form>
+                        <?php endif; ?>
 
+                        <!-- SELESAIKAN (hanya kalau aktif) -->
+                        <?php if($status === 'aktif'): ?>
+                        <div class="relative inline-block">
+
+                            <button type="button"
+                                class="btn-hover bg-blue-100 text-blue-700 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-blue-200 transition-all whitespace-nowrap
+                                    dropdownToggle">
+                                Aksi ▼
+                            </button>
+
+                            <div class="absolute hidden bg-white shadow-lg rounded-lg border border-gray-200 mt-1 w-40 z-20 dropdownMenu">
+
+                                <form method="POST" action="<?= base_url('/pendaftaran/selesai/'.$p['id']) ?>">
+                                    <?= csrf_field() ?>
+                                    <button class="block w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-gray-100">
+                                        Selesai Belajar
+                                    </button>
+                                </form>
+
+                                <form method="POST" action="<?= base_url('/pendaftaran/mundur/'.$p['id']) ?>">
+                                    <?= csrf_field() ?>
+                                    <button class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
+                                        Mengundurkan Diri
+                                    </button>
+                                </form>
+
+                            </div>
+                        </div>
+                        <?php endif; ?>
+
+                        <!-- EDIT -->
+                        <?php if($status === 'pending' || $status === 'batal'): ?>
+                        <button class="btnEdit btn-hover bg-indigo-100 text-indigo-700 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-indigo-200 transition-all whitespace-nowrap"
+                            data-id="<?= $p['id'] ?>"
+                            data-status="<?= $p['status'] ?>"
+                            data-nama="<?= esc($p['nama'] ?? '', 'attr') ?>"
+                            data-email="<?= esc($p['email'] ?? '', 'attr') ?>"
+                            data-nohp="<?= esc($p['no_hp'] ?? '', 'attr') ?>"
+                            data-alamat="<?= esc($p['alamat'] ?? '', 'attr') ?>"
+                            data-tgl="<?= esc($p['tgl_lahir'] ?? '', 'attr') ?>"
+                            data-foto="<?= esc($p['foto_profil'] ?? '', 'attr') ?>"
+                            data-bukti="<?= esc($p['bukti_transaksi'] ?? '', 'attr') ?>"
+                            data-status="<?= esc($p['status'] ?? '', 'attr') ?>"
+                            data-paket-id="<?= esc($p['paket_id'] ?? '', 'attr') ?>"
+                            data-tgl-mulai="<?= esc($p['tanggal_mulai'] ?? '', 'attr') ?>"
+                            data-tgl-selesai="<?= esc($p['tanggal_selesai'] ?? '', 'attr') ?>"
+                            data-nominal="<?= esc($p['nominal'] ?? '', 'attr') ?>">
+                            <i class="fa fa-pen mr-1"></i>Edit
+                        </button>
+                        <?php endif; ?>
                     </div>
-                </div>
-                <?php endif; ?>
+                </td>
 
-                <!-- EDIT -->
-                <?php if($status === 'pending' || $status === 'batal'): ?>
-                <button class="btnEdit btn-hover bg-indigo-100 text-indigo-700 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-indigo-200 transition-all"
-                    data-id="<?= $p['id'] ?>"
-                    data-status="<?= $p['status'] ?>"
-                    data-nama="<?= esc($p['nama'] ?? '', 'attr') ?>"
-                    data-email="<?= esc($p['email'] ?? '', 'attr') ?>"
-                    data-nohp="<?= esc($p['no_hp'] ?? '', 'attr') ?>"
-                    data-alamat="<?= esc($p['alamat'] ?? '', 'attr') ?>"
-                    data-tgl="<?= esc($p['tgl_lahir'] ?? '', 'attr') ?>"
-                    data-foto="<?= esc($p['foto_profil'] ?? '', 'attr') ?>"
-                    data-bukti="<?= esc($p['bukti_transaksi'] ?? '', 'attr') ?>"
-                    data-status="<?= esc($p['status'] ?? '', 'attr') ?>"
-                    data-paket-id="<?= esc($p['paket_id'] ?? '', 'attr') ?>"
-                    data-tgl-mulai="<?= esc($p['tanggal_mulai'] ?? '', 'attr') ?>"
-                    data-tgl-selesai="<?= esc($p['tanggal_selesai'] ?? '', 'attr') ?>"
-                    data-nominal="<?= esc($p['nominal'] ?? '', 'attr') ?>">
-                    <i class="fa fa-pen mr-1"></i>Edit
-                </button>
-                <?php endif; ?>
-            </td>
-
-        </tr>
-        <?php endforeach; else: ?>
-        <tr>
-            <td colspan="8" class="py-8 text-center text-gray-500">
-                <i class="fa fa-file-alt text-4xl mb-3 opacity-20"></i>
-                <p>Belum ada data pendaftaran.</p>
-            </td>
-        </tr>
-        <?php endif; ?>
-        </tbody>
-    </table>
+            </tr>
+            <?php endforeach; else: ?>
+            <tr>
+                <td colspan="8" class="py-8 text-center text-gray-500">
+                    <i class="fa fa-file-alt text-4xl mb-3 opacity-20"></i>
+                    <p>Belum ada data pendaftaran.</p>
+                </td>
+            </tr>
+            <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- HINT SCROLL -->
+    <div class="text-center text-xs text-gray-500 p-2 bg-gray-50 border-t">
+        <i class="fa fa-arrows-alt-h mr-1"></i>Geser tabel ke kanan untuk melihat lebih banyak
+    </div>
 </div>
 
 <!-- MOBILE CARDS -->

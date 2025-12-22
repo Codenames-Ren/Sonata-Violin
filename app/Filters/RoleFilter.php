@@ -1,7 +1,5 @@
 <?php
-
 namespace App\Filters;
-
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\Filters\FilterInterface;
@@ -11,7 +9,7 @@ class RoleFilter implements FilterInterface
     public function before(RequestInterface $request, $arguments = null)
     {
         $role = session('role');
-
+        
         // Belum login
         if (!$role) {
             return redirect()->to('/login');
@@ -19,24 +17,23 @@ class RoleFilter implements FilterInterface
 
         $path = service('uri')->getPath();
 
-        // Instruktor dilarang ke dashboard
+        // Instruktur dilarang ke dashboard - redirect tanpa message
         if ($role === 'instruktur' && $path === 'dashboard') {
-            return redirect()->to('/jadwal');
+            return redirect()->to('/jadwal-kelas');
         }
 
         // Jika route butuh role tertentu
         if ($arguments && !in_array($role, $arguments)) {
-            // Redirect sesuai role
+            // Redirect sesuai role - HAPUS with('error')
             if ($role === 'instruktur') {
-                return redirect()->to('/jadwal')->with('error', 'Akses ditolak.');
+                return redirect()->to('/jadwal-kelas');
             }
-
-            return redirect()->to('/dashboard')->with('error', 'Akses ditolak.');
+            return redirect()->to('/dashboard');
         }
     }
 
     public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
     {
-
+        // No action
     }
 }

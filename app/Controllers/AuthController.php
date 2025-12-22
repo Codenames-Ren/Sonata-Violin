@@ -1,16 +1,14 @@
 <?php
-
 namespace App\Controllers;
-
 use App\Models\OperatorModel;
 
 class AuthController extends BaseController
 {
-    protected $operator;
+    protected $operatorModel;
 
     public function __construct()
     {
-        $this->operator = new OperatorModel();
+        $this->operatorModel = new OperatorModel();
     }
 
     public function index()
@@ -23,9 +21,10 @@ class AuthController extends BaseController
         $username = $this->request->getPost('username');
         $password = $this->request->getPost('password');
 
-        $user = $this->operator
+        // Login dari tabel operator (semua user: admin, operator, instruktur)
+        $user = $this->operatorModel
                     ->where('username', $username)
-                    ->where('deleted_at', null) 
+                    ->where('deleted_at', null)
                     ->first();
 
         if (!$user) {
@@ -52,36 +51,29 @@ class AuthController extends BaseController
         }
 
         // SET SESSION
-        session()->set([
+        $sessionData = [
             'logged_in' => true,
             'user_id'   => $user['id'],
             'username'  => $user['username'],
             'nama'      => $user['nama_lengkap'],
-            'role'      => $user['role'],
-        ]);
-
-        // LOGIN BERHASIL - Return JSON
-        return $this->response->setJSON([
-            'success' => true,
-            'message' => 'Selamat datang, ' . $user['nama_lengkap'] . '!'
-        ]);
-    }
-
-    public function registerProcess()
-    {
-        $data = [
-            'username'      => $this->request->getPost('username'),
-            'nama_lengkap'  => $this->request->getPost('nama_lengkap'),
-            'password'      => password_hash($this->request->getPost('password'), PASSWORD_DEFAULT),
-            'role'          => 'operator',
-            'status'        => 'aktif',
-            'created_at'    => date('Y-m-d H:i:s'),
-            'deleted_at'    => null
+            'role'      => $user['role']
         ];
 
-        $this->operator->insert($data);
+        // PENTING: Kalau role instruktur, ambil instruktur_id dari kolom
+        if ($user['role'] === 'instruktur') {
+            $sessionData['instruktur_id'] = $user['instruktur_id'];
+        }
 
-        return redirect()->to('/login')->with('success', 'Pendaftaran berhasil! Silakan login.');
+        session()->set($sessionData);
+
+        // Redirect berdasarkan role
+        $redirectUrl = ($user['role'] === 'instruktur') ? '/jadwal-kelas' : '/dashboard';
+
+        return $this->response->setJSON([
+            'success' => true,
+            'message' => 'Selamat datang, ' . $user['nama_lengkap'] . '!',
+            'redirect' => $redirectUrl
+        ]);
     }
 
     public function logout()

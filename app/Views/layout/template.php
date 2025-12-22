@@ -71,7 +71,7 @@ if (in_array($role, ['admin', 'operator'])) {
     'label'=>'Operations',
     'icon'=>'fa-briefcase',
     'items'=>[
-      ['/jadwal','Jadwal Kelas','fa-calendar-days'],
+      ['/jadwal-kelas','Jadwal Kelas','fa-calendar-days'],
       ['/pendaftaran','Pendaftaran','fa-file-signature'],
       ['/pembayaran','Verifikasi Pembayaran','fa-money-check-dollar'],
       ['/absensi','Absensi','fa-user-check'],
@@ -86,7 +86,7 @@ if ($role === 'instruktur') {
     'label'=>'Pengajaran',
     'icon'=>'fa-chalkboard',
     'items'=>[
-      ['/jadwal','Jadwal Kelas','fa-calendar-days'],
+      ['/jadwal-kelas','Jadwal Kelas','fa-calendar-days'],
       ['/absensi','Absensi','fa-user-check'],
       ['/progress','Progress Kursus','fa-chart-line'],
     ]

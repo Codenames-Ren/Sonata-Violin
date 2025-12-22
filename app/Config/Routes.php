@@ -12,7 +12,7 @@ $routes->post('/register', 'AuthController::registerProcess');
 $routes->get('/logout', 'AuthController::logout');
 
 $routes->group('', ['filter' => 'auth'], function($routes) {
-    $routes->get('/dashboard', 'Dashboard::index');
+    $routes->get('/dashboard', 'Dashboard::index', ['filter' => 'role:admin,operator']);
 });
 
 $routes->group('paket', ['filter' => 'admin'], function($routes){
@@ -81,3 +81,19 @@ $routes->post('pembayaran/verify/(:num)', 'PembayaranController::verify/$1');
 $routes->post('pembayaran/reject/(:num)', 'PembayaranController::reject/$1');
 $routes->post('pembayaran/resubmit/(:num)', 'PembayaranController::resubmit/$1');
 
+$routes->group('jadwal-kelas', ['filter' => 'auth'], function ($routes) {
+    $routes->group('', ['filter' => 'role:admin,operator,instruktur'], function ($routes) {
+        $routes->get('/', 'JadwalKelasController::index');
+        $routes->get('(:num)', 'JadwalKelasController::detail/$1');
+    });
+    
+    // Routes khusus admin dan operator
+    $routes->group('', ['filter' => 'role:admin,operator'], function ($routes) {
+        $routes->post('create', 'JadwalKelasController::create');
+        $routes->post('update/(:num)', 'JadwalKelasController::update/$1');
+        $routes->post('(:num)', 'JadwalKelasController::delete/$1');
+        $routes->delete('(:num)', 'JadwalKelasController::delete/$1');
+        $routes->post('assign-siswa', 'JadwalKelasController::assignSiswa');
+        $routes->post('remove-siswa/(:num)/(:num)', 'JadwalKelasController::removeSiswa/$1/$2');
+    });
+});
