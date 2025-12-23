@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Login - Kursus Biola</title>
+  <title>Sonata Violin - Login</title>
 
   <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -250,7 +250,7 @@
     <div class="w-full max-w-md">
 
       <div class="text-center mb-8">
-        <h2 class="text-3xl font-bold text-slate-800 mb-2">Admin Login</h2>
+        <h2 class="text-3xl font-bold text-slate-800 mb-2">Sonata Violin Login</h2>
         <p class="text-slate-500 text-sm">Enter your credentials to continue</p>
       </div>
 
@@ -283,9 +283,6 @@
             <input type="checkbox" id="rememberMe" class="w-4 h-4 rounded border-gray-300 text-purple-600 focus:ring-purple-500 cursor-pointer">
             <span class="text-sm text-slate-600 group-hover:text-slate-800 transition-colors">Remember me</span>
           </label>
-          <a href="#" class="text-sm text-purple-600 hover:text-purple-700 font-medium transition-colors">
-            Forgot Password?
-          </a>
         </div>
 
         <button type="submit" class="w-full py-3 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5">
@@ -295,7 +292,7 @@
         <div class="mt-6 text-center">
           <p class="text-xs text-gray-400">
             <i class="fas fa-shield-alt mr-1"></i>
-            Protected by enterprise security
+            Protected by sonata violin security
           </p>
         </div>
       </form>
@@ -358,7 +355,7 @@
       if (data.success) {
         Swal.fire({
           icon: 'success',
-          title: 'Login Berhasil!',
+          title: 'Login Success!',
           text: data.message,
           confirmButtonColor: '#667eea',
           confirmButtonText: 'OK'

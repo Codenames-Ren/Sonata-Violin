@@ -51,7 +51,9 @@ class AbsensiController extends BaseController
             'absensi' => $absensi,
             'role'    => $role,
             'jadwal'  => $jadwalTersedia ?? [],
-            'hariIni' => $this->getHariIndonesia(date('N'))
+            'hariIni' => $this->getHariIndonesia(date('N')),
+            'page_title' => 'Manajemen Absensi',
+            'page_subtitle' => 'Kelola data absensi siswa Sonata Violin'
         ]);
     }
 
@@ -161,7 +163,9 @@ class AbsensiController extends BaseController
         return view('absensi/detail', [
             'absensi'     => $absensi,
             'siswaAbsen'  => $siswaAbsen,
-            'role'        => $role
+            'role'        => $role,
+            'page_title' => 'Manajemen Absensi Siswa',
+            'page_subtitle' => 'Instruktur dapat mengelola absensi siswa dikelasnya'
         ]);
     }
 

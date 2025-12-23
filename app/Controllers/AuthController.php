@@ -69,7 +69,7 @@ class AuthController extends BaseController
 
         return $this->response->setJSON([
             'success' => true,
-            'message' => 'Selamat datang, ' . $user['nama_lengkap'] . '!',
+            'message' => 'Welcome, '. $user['role'] . " " . $user['nama_lengkap'] . '!',
             'redirect' => $redirectUrl
         ]);
     }

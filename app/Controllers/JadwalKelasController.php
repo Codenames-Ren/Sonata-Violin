@@ -50,7 +50,9 @@ class JadwalKelasController extends BaseController
                 'paket' => [],
                 'ruang' => [],
                 'instruktur' => [],
-                'pendaftaran' => []
+                'pendaftaran' => [],
+                'page_title' => 'Jadwal Kelas Saya',
+                'page_subtitle' => 'Daftar kelas yang Anda bimbing'
             ];
         } else {
             $data = [
@@ -64,7 +66,9 @@ class JadwalKelasController extends BaseController
                     ->join('paket_kursus', 'paket_kursus.id = pendaftaran.paket_id')
                     ->where('pendaftaran.status', 'aktif')
                     ->whereNotIn('pendaftaran.id', !empty($pendaftaranIdTerpakai) ? $pendaftaranIdTerpakai : [0])
-                    ->findAll()
+                    ->findAll(),
+                'page_title' => 'Manajemen Jadwal Kelas',
+                'page_subtitle' => 'Kelola jadwal kelas Sonata Violin'
             ];
         }
 
@@ -252,7 +256,9 @@ class JadwalKelasController extends BaseController
             'jadwal' => $jadwal,
             'siswa' => $siswa,
             'siswaAvailable' => $siswaAvailable,
-            'role' => $role
+            'role' => $role,
+            'page_title' => 'Jadwal Kelas',
+            'page_subtitle' => 'Informasi kelas ' . $jadwal['nama_paket'] . ' - ' . $jadwal['hari']
         ];
 
         return view('jadwal_kelas/detail', $data);
