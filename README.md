@@ -487,8 +487,9 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## 🙏 Acknowledgments
 
-- CodeIgniter Team for the awesome framework
-- Tailwind CSS for the styling framework
+- [CodeIgniter Team](https://codeigniter.com/) for the awesome PHP framework
+- [Tailwind CSS](https://tailwindcss.com/) for the utility-first CSS framework
+- [SweetAlert2](https://sweetalert2.github.io/) for the beautiful, responsive, and customizable popup boxes
 - All contributors who have helped this project
 
 ---
