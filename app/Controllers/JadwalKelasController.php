@@ -31,9 +31,8 @@ class JadwalKelasController extends BaseController
     public function index()
     {
         $role = session('role');
-        $instrukturId = session('instruktur_id'); // Pastikan ini di-set saat login
+        $instrukturId = session('instruktur_id');
 
-        // Ambil ID pendaftaran yang SUDAH di-assign ke kelas manapun
         $sudahDiassign = $this->kelasSiswaModel
             ->select('pendaftaran_id')
             ->where('status', 'aktif')
@@ -48,14 +47,12 @@ class JadwalKelasController extends BaseController
             $data = [
                 'kelas' => $kelas,
                 'role' => $role,
-                // Instruktur tidak perlu data berikut (read-only)
                 'paket' => [],
                 'ruang' => [],
                 'instruktur' => [],
                 'pendaftaran' => []
             ];
         } else {
-            // Admin & Operator - lihat semua kelas
             $data = [
                 'kelas' => $this->jadwalModel->getJadwalLengkap(),
                 'role' => $role,
@@ -76,7 +73,6 @@ class JadwalKelasController extends BaseController
 
     public function create()
     {
-        // Hanya admin & operator yang bisa create
         if (session('role') === 'instruktur') {
             return redirect()->to('/jadwal-kelas')->with('error', 'Akses ditolak!');
         }
@@ -126,7 +122,6 @@ class JadwalKelasController extends BaseController
 
     public function update($id)
     {
-        // Hanya admin & operator yang bisa update
         if (session('role') === 'instruktur') {
             return redirect()->to('/jadwal-kelas')->with('error', 'Akses ditolak!');
         }
@@ -175,7 +170,6 @@ class JadwalKelasController extends BaseController
 
     public function assignSiswa()
     {
-        // Hanya admin & operator yang bisa assign
         if (session('role') === 'instruktur') {
             return redirect()->to('/jadwal-kelas')->with('error', 'Akses ditolak!');
         }
@@ -230,14 +224,12 @@ class JadwalKelasController extends BaseController
             return redirect()->to('/jadwal-kelas')->with('error', 'Jadwal tidak ditemukan!');
         }
 
-        // Jika instruktur, pastikan dia hanya bisa lihat kelasnya sendiri
         if ($role === 'instruktur' && $jadwal['instruktur_id'] != $instrukturId) {
             return redirect()->to('/jadwal-kelas')->with('error', 'Anda tidak memiliki akses ke kelas ini!');
         }
 
         $siswa = $this->kelasSiswaModel->getSiswaByKelas($id);
 
-        // Instruktur tidak perlu data untuk assign siswa
         $siswaAvailable = [];
         if (in_array($role, ['admin', 'operator'])) {
             $sudahDiassign = $this->kelasSiswaModel
@@ -268,7 +260,6 @@ class JadwalKelasController extends BaseController
 
     public function removeSiswa($jadwalId, $siswaId)
     {
-        // Hanya admin & operator yang bisa remove
         if (session('role') === 'instruktur') {
             return $this->response->setJSON([
                 'success' => false,

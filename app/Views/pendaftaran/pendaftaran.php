@@ -112,7 +112,7 @@
 
         <!-- ADD BUTTON -->
         <button id="btnOpenCreate"
-                class="btn-hover bg-white text-primary px-5 py-2.5 rounded-lg font-semibold shadow-md hover:shadow-lg transition-all w-full md:w-auto flex items-center justify-center gap-2">
+                class="btn-hover bg-white text-primary px-5 rounded-lg font-semibold shadow-md hover:shadow-lg transition-all w-full md:w-auto flex items-center justify-center gap-2">
             <i class="fa fa-plus"></i> Tambah Pendaftaran
         </button>
 

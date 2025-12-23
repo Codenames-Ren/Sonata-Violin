@@ -21,7 +21,6 @@ class AuthController extends BaseController
         $username = $this->request->getPost('username');
         $password = $this->request->getPost('password');
 
-        // Login dari tabel operator (semua user: admin, operator, instruktur)
         $user = $this->operatorModel
                     ->where('username', $username)
                     ->where('deleted_at', null)
@@ -59,7 +58,6 @@ class AuthController extends BaseController
             'role'      => $user['role']
         ];
 
-        // PENTING: Kalau role instruktur, ambil instruktur_id dari kolom
         if ($user['role'] === 'instruktur') {
             $sessionData['instruktur_id'] = $user['instruktur_id'];
         }

@@ -129,7 +129,7 @@ class Filters extends BaseFilters
                 'jadwal/*',
                 'pembayaran/*',
                 'verifikasi/*',
-                'absensi/*',
+                // 'absensi/*',
                 'progress/*',
                 'laporan/*',
             ]

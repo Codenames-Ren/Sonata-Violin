@@ -10,21 +10,18 @@ class RoleFilter implements FilterInterface
     {
         $role = session('role');
         
-        // Belum login
         if (!$role) {
             return redirect()->to('/login');
         }
 
         $path = service('uri')->getPath();
 
-        // Instruktur dilarang ke dashboard - redirect tanpa message
         if ($role === 'instruktur' && $path === 'dashboard') {
             return redirect()->to('/jadwal-kelas');
         }
 
         // Jika route butuh role tertentu
         if ($arguments && !in_array($role, $arguments)) {
-            // Redirect sesuai role - HAPUS with('error')
             if ($role === 'instruktur') {
                 return redirect()->to('/jadwal-kelas');
             }

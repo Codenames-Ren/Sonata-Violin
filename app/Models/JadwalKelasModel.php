@@ -8,8 +8,8 @@ class JadwalKelasModel extends Model
     protected $primaryKey = 'id';
     protected $allowedFields = [
         'instruktur_id',
-        'paket_id',           // TAMBAHKAN INI
-        'ruang_kelas_id',     // TAMBAHKAN INI
+        'paket_id',           
+        'ruang_kelas_id',     
         'hari',
         'jam_mulai',
         'jam_selesai',
@@ -29,8 +29,8 @@ class JadwalKelasModel extends Model
                 paket_kursus.nama_paket,
                 paket_kursus.level AS tingkat,
                 paket_kursus.jumlah_pertemuan,
-                paket_kursus.periode_mulai,
-                paket_kursus.periode_selesai,
+                paket_kursus.tanggal_mulai,
+                paket_kursus.tanggal_selesai,
                 ruang_kelas.nama_ruang,
                 ruang_kelas.kapasitas AS kapasitas_ruang,
                 COUNT(ks.id) AS jumlah_siswa
@@ -48,10 +48,6 @@ class JadwalKelasModel extends Model
     }
 
 
-    // ============ TAMBAH METHOD BARU INI ============
-    /**
-     * Ambil jadwal berdasarkan instruktur_id (untuk instruktur)
-     */
     public function getJadwalByInstruktur($instrukturId)
     {
         return $this->select('
@@ -61,8 +57,8 @@ class JadwalKelasModel extends Model
                 paket_kursus.nama_paket,
                 paket_kursus.level AS tingkat,
                 paket_kursus.jumlah_pertemuan,
-                paket_kursus.periode_mulai,
-                paket_kursus.periode_selesai,
+                paket_kursus.tanggal_mulai,
+                paket_kursus.tanggal_selesai,
                 ruang_kelas.nama_ruang,
                 ruang_kelas.kapasitas AS kapasitas_ruang,
                 COUNT(ks.id) AS jumlah_siswa
@@ -81,9 +77,6 @@ class JadwalKelasModel extends Model
             ->findAll();
     }
 
-    /**
-     * Ambil detail 1 jadwal dengan JOIN lengkap
-     */
     public function getJadwalById($id)
     {
         return $this->select('
@@ -109,9 +102,6 @@ class JadwalKelasModel extends Model
             ->first();
     }
 
-    /**
-     * Cek bentrok jadwal (instruktur / ruang)
-     */
     public function cekBentrok($data, $excludeId = null)
     {
         $builder = $this->where('hari', $data['hari'])

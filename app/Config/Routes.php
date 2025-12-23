@@ -87,7 +87,7 @@ $routes->group('jadwal-kelas', ['filter' => 'auth'], function ($routes) {
         $routes->get('(:num)', 'JadwalKelasController::detail/$1');
     });
     
-    // Routes khusus admin dan operator
+    // Routes khusus admin dan operator untuk jadwal kelas
     $routes->group('', ['filter' => 'role:admin,operator'], function ($routes) {
         $routes->post('create', 'JadwalKelasController::create');
         $routes->post('update/(:num)', 'JadwalKelasController::update/$1');
@@ -95,5 +95,25 @@ $routes->group('jadwal-kelas', ['filter' => 'auth'], function ($routes) {
         $routes->delete('(:num)', 'JadwalKelasController::delete/$1');
         $routes->post('assign-siswa', 'JadwalKelasController::assignSiswa');
         $routes->post('remove-siswa/(:num)/(:num)', 'JadwalKelasController::removeSiswa/$1/$2');
+    });
+});
+
+$routes->group('absensi', ['filter' => 'auth'], function ($routes) {
+    // Routes untuk semua role (admin, operator, instruktur)
+    $routes->group('', ['filter' => 'role:admin,operator,instruktur'], function ($routes) {
+        $routes->get('/', 'AbsensiController::index');
+        $routes->get('detail/(:num)', 'AbsensiController::detail/$1');
+    });
+    
+    // Routes khusus admin dan operator untuk manage absensi
+    $routes->group('', ['filter' => 'role:admin,operator'], function ($routes) {
+        $routes->get('create', 'AbsensiController::create');
+        $routes->post('open/(:num)', 'AbsensiController::open/$1');
+        $routes->post('close/(:num)', 'AbsensiController::close/$1');
+    });
+    
+    // Routes khusus instruktur untuk isi absensi siswa
+    $routes->group('', ['filter' => 'role:instruktur'], function ($routes) {
+        $routes->post('submit', 'AbsensiController::submit');
     });
 });

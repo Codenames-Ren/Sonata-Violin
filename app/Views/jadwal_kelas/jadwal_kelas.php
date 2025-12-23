@@ -12,7 +12,7 @@ tailwind.config = {
             colors: {
                 primary: '#667eea',
                 'primary-dark': '#5568d3',
-                secondary: '#764ba2',
+                 secondary: '#764ba2',
             }
         }
     }
@@ -66,18 +66,15 @@ tailwind.config = {
         margin-top: 2rem;
     }
 
-    /* Wrapper tabel biar bisa scroll horizontal */
     .table-wrapper {
         overflow-x: auto;
-        -webkit-overflow-scrolling: touch; /* Smooth scroll di mobile */
+        -webkit-overflow-scrolling: touch;
     }
 
-    /* Atur minimum width kolom biar gak terlalu sempit */
     .table-wrapper table {
-        min-width: 1280px; /* Sesuaikan dengan kebutuhan */
+        min-width: 1280px;
     }
 
-    /* Custom scrollbar biar lebih keren */
     .table-wrapper::-webkit-scrollbar {
         height: 8px;
     }
@@ -179,8 +176,8 @@ tailwind.config = {
                 <td class="px-4 py-4 text-gray-600"><?= esc($k['nama_paket']) ?></td>
                 <td class="px-4 py-4 text-center">
                     <span class="px-3 py-1 rounded-full text-xs font-semibold bg-purple-100 text-purple-700">
-                        <?php if (!empty($k['periode_mulai']) && !empty($k['periode_selesai'])): ?>
-                            <?= date('d M Y', strtotime($k['periode_mulai'])) ?> - <?= date('d M Y', strtotime($k['periode_selesai'])) ?>
+                        <?php if (!empty($k['tanggal_mulai']) && !empty($k['tanggal_selesai'])): ?>
+                            <?= date('d M Y', strtotime($k['tanggal_mulai'])) ?> - <?= date('d M Y', strtotime($k['tanggal_selesai'])) ?>
                         <?php else: ?>
                             Belum Ditentukan
                         <?php endif; ?>
@@ -234,7 +231,7 @@ tailwind.config = {
     </table>
     </div>
     
-    <!-- HINT SCROLL - DI SINI, DI DALAM WRAPPER DESKTOP TABLE -->
+    <!-- HINT SCROLL -->
     <div class="text-center text-xs text-gray-500 p-2 bg-gray-50 border-t">
         <i class="fa fa-arrows-alt-h mr-1"></i>Geser tabel ke kanan untuk melihat lebih banyak
     </div>
@@ -261,8 +258,8 @@ tailwind.config = {
                     <p class="text-gray-600"><strong>Paket:</strong> <?= esc($k['nama_paket']) ?></p>
                     <p class="text-gray-600">
                         <strong>Periode:</strong> 
-                        <?php if (!empty($k['periode_mulai']) && !empty($k['periode_selesai'])): ?>
-                            <?= date('d M Y', strtotime($k['periode_mulai'])) ?> - <?= date('d M Y', strtotime($k['periode_selesai'])) ?>
+                        <?php if (!empty($k['tanggal_mulai']) && !empty($k['tanggal_selesai'])): ?>
+                            <?= date('d M Y', strtotime($k['tanggal_mulai'])) ?> - <?= date('d M Y', strtotime($k['tanggal_selesai'])) ?>
                         <?php else: ?>
                             Belum Ditentukan
                         <?php endif; ?>
@@ -512,281 +509,281 @@ tailwind.config = {
 </div>
 
 <script>
-// ==================== SEARCH FUNCTIONALITY ====================
-const searchInput = document.getElementById("searchInput");
-const btnClearSearch = document.getElementById("btnClearSearch");
+    // ==================== SEARCH FUNCTIONALITY ====================
+    const searchInput = document.getElementById("searchInput");
+    const btnClearSearch = document.getElementById("btnClearSearch");
 
-function applySearch() {
-    const keyword = searchInput.value.toLowerCase().trim();
-    btnClearSearch.classList.toggle("hidden", keyword.length === 0);
+    function applySearch() {
+        const keyword = searchInput.value.toLowerCase().trim();
+        btnClearSearch.classList.toggle("hidden", keyword.length === 0);
 
-    const rows = document.querySelectorAll(".table-row");
-    const cards = document.querySelectorAll(".card-item");
+        const rows = document.querySelectorAll(".table-row");
+        const cards = document.querySelectorAll(".card-item");
 
-    rows.forEach(row => {
-        const searchData = row.dataset.search || "";
-        row.style.display = searchData.includes(keyword) ? "" : "none";
-    });
-
-    cards.forEach(card => {
-        const searchData = card.dataset.search || "";
-        card.style.display = searchData.includes(keyword) ? "" : "none";
-    });
-
-    currentPage = 1;
-    updatePagination();
-}
-
-searchInput.addEventListener("input", applySearch);
-
-btnClearSearch.addEventListener("click", () => {
-    searchInput.value = "";
-    btnClearSearch.classList.add("hidden");
-    applySearch();
-});
-
-// ==================== PAGINATION ====================
-let currentPage = 1;
-let totalPages = 1;
-
-function getVisibleItems() {
-    const isMobile = window.innerWidth < 768;
-    const rows = Array.from(document.querySelectorAll(".table-row"));
-    const cards = Array.from(document.querySelectorAll(".card-item"));
-    
-    const allItems = isMobile ? cards : rows;
-    const keyword = searchInput.value.toLowerCase().trim();
-    
-    if (keyword === '') {
-        return allItems;
-    }
-    
-    return allItems.filter(item => {
-        const searchData = item.dataset.search || '';
-        return searchData.includes(keyword);
-    });
-}
-
-function updatePagination() {
-    const isMobile = window.innerWidth < 768;
-    const allRows = Array.from(document.querySelectorAll(".table-row"));
-    const allCards = Array.from(document.querySelectorAll(".card-item"));
-    
-    allRows.forEach(row => row.style.display = "none");
-    allCards.forEach(card => card.style.display = "none");
-    
-    const visibleItems = getVisibleItems();
-    const perPage = isMobile ? 3 : 8;
-
-    totalPages = Math.max(1, Math.ceil(visibleItems.length / perPage));
-    if (currentPage > totalPages) currentPage = totalPages;
-
-    const startIndex = (currentPage - 1) * perPage;
-    const endIndex = startIndex + perPage;
-    
-    visibleItems.slice(startIndex, endIndex).forEach(item => {
-        item.style.display = "";
-    });
-
-    document.getElementById("currentPage").textContent = currentPage;
-    document.getElementById("totalPages").textContent = totalPages;
-
-    document.getElementById("btnPrev").disabled = currentPage === 1;
-    document.getElementById("btnNext").disabled = currentPage === totalPages;
-}
-
-document.getElementById("btnPrev").addEventListener("click", () => {
-    if (currentPage > 1) { 
-        currentPage--; 
-        updatePagination(); 
-    }
-});
-
-document.getElementById("btnNext").addEventListener("click", () => {
-    if (currentPage < totalPages) { 
-        currentPage++; 
-        updatePagination(); 
-    }
-});
-
-window.addEventListener("resize", () => {
-    currentPage = 1;
-    updatePagination();
-});
-
-// ==================== MODAL JADWAL KELAS ====================
-<?php if (in_array($role, ['admin', 'operator'])): ?>
-const modalJadwal = document.getElementById("modalJadwal");
-const modalBox = document.getElementById("modalBox");
-const modalTitle = document.getElementById("modalTitle");
-const modalForm = document.getElementById("modalForm");
-
-const btnOpenCreate = document.getElementById("btnOpenCreate");
-const btnCloseModal = document.getElementById("btnCloseModal");
-const btnCancelModal = document.getElementById("btnCancelModal");
-
-let isEditMode = false;
-
-function openModalJadwal(mode = 'create') {
-    isEditMode = (mode === 'edit');
-    
-    modalTitle.textContent = isEditMode ? "Edit Jadwal Kelas" : "Tambah Jadwal Kelas";
-    
-    if (!isEditMode) {
-        modalForm.reset();
-        document.getElementById("jadwal_id").value = "";
-    }
-    
-    modalJadwal.classList.remove("hidden");
-    
-    setTimeout(() => {
-        modalBox.classList.remove("opacity-0", "scale-95");
-        modalBox.classList.add("opacity-100", "scale-100");
-    }, 10);
-}
-
-function closeModalJadwal() {
-    modalBox.classList.remove("opacity-100", "scale-100");
-    modalBox.classList.add("opacity-0", "scale-95");
-    
-    setTimeout(() => {
-        modalJadwal.classList.add("hidden");
-    }, 300);
-}
-
-if (btnOpenCreate) {
-    btnOpenCreate.addEventListener("click", () => openModalJadwal('create'));
-}
-
-btnCloseModal.addEventListener("click", closeModalJadwal);
-btnCancelModal.addEventListener("click", closeModalJadwal);
-
-modalForm.addEventListener("submit", function(e) {
-    const id = document.getElementById("jadwal_id").value;
-    
-    const checkedDays = document.querySelectorAll('input[name="hari[]"]:checked');
-    if (checkedDays.length === 0) {
-        e.preventDefault();
-        Swal.fire({
-            icon: 'warning',
-            title: 'Pilih Minimal 1 Hari!',
-            text: 'Anda harus memilih minimal 1 hari untuk jadwal kelas.',
-            confirmButtonColor: '#667eea'
+        rows.forEach(row => {
+            const searchData = row.dataset.search || "";
+            row.style.display = searchData.includes(keyword) ? "" : "none";
         });
-        return;
-    }
-    
-    if (id) {
-        this.action = "<?= base_url('jadwal-kelas/update/') ?>" + id;
-    } else {
-        this.action = "<?= base_url('jadwal-kelas/create') ?>";
-    }
-});
 
-document.querySelectorAll(".btnEdit").forEach(btn => {
-    btn.addEventListener("click", function() {
-        const id = this.dataset.id;
-        const paket = this.dataset.paket;
-        const ruang = this.dataset.ruang;
-        const instruktur = this.dataset.instruktur;
-        const hari = this.dataset.hari;
-        const jamMulai = this.dataset.jammulai;
-        const jamSelesai = this.dataset.jamselesai;
-
-        document.getElementById("jadwal_id").value = id;
-        document.getElementById("jadwal_paket").value = paket;
-        document.getElementById("jadwal_ruang").value = ruang;
-        document.getElementById("jadwal_instruktur").value = instruktur;
-        
-        document.querySelectorAll('input[name="hari[]"]').forEach(cb => cb.checked = false);
-
-        const hariArray = hari.split(',').map(h => h.trim());
-        document.querySelectorAll('input[name="hari[]"]').forEach(cb => {
-            if (hariArray.includes(cb.value)) {
-                cb.checked = true;
-            }
+        cards.forEach(card => {
+            const searchData = card.dataset.search || "";
+            card.style.display = searchData.includes(keyword) ? "" : "none";
         });
-        document.getElementById("jadwal_jam_mulai").value = jamMulai;
-        document.getElementById("jadwal_jam_selesai").value = jamSelesai;
 
-        openModalJadwal('edit');
-    });
-});
-
-modalJadwal.addEventListener("click", function(e) {
-    if (e.target === modalJadwal) {
-        closeModalJadwal();
+        currentPage = 1;
+        updatePagination();
     }
-});
-<?php endif; ?>
 
-// ==================== MODAL ASSIGN SISWA ====================
-const modalAssign = document.getElementById("modalAssign");
-const modalAssignBox = document.getElementById("modalAssignBox");
-const btnCloseAssign = document.getElementById("btnCloseAssign");
-const btnCancelAssign = document.getElementById("btnCancelAssign");
+    searchInput.addEventListener("input", applySearch);
 
-function openModalAssign() {
-    modalAssign.classList.remove("hidden");
-    
-    setTimeout(() => {
-        modalAssignBox.classList.remove("opacity-0", "scale-95");
-        modalAssignBox.classList.add("opacity-100", "scale-100");
-    }, 10);
-}
+    btnClearSearch.addEventListener("click", () => {
+        searchInput.value = "";
+        btnClearSearch.classList.add("hidden");
+        applySearch();
+    });
 
-function closeModalAssign() {
-    modalAssignBox.classList.remove("opacity-100", "scale-100");
-    modalAssignBox.classList.add("opacity-0", "scale-95");
-    
-    setTimeout(() => {
-        modalAssign.classList.add("hidden");
-    }, 300);
-}
+    // ==================== PAGINATION ====================
+    let currentPage = 1;
+    let totalPages = 1;
 
-btnCloseAssign.addEventListener("click", closeModalAssign);
-btnCancelAssign.addEventListener("click", closeModalAssign);
-
-document.querySelectorAll(".btnAssign").forEach(btn => {
-    btn.addEventListener("click", function() {
-        const id = this.dataset.id;
-        const hari = this.dataset.hari;
-        const paket = this.dataset.paket;
-        const paketId = this.dataset.paketid; 
-
-        document.getElementById("assign_jadwal_id").value = id;
-        document.getElementById("infoKelasHari").textContent = hari;
-        document.getElementById("infoKelasPaket").textContent = paket;
-
-        const selectSiswa = document.getElementById("assign_siswa");
-        const allOptions = selectSiswa.querySelectorAll("option");
+    function getVisibleItems() {
+        const isMobile = window.innerWidth < 768;
+        const rows = Array.from(document.querySelectorAll(".table-row"));
+        const cards = Array.from(document.querySelectorAll(".card-item"));
         
-        allOptions.forEach(option => {
-            if (option.value === "") {
-                option.style.display = ""; 
-                return;
-            }
+        const allItems = isMobile ? cards : rows;
+        const keyword = searchInput.value.toLowerCase().trim();
+        
+        if (keyword === '') {
+            return allItems;
+        }
+        
+        return allItems.filter(item => {
+            const searchData = item.dataset.search || '';
+            return searchData.includes(keyword);
+        });
+    }
+
+    function updatePagination() {
+        const isMobile = window.innerWidth < 768;
+        const allRows = Array.from(document.querySelectorAll(".table-row"));
+        const allCards = Array.from(document.querySelectorAll(".card-item"));
+        
+        allRows.forEach(row => row.style.display = "none");
+        allCards.forEach(card => card.style.display = "none");
+        
+        const visibleItems = getVisibleItems();
+        const perPage = isMobile ? 3 : 8;
+
+        totalPages = Math.max(1, Math.ceil(visibleItems.length / perPage));
+        if (currentPage > totalPages) currentPage = totalPages;
+
+        const startIndex = (currentPage - 1) * perPage;
+        const endIndex = startIndex + perPage;
+        
+        visibleItems.slice(startIndex, endIndex).forEach(item => {
+            item.style.display = "";
+        });
+
+        document.getElementById("currentPage").textContent = currentPage;
+        document.getElementById("totalPages").textContent = totalPages;
+
+        document.getElementById("btnPrev").disabled = currentPage === 1;
+        document.getElementById("btnNext").disabled = currentPage === totalPages;
+    }
+
+    document.getElementById("btnPrev").addEventListener("click", () => {
+        if (currentPage > 1) { 
+            currentPage--; 
+            updatePagination(); 
+        }
+    });
+
+    document.getElementById("btnNext").addEventListener("click", () => {
+        if (currentPage < totalPages) { 
+            currentPage++; 
+            updatePagination(); 
+        }
+    });
+
+    window.addEventListener("resize", () => {
+        currentPage = 1;
+        updatePagination();
+    });
+
+    // ==================== MODAL JADWAL KELAS ====================
+    <?php if (in_array($role, ['admin', 'operator'])): ?>
+    const modalJadwal = document.getElementById("modalJadwal");
+    const modalBox = document.getElementById("modalBox");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalForm = document.getElementById("modalForm");
+
+    const btnOpenCreate = document.getElementById("btnOpenCreate");
+    const btnCloseModal = document.getElementById("btnCloseModal");
+    const btnCancelModal = document.getElementById("btnCancelModal");
+
+    let isEditMode = false;
+
+    function openModalJadwal(mode = 'create') {
+        isEditMode = (mode === 'edit');
+        
+        modalTitle.textContent = isEditMode ? "Edit Jadwal Kelas" : "Tambah Jadwal Kelas";
+        
+        if (!isEditMode) {
+            modalForm.reset();
+            document.getElementById("jadwal_id").value = "";
+        }
+        
+        modalJadwal.classList.remove("hidden");
+        
+        setTimeout(() => {
+            modalBox.classList.remove("opacity-0", "scale-95");
+            modalBox.classList.add("opacity-100", "scale-100");
+        }, 10);
+    }
+
+    function closeModalJadwal() {
+        modalBox.classList.remove("opacity-100", "scale-100");
+        modalBox.classList.add("opacity-0", "scale-95");
+        
+        setTimeout(() => {
+            modalJadwal.classList.add("hidden");
+        }, 300);
+    }
+
+    if (btnOpenCreate) {
+        btnOpenCreate.addEventListener("click", () => openModalJadwal('create'));
+    }
+
+    btnCloseModal.addEventListener("click", closeModalJadwal);
+    btnCancelModal.addEventListener("click", closeModalJadwal);
+
+    modalForm.addEventListener("submit", function(e) {
+        const id = document.getElementById("jadwal_id").value;
+        
+        const checkedDays = document.querySelectorAll('input[name="hari[]"]:checked');
+        if (checkedDays.length === 0) {
+            e.preventDefault();
+            Swal.fire({
+                icon: 'warning',
+                title: 'Pilih Minimal 1 Hari!',
+                text: 'Anda harus memilih minimal 1 hari untuk jadwal kelas.',
+                confirmButtonColor: '#667eea'
+            });
+            return;
+        }
+        
+        if (id) {
+            this.action = "<?= base_url('jadwal-kelas/update/') ?>" + id;
+        } else {
+            this.action = "<?= base_url('jadwal-kelas/create') ?>";
+        }
+    });
+
+    document.querySelectorAll(".btnEdit").forEach(btn => {
+        btn.addEventListener("click", function() {
+            const id = this.dataset.id;
+            const paket = this.dataset.paket;
+            const ruang = this.dataset.ruang;
+            const instruktur = this.dataset.instruktur;
+            const hari = this.dataset.hari;
+            const jamMulai = this.dataset.jammulai;
+            const jamSelesai = this.dataset.jamselesai;
+
+            document.getElementById("jadwal_id").value = id;
+            document.getElementById("jadwal_paket").value = paket;
+            document.getElementById("jadwal_ruang").value = ruang;
+            document.getElementById("jadwal_instruktur").value = instruktur;
             
-            const optionPaketId = option.dataset.paket;
-            if (optionPaketId === paketId) {
-                option.style.display = ""; 
-            } else {
-                option.style.display = "none";
-            }
+            document.querySelectorAll('input[name="hari[]"]').forEach(cb => cb.checked = false);
+
+            const hariArray = hari.split(',').map(h => h.trim());
+            document.querySelectorAll('input[name="hari[]"]').forEach(cb => {
+                if (hariArray.includes(cb.value)) {
+                    cb.checked = true;
+                }
+            });
+            document.getElementById("jadwal_jam_mulai").value = jamMulai;
+            document.getElementById("jadwal_jam_selesai").value = jamSelesai;
+
+            openModalJadwal('edit');
         });
-
-        openModalAssign();
     });
-});
 
-modalAssign.addEventListener("click", function(e) {
-    if (e.target === modalAssign) {
-        closeModalAssign();
+    modalJadwal.addEventListener("click", function(e) {
+        if (e.target === modalJadwal) {
+            closeModalJadwal();
+        }
+    });
+    <?php endif; ?>
+
+    // ==================== MODAL ASSIGN SISWA ====================
+    const modalAssign = document.getElementById("modalAssign");
+    const modalAssignBox = document.getElementById("modalAssignBox");
+    const btnCloseAssign = document.getElementById("btnCloseAssign");
+    const btnCancelAssign = document.getElementById("btnCancelAssign");
+
+    function openModalAssign() {
+        modalAssign.classList.remove("hidden");
+        
+        setTimeout(() => {
+            modalAssignBox.classList.remove("opacity-0", "scale-95");
+            modalAssignBox.classList.add("opacity-100", "scale-100");
+        }, 10);
     }
-});
 
-// ==================== INITIALIZE ====================
-updatePagination();
+    function closeModalAssign() {
+        modalAssignBox.classList.remove("opacity-100", "scale-100");
+        modalAssignBox.classList.add("opacity-0", "scale-95");
+        
+        setTimeout(() => {
+            modalAssign.classList.add("hidden");
+        }, 300);
+    }
+
+    btnCloseAssign.addEventListener("click", closeModalAssign);
+    btnCancelAssign.addEventListener("click", closeModalAssign);
+
+    document.querySelectorAll(".btnAssign").forEach(btn => {
+        btn.addEventListener("click", function() {
+            const id = this.dataset.id;
+            const hari = this.dataset.hari;
+            const paket = this.dataset.paket;
+            const paketId = this.dataset.paketid; 
+
+            document.getElementById("assign_jadwal_id").value = id;
+            document.getElementById("infoKelasHari").textContent = hari;
+            document.getElementById("infoKelasPaket").textContent = paket;
+
+            const selectSiswa = document.getElementById("assign_siswa");
+            const allOptions = selectSiswa.querySelectorAll("option");
+            
+            allOptions.forEach(option => {
+                if (option.value === "") {
+                    option.style.display = ""; 
+                    return;
+                }
+                
+                const optionPaketId = option.dataset.paket;
+                if (optionPaketId === paketId) {
+                    option.style.display = ""; 
+                } else {
+                    option.style.display = "none";
+                }
+            });
+
+            openModalAssign();
+        });
+    });
+
+    modalAssign.addEventListener("click", function(e) {
+        if (e.target === modalAssign) {
+            closeModalAssign();
+        }
+    });
+
+    // ==================== INITIALIZE ====================
+    updatePagination();
 </script>
 
 <?= $this->endSection() ?>

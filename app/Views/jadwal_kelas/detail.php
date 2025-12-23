@@ -36,8 +36,7 @@ tailwind.config = {
 
 <?php $role = session('role'); ?>
 
-<!-- BACK BUTTON (hanya untuk admin/operator) -->
-<?php if (in_array($role, ['admin', 'operator'])): ?>
+<!-- BACK BUTTON -->
 <div class="mb-4">
     <a href="<?= base_url('jadwal-kelas') ?>" 
        class="btn-hover inline-flex items-center gap-2 px-4 py-2 bg-white border-2 border-gray-300 rounded-lg font-semibold text-gray-700 hover:border-primary hover:text-primary transition-all">
@@ -45,7 +44,6 @@ tailwind.config = {
         <span>Kembali ke Daftar Jadwal</span>
     </a>
 </div>
-<?php endif; ?>
 
 <!-- HEADER CARD -->
 <div class="info-card p-6 rounded-xl shadow-lg mb-6 text-white">
@@ -71,7 +69,7 @@ tailwind.config = {
     </div>
 </div>
 
-<!-- INFO INSTRUKTUR (COMPACT) -->
+<!-- INFO INSTRUKTUR -->
 <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
     <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
         <i class="fa fa-chalkboard-teacher text-primary"></i>
@@ -270,217 +268,215 @@ tailwind.config = {
 <?php endif; ?>
 
 <script>
-// ==================== SWAL STYLING ====================
-const swalStyle = document.createElement('style');
-swalStyle.textContent = `
-    .swal2-container {
-        z-index: 99999 !important;
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important;
-        right: 0 !important;
-        bottom: 0 !important;
-    }
-
-    .swal2-popup {
-        margin: 0 !important;
-        position: absolute !important;
-        top: 35% !important;
-        left: 56% !important;
-        transform: translate(-50%, -50%) !important;
-    }
-
-    .swal2-container.swal2-backdrop-show {
-        background: rgba(0, 0, 0, 0.6) !important;
-    }
-`;
-document.head.appendChild(swalStyle);
-
-// ==================== MODAL TAMBAH SISWA ====================
-<?php if (in_array($role, ['admin', 'operator'])): ?>
-const modal = document.getElementById("modalTambahSiswa");
-const modalBox = document.getElementById("modalBox");
-const btnTambahSiswa = document.getElementById("btnTambahSiswa");
-const btnCloseModal = document.getElementById("btnCloseModal");
-const btnCancelModal = document.getElementById("btnCancelModal");
-
-function openModal() {
-    modal.classList.remove("hidden");
-    
-    setTimeout(() => {
-        modalBox.classList.remove("opacity-0", "scale-95");
-        modalBox.classList.add("opacity-100", "scale-100");
-    }, 10);
-}
-
-function closeModal() {
-    modalBox.classList.remove("opacity-100", "scale-100");
-    modalBox.classList.add("opacity-0", "scale-95");
-    
-    setTimeout(() => {
-        modal.classList.add("hidden");
-    }, 300);
-}
-
-// Event Listeners untuk Modal
-if (btnTambahSiswa) {
-    btnTambahSiswa.addEventListener("click", openModal);
-}
-
-if (btnCloseModal) {
-    btnCloseModal.addEventListener("click", closeModal);
-}
-
-if (btnCancelModal) {
-    btnCancelModal.addEventListener("click", closeModal);
-}
-
-// Close modal ketika klik di luar
-if (modal) {
-    modal.addEventListener("click", function(e) {
-        if (e.target === modal) {
-            closeModal();
+    // ==================== SWAL STYLING ====================
+    const swalStyle = document.createElement('style');
+    swalStyle.textContent = `
+        .swal2-container {
+            z-index: 99999 !important;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
         }
-    });
-}
-<?php endif; ?>
 
-// ==================== HAPUS SISWA ====================
-<?php if (in_array($role, ['admin', 'operator'])): ?>
-document.querySelectorAll(".btnHapusSiswa").forEach(btn => {
-    btn.addEventListener("click", function() {
-        const siswaId = this.dataset.id;
-        const namaSiswa = this.dataset.nama;
-        const jadwalId = <?= $jadwal['id'] ?>;
+        .swal2-popup {
+            margin: 0 !important;
+            position: absolute !important;
+            top: 35% !important;
+            left: 56% !important;
+            transform: translate(-50%, -50%) !important;
+        }
 
-        Swal.fire({
-            title: 'Hapus Siswa?',
-            html: `Apakah Anda yakin ingin menghapus <strong>${namaSiswa}</strong> dari kelas ini?`,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#ef4444',
-            cancelButtonColor: '#6b7280',
-            confirmButtonText: 'Ya, Hapus!',
-            cancelButtonText: 'Batal',
-            reverseButtons: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Kirim request hapus
-                fetch(`<?= base_url('jadwal-kelas/remove-siswa/') ?>${jadwalId}/${siswaId}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    body: JSON.stringify({
-                        <?= csrf_token() ?>: '<?= csrf_hash() ?>'
+        .swal2-container.swal2-backdrop-show {
+            background: rgba(0, 0, 0, 0.6) !important;
+        }
+    `;
+    document.head.appendChild(swalStyle);
+
+    // ==================== MODAL TAMBAH SISWA ====================
+    <?php if (in_array($role, ['admin', 'operator'])): ?>
+    const modal = document.getElementById("modalTambahSiswa");
+    const modalBox = document.getElementById("modalBox");
+    const btnTambahSiswa = document.getElementById("btnTambahSiswa");
+    const btnCloseModal = document.getElementById("btnCloseModal");
+    const btnCancelModal = document.getElementById("btnCancelModal");
+
+    function openModal() {
+        modal.classList.remove("hidden");
+        
+        setTimeout(() => {
+            modalBox.classList.remove("opacity-0", "scale-95");
+            modalBox.classList.add("opacity-100", "scale-100");
+        }, 10);
+    }
+
+    function closeModal() {
+        modalBox.classList.remove("opacity-100", "scale-100");
+        modalBox.classList.add("opacity-0", "scale-95");
+        
+        setTimeout(() => {
+            modal.classList.add("hidden");
+        }, 300);
+    }
+
+    // Event Listeners untuk Modal
+    if (btnTambahSiswa) {
+        btnTambahSiswa.addEventListener("click", openModal);
+    }
+
+    if (btnCloseModal) {
+        btnCloseModal.addEventListener("click", closeModal);
+    }
+
+    if (btnCancelModal) {
+        btnCancelModal.addEventListener("click", closeModal);
+    }
+
+    // Close modal ketika klik di luar
+    if (modal) {
+        modal.addEventListener("click", function(e) {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+    }
+    <?php endif; ?>
+
+    // ==================== HAPUS SISWA ====================
+    <?php if (in_array($role, ['admin', 'operator'])): ?>
+    document.querySelectorAll(".btnHapusSiswa").forEach(btn => {
+        btn.addEventListener("click", function() {
+            const siswaId = this.dataset.id;
+            const namaSiswa = this.dataset.nama;
+            const jadwalId = <?= $jadwal['id'] ?>;
+
+            Swal.fire({
+                title: 'Hapus Siswa?',
+                html: `Apakah Anda yakin ingin menghapus <strong>${namaSiswa}</strong> dari kelas ini?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`<?= base_url('jadwal-kelas/remove-siswa/') ?>${jadwalId}/${siswaId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: JSON.stringify({
+                            <?= csrf_token() ?>: '<?= csrf_hash() ?>'
+                        })
                     })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Berhasil!',
+                                text: 'Siswa berhasil dihapus dari kelas.',
+                                showConfirmButton: false,
+                                timer: 1500,
+                                timerProgressBar: true
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Gagal!',
+                                text: data.message || 'Gagal menghapus siswa.',
+                                confirmButtonColor: '#667eea'
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: 'Terjadi kesalahan saat menghapus siswa.',
+                            confirmButtonColor: '#667eea'
+                        });
+                    });
+                }
+            });
+        });
+    });
+    <?php endif; ?>
+
+    // ==================== FORM SUBMIT TAMBAH SISWA ====================
+    <?php if (in_array($role, ['admin', 'operator'])): ?>
+    const formTambahSiswa = document.getElementById("formTambahSiswa");
+
+    if (formTambahSiswa) {
+        formTambahSiswa.addEventListener("submit", function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            closeModal();
+            
+            setTimeout(() => {
+                Swal.fire({
+                    title: 'Processing...',
+                    text: 'Menambahkan siswa ke kelas...',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                
+                fetch(this.action, {
+                    method: 'POST',
+                    body: formData
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
+                .then(response => {
+                    if (response.redirected) {
+                        window.location.href = response.url;
+                    } else {
+                        return response.text();
+                    }
+                })
+                .then(html => {
+                    if (html) {
                         Swal.fire({
                             icon: 'success',
                             title: 'Berhasil!',
-                            text: 'Siswa berhasil dihapus dari kelas.',
+                            text: 'Siswa berhasil ditambahkan ke kelas.',
                             showConfirmButton: false,
                             timer: 1500,
                             timerProgressBar: true
                         }).then(() => {
                             location.reload();
                         });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Gagal!',
-                            text: data.message || 'Gagal menghapus siswa.',
-                            confirmButtonColor: '#667eea'
-                        });
                     }
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    console.error('Submit error:', error);
                     Swal.fire({
                         icon: 'error',
                         title: 'Error!',
-                        text: 'Terjadi kesalahan saat menghapus siswa.',
+                        text: 'Terjadi kesalahan saat menambahkan siswa.',
                         confirmButtonColor: '#667eea'
                     });
                 });
-            }
+            }, 300);
         });
+    }
+    <?php endif; ?>
+
+    // ==================== SMOOTH SCROLL BACK BUTTON ====================
+    window.addEventListener('load', function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     });
-});
-<?php endif; ?>
 
-// ==================== FORM SUBMIT TAMBAH SISWA ====================
-<?php if (in_array($role, ['admin', 'operator'])): ?>
-const formTambahSiswa = document.getElementById("formTambahSiswa");
-
-if (formTambahSiswa) {
-    formTambahSiswa.addEventListener("submit", function(e) {
-        e.preventDefault();
-        
-        const formData = new FormData(this);
-        
-        closeModal();
-        
-        setTimeout(() => {
-            Swal.fire({
-                title: 'Processing...',
-                text: 'Menambahkan siswa ke kelas...',
-                allowOutsideClick: false,
-                allowEscapeKey: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                }
-            });
-            
-            fetch(this.action, {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => {
-                if (response.redirected) {
-                    window.location.href = response.url;
-                } else {
-                    return response.text();
-                }
-            })
-            .then(html => {
-                if (html) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Berhasil!',
-                        text: 'Siswa berhasil ditambahkan ke kelas.',
-                        showConfirmButton: false,
-                        timer: 1500,
-                        timerProgressBar: true
-                    }).then(() => {
-                        location.reload();
-                    });
-                }
-            })
-            .catch(error => {
-                console.error('Submit error:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error!',
-                    text: 'Terjadi kesalahan saat menambahkan siswa.',
-                    confirmButtonColor: '#667eea'
-                });
-            });
-        }, 300);
-    });
-}
-<?php endif; ?>
-
-// ==================== SMOOTH SCROLL BACK BUTTON ====================
-window.addEventListener('load', function() {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-});
-
-console.log('Detail Jadwal Kelas - JavaScript Loaded Successfully ✓');
 </script>
 
 <?= $this->endSection() ?>
