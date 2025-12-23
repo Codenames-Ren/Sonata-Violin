@@ -7,115 +7,115 @@
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-38B2AC?style=flat-square&logo=tailwind-css)
 ![MySQL](https://img.shields.io/badge/MySQL-Database-4479A1?style=flat-square&logo=mysql)
 
-Sistem manajemen kursus musik khusus biola yang dirancang untuk mengelola pendaftaran siswa, penjadwalan kelas, hingga pelaporan progres secara efisien dan terintegrasi.
+A comprehensive music course management system specifically designed for violin courses, handling student enrollment, class scheduling, and progress reporting efficiently and seamlessly.
 
-[Features](#-fitur-utama) • [Tech Stack](#️-tech-stack) • [Installation](#-instalasi) • [User Roles](#-role--akses-pengguna)
+[Features](#-key-features) • [Tech Stack](#️-tech-stack) • [Installation](#-installation) • [User Roles](#-user-roles--access-control)
 
 </div>
 
 ---
 
-## 📋 Daftar Isi
+## 📋 Table of Contents
 
-- [Tentang Proyek](#-tentang-proyek)
-- [Fitur Utama](#-fitur-utama)
+- [About The Project](#-about-the-project)
+- [Key Features](#-key-features)
 - [Tech Stack](#️-tech-stack)
-- [Arsitektur Sistem](#-arsitektur-sistem)
-- [Role & Akses Pengguna](#-role--akses-pengguna)
-- [Instalasi](#-instalasi)
-- [Konfigurasi](#️-konfigurasi)
-- [Penggunaan](#-penggunaan)
-- [Keamanan](#-keamanan)
-- [Kontribusi](#-kontribusi)
-- [Lisensi](#-lisensi)
-- [Kontak](#-kontak)
+- [System Architecture](#-system-architecture)
+- [User Roles & Access Control](#-user-roles--access-control)
+- [Installation](#-installation)
+- [Configuration](#️-configuration)
+- [Usage](#-usage)
+- [Security](#-security)
+- [Contributing](#-contributing)
+- [License](#-license)
+- [Contact](#-contact)
 
 ---
 
-## 🎯 Tentang Proyek
+## 🎯 About The Project
 
-**Sonata Violin** adalah sistem manajemen kursus musik berbasis web yang dibangun khusus untuk mengelola operasional kursus biola secara komprehensif. Sistem ini menggabungkan kemudahan pendaftaran mandiri untuk calon siswa dengan dashboard manajemen yang powerful untuk pengelola kursus.
+**Sonata Violin** is a web-based music course management system built specifically to manage violin course operations comprehensively. This system combines ease of self-registration for prospective students with a powerful management dashboard for course administrators.
 
-Dibangun dengan prinsip **Clean Code** dan mengadopsi **Role-Based Access Control (RBAC)** untuk keamanan maksimal, Sonata Violin menyediakan solusi end-to-end mulai dari pendaftaran, pembayaran, penjadwalan, hingga tracking progress siswa.
+Built with **Clean Code** principles and adopting **Role-Based Access Control (RBAC)** for maximum security, Sonata Violin provides an end-to-end solution from registration, payment, scheduling, to student progress tracking.
 
 ---
 
-## 🚀 Fitur Utama
+## 🚀 Key Features
 
-### 1. 🌐 Pendaftaran Mandiri (Public SPA Page)
+### 1. 🌐 Self-Registration (Public SPA Page)
 
-Calon siswa dapat mendaftar **tanpa perlu login** melalui halaman Single Page Application (SPA) yang user-friendly:
+Prospective students can register **without login** through a user-friendly Single Page Application (SPA):
 
-- ✅ **Formulir Pendaftaran Interaktif** - Interface yang intuitif dan mudah digunakan
-- 💳 **Sistem Paket Kursus** - Pilihan paket yang transparan dengan harga dan durasi jelas
-- 💰 **Pay-at-Front System** - Pembayaran sekali di awal, tidak ada biaya tambahan
-- 📤 **Upload Bukti Transfer** - Wajib upload bukti pembayaran di akhir formulir
-- 🔔 **Notifikasi Real-time** - Status pendaftaran langsung terkirim
+- ✅ **Interactive Registration Form** - Intuitive and easy-to-use interface
+- 💳 **Course Package System** - Transparent package options with clear pricing and duration
+- 💰 **Pay-at-Front System** - One-time upfront payment, no additional fees
+- 📤 **Payment Proof Upload** - Mandatory upload of payment proof at the end of registration form
+- 🔔 **Real-time Notifications** - Registration status sent immediately
 
-### 2. 📊 Manajemen Data Master
+### 2. 📊 Master Data Management
 
-Sistem pengelolaan data master yang lengkap dan terstruktur:
+Complete and structured master data management system:
 
-#### Master Instruktur
-- Database pengajar profesional
-- Tracking spesialisasi dan ketersediaan instruktur
-- Riwayat kelas yang diampu
+#### Instructor Master
+- Professional instructor database
+- Track specialization and instructor availability
+- Teaching history and class records
 
-#### Master Ruangan
-- Pengelolaan ketersediaan ruang kelas
-- Kapasitas dan fasilitas ruangan
-- Status penggunaan real-time
+#### Room Master
+- Classroom availability management
+- Room capacity and facilities
+- Real-time usage status
 
-#### Master Siswa
-- Database siswa aktif dan alumni
-- Profil lengkap dan kontak darurat
-- Riwayat kursus dan pencapaian
+#### Student Master
+- Active student and alumni database
+- Complete profile and emergency contacts
+- Course history and achievements
 
-#### Master Paket
-- Pengaturan variasi paket kursus
-- Flexible pricing dan durasi
-- Deskripsi lengkap benefit tiap paket
+#### Package Master
+- Course package variations setup
+- Flexible pricing and duration
+- Detailed benefit descriptions for each package
 
-### 3. 🔄 Modul Transaksi & Operasional
+### 3. 🔄 Transaction & Operational Modules
 
-Sistem operasional yang terintegrasi dan efisien:
+Integrated and efficient operational system:
 
-#### 💵 Pendaftaran
-- Formulir pendaftaran komprehensif
-- Validasi data otomatis
-- Queue system untuk pemrosesan
+#### 💵 Registration
+- Comprehensive registration form
+- Automatic data validation
+- Queue system for processing
 
-#### ✅ Verifikasi Pembayaran
-- Dashboard verifikasi untuk admin/operator
-- Preview bukti transfer
-- Approve/reject dengan alasan
-- Notifikasi otomatis ke siswa
+#### ✅ Payment Verification
+- Verification dashboard for admin/operator
+- Payment proof preview
+- Approve/reject with reasons
+- Automatic notifications to students
 
-#### 📅 Smart Scheduling (Jadwal Kelas)
-- **Conflict Prevention System** - Sistem deteksi bentrok otomatis
-- Validasi ketersediaan instruktur, ruangan, dan waktu
-- Sistem menolak otomatis jika jam, hari, dan tanggal sudah digunakan
-- Visual calendar untuk kemudahan scheduling
-- Filter berdasarkan instruktur/ruangan/siswa
+#### 📅 Smart Scheduling (Class Schedule)
+- **Conflict Prevention System** - Automatic conflict detection system
+- Validation of instructor, room, and time availability
+- System automatically rejects if time, day, and date are already in use
+- Visual calendar for easy scheduling
+- Filter by instructor/room/student
 
-#### 📝 Absensi
-- Pencatatan kehadiran per pertemuan
-- Status: Hadir, Izin, Sakit, Alfa
-- Catatan tambahan untuk setiap pertemuan
-- Statistik kehadiran siswa
+#### 📝 Attendance
+- Attendance recording per session
+- Status: Present, Excused, Sick, Absent
+- Additional notes for each session
+- Student attendance statistics
 
-#### 📈 Progress Kursus
-- Tracking perkembangan kemampuan siswa
-- Evaluasi per pertemuan
-- Milestone dan achievement
-- Grafik progress visual
+#### 📈 Course Progress
+- Student skill development tracking
+- Evaluation per session
+- Milestones and achievements
+- Visual progress charts
 
-#### 📊 Laporan
-- Rekapitulasi pendaftaran dan pembayaran
-- Laporan kehadiran siswa
-- Analisis revenue
-- Export ke PDF/Excel
-- Dashboard analytics
+#### 📊 Reports
+- Registration and payment recap
+- Student attendance reports
+- Revenue analysis
+- Export to PDF/Excel
+- Analytics dashboard
 
 ---
 
@@ -123,13 +123,13 @@ Sistem operasional yang terintegrasi dan efisien:
 
 ### Backend
 - **PHP 8.1+** - Server-side scripting
-- **CodeIgniter 4** - PHP Framework dengan arsitektur MVC
+- **CodeIgniter 4** - PHP Framework with MVC architecture
 - **MySQL** - Relational Database Management System
 
 ### Frontend
 - **Tailwind CSS** - Utility-first CSS framework
-- **JavaScript (Vanilla)** - Interactivity dan dynamic content
-- **SPA Architecture** - Single Page Application untuk halaman publik
+- **JavaScript (Vanilla)** - Interactivity and dynamic content
+- **SPA Architecture** - Single Page Application for public pages
 
 ### Development Tools
 - **Composer** - PHP dependency management
@@ -138,12 +138,12 @@ Sistem operasional yang terintegrasi dan efisien:
 
 ---
 
-## 🏗️ Arsitektur Sistem
+## 🏗️ System Architecture
 
 ```
 sonata-violin/
 ├── app/
-│   ├── Config/         # Konfigurasi aplikasi
+│   ├── Config/         # Application configuration
 │   ├── Controllers/    # Business logic handlers
 │   ├── Models/         # Database interaction layer
 │   ├── Views/          # Presentation layer
@@ -162,126 +162,126 @@ sonata-violin/
 
 ### MVC Pattern Implementation
 
-**Model** → Menangani logika data dan database
-**View** → Menampilkan interface kepada user
-**Controller** → Menghubungkan Model dan View, mengatur alur aplikasi
+**Model** → Handles data logic and database
+**View** → Displays interface to user
+**Controller** → Connects Model and View, manages application flow
 
 ---
 
-## 🔐 Role & Akses Pengguna
+## 🔐 User Roles & Access Control
 
-Sistem mengimplementasikan **Role-Based Access Control (RBAC)** dengan 3 level akses:
+The system implements **Role-Based Access Control (RBAC)** with 3 access levels:
 
 ### 👑 Admin (Full Access)
-**Hak Akses:**
-- ✅ Full CRUD pada semua modul
-- ✅ Manajemen user (tambah/edit/hapus Operator & Instruktur)
-- ✅ Akses ke semua laporan dan analytics
-- ✅ Konfigurasi sistem
-- ✅ Verifikasi pembayaran
-- ✅ Manajemen jadwal global
+**Access Rights:**
+- ✅ Full CRUD on all modules
+- ✅ User management (add/edit/delete Operator & Instructor)
+- ✅ Access to all reports and analytics
+- ✅ System configuration
+- ✅ Payment verification
+- ✅ Global schedule management
 
-**Menu yang Dapat Diakses:**
+**Accessible Menus:**
 - Dashboard
-- Master Data (Instruktur, Ruangan, Siswa, Paket)
-- Pendaftaran
-- Verifikasi Pembayaran
-- Jadwal Kelas
-- Absensi
-- Progress Kursus
-- Laporan
-- Manajemen User
+- Master Data (Instructor, Room, Student, Package)
+- Registration
+- Payment Verification
+- Class Schedule
+- Attendance
+- Course Progress
+- Reports
+- User Management
 
 ---
 
 ### 🔧 Operator (Transaction Access Only)
-**Hak Akses:**
-- ✅ Verifikasi pembayaran pendaftaran
-- ✅ Manajemen jadwal kelas
-- ✅ Buka absensi kelas
-- ❌ Tidak bisa menambah/edit/hapus data master
-- ❌ Tidak bisa manajemen user
+**Access Rights:**
+- ✅ Registration payment verification
+- ✅ Class schedule management
+- ✅ Open class attendance
+- ❌ Cannot add/edit/delete master data
+- ❌ Cannot manage users
 
-**Menu yang Dapat Diakses:**
+**Accessible Menus:**
 - Dashboard (limited)
-- Pendaftaran (tidak bisa edit data sembarangan)
-- Verifikasi Pembayaran
-- Jadwal Kelas
-- Absensi
+- Registration (cannot edit data arbitrarily)
+- Payment Verification
+- Class Schedule
+- Attendance
 
-**Pembatasan Ketat:**
-- Tidak bisa mengakses halaman manajemen user
-- Tidak bisa mengubah data master
-- Hanya bisa melihat laporan terbatas
-
----
-
-### 🎓 Instruktur (Limited Access)
-**Hak Akses:**
-- ✅ Lihat jadwal kelas **yang diampu sendiri**
-- ✅ Input absensi **kelas sendiri**
-- ✅ Input progress **siswa di kelas sendiri**
-- ❌ Tidak bisa melihat kelas instruktur lain
-- ❌ Tidak bisa akses modul lainnya
-
-**Menu yang Dapat Diakses (Hanya 3 Halaman):**
-1. **Jadwal Kelas** - Filtered hanya kelas yang diampu
-2. **Absensi** - Input kehadiran untuk kelas sendiri
-3. **Progress Kursus** - Evaluasi siswa di kelas sendiri
-
-**Sistem Filtering Otomatis:**
-- Semua data yang ditampilkan otomatis difilter berdasarkan ID instruktur
-- Instruktur tidak bisa mengakses atau melihat data kelas lain
-- Protection di level database query untuk keamanan maksimal
+**Strict Restrictions:**
+- Cannot access user management page
+- Cannot modify master data
+- Can only view limited reports
 
 ---
 
-## 💻 Instalasi
+### 🎓 Instructor (Limited Access)
+**Access Rights:**
+- ✅ View **own teaching schedule** only
+- ✅ Input attendance for **own classes**
+- ✅ Input progress for **students in own classes**
+- ❌ Cannot see other instructors' classes
+- ❌ Cannot access other modules
+
+**Accessible Menus (Only 3 Pages):**
+1. **Class Schedule** - Filtered to show only assigned classes
+2. **Attendance** - Input attendance for own classes only
+3. **Course Progress** - Evaluate students in own classes only
+
+**Automatic Filtering System:**
+- All displayed data is automatically filtered by instructor ID
+- Instructors cannot access or view other classes' data
+- Protection at database query level for maximum security
+
+---
+
+## 💻 Installation
 
 ### Prerequisites
 
-Pastikan sistem Anda sudah terinstall:
+Ensure your system has:
 - PHP >= 8.1+
 - MySQL >= 5.7
 - Composer
-- Node js & NPM (jika ingin menggunakan tailwind secara lokal)
+- Node.js & NPM (if you want to use Tailwind locally)
 - Git
 
-### Langkah Instalasi
+### Installation Steps
 
 1. **Clone Repository**
    ```bash
    git clone https://github.com/Codenames-Ren/sonata-violin.git
    ```
 
-2. **Masuk ke Direktori Project**
+2. **Navigate to Project Directory**
    ```bash
    cd sonata-violin
    ```
 
-3. **Install Dependencies PHP**
+3. **Install PHP Dependencies**
    ```bash
    composer install
    ```
 
-4. **Install Dependencies Frontend**
+4. **Install Frontend Dependencies**
    ```bash
    npm install
    npm run build
    ```
 
-5. **Konfigurasi Environment**
+5. **Configure Environment**
    ```bash
-   # Copy file env menjadi .env
+   # Copy env file to .env
    cp env .env
    
-   # Atau di Windows
+   # Or on Windows
    copy env .env
    ```
 
-6. **Edit File .env**
+6. **Edit .env File**
    
-   Buka file `.env` dan sesuaikan konfigurasi database:
+   Open `.env` file and adjust database configuration:
    ```env
    database.default.hostname = localhost
    database.default.database = sonata_violin_db
@@ -290,42 +290,42 @@ Pastikan sistem Anda sudah terinstall:
    database.default.DBDriver = MySQLi
    ```
 
-7. **Buat Database**
+7. **Create Database**
    ```sql
    CREATE DATABASE sonata_violin_db;
    ```
 
-8. **Jalankan Migration**
+8. **Run Migration**
    ```bash
    php spark migrate
    ```
 
-9. **Jalankan Seeder**
+9. **Run Seeder**
    ```bash
    php spark db:seed UserSeeder
    ```
 
-10. **Generate App Key (Opsional)**
+10. **Generate App Key (Optional)**
     ```bash
     php spark key:generate
     ```
 
-11. **Jalankan Development Server**
+11. **Start Development Server**
     ```bash
     php spark serve
     ```
 
-12. **Akses Aplikasi**
+12. **Access Application**
     
-    Buka browser dan akses: `http://localhost:8080`
+    Open your browser and go to: `http://localhost:8080`
 
 ---
 
-## ⚙️ Konfigurasi
+## ⚙️ Configuration
 
 ### Default Login Credentials
 
-Setelah menjalankan seeder, gunakan kredensial berikut:
+After running the seeder, use the following credentials:
 
 **Admin:**
 ```
@@ -339,24 +339,24 @@ Username: operator
 Password: operator123
 ```
 
-**Instruktur:**
+**Instructor:**
 ```
 Username: instruktur
 Password: instruktur123
 ```
 
-> ⚠️ **Penting:** Segera ganti password default setelah login pertama kali!
+> ⚠️ **Important:** Change default passwords immediately after first login!
 
-### Konfigurasi Upload
+### Upload Configuration
 
-Edit file `app/Config/App.php` untuk mengatur:
+Edit `app/Config/App.php` file to configure:
 - Maximum file upload size
-- Allowed file types untuk bukti transfer
+- Allowed file types for payment proof
 - Upload directory path
 
-### Konfigurasi Email (Opsional)
+### Email Configuration (Optional)
 
-Untuk fitur notifikasi email, edit `app/Config/Email.php` atau bisa di input di dalam .env:
+For email notification features, edit `app/Config/Email.php` or input in .env:
 ```php
 public $SMTPHost = 'your_smtp_host';
 public $SMTPUser = 'your_email@domain.com';
@@ -365,114 +365,114 @@ public $SMTPPass = 'your_password';
 
 ---
 
-## 📖 Penggunaan
+## 📖 Usage
 
-### Untuk Calon Siswa
+### For Prospective Students
 
-1. Akses halaman pendaftaran publik
-2. Isi formulir pendaftaran lengkap
-3. Pilih paket kursus yang diinginkan
-4. Upload bukti transfer pembayaran
-5. Notifikasi akan masuk ke Email (jika config email sudah di set sebelumnya)
-6. Submit dan tunggu verifikasi dari admin
+1. Access public registration page
+2. Fill out complete registration form
+3. Select desired course package
+4. Upload payment transfer proof
+5. Notification will be sent to Email (if email config is set)
+6. Submit and wait for admin verification
 
-### Untuk Admin
+### For Admin
 
-1. Login ke dashboard admin
-2. Kelola data master (instruktur, ruangan, paket)
-3. Verifikasi pembayaran siswa baru
-4. Atur jadwal kelas dengan smart scheduling
-5. Monitor progress dan generate laporan
+1. Login to admin dashboard
+2. Manage master data (instructor, room, package)
+3. Verify new student payments
+4. Arrange class schedules with smart scheduling
+5. Monitor progress and generate reports
 
-### Untuk Operator
+### For Operator
 
-1. Login ke dashboard operator
-2. Verifikasi pembayaran pendaftaran
-3. Atur jadwal kelas
-4. Input absensi siswa
+1. Login to operator dashboard
+2. Verify registration payments
+3. Arrange class schedules
+4. Input student attendance
 
-### Untuk Instruktur
+### For Instructor
 
-1. Login ke dashboard instruktur
-2. Cek jadwal mengajar
-3. Input absensi siswa
-4. Update progress pembelajaran siswa
+1. Login to instructor dashboard
+2. Check teaching schedule
+3. Input student attendance
+4. Update student learning progress
 
 ---
 
-## 🔒 Keamanan
+## 🔒 Security
 
-### Implementasi Keamanan
+### Security Implementation
 
-- ✅ **RBAC (Role-Based Access Control)** - Pembatasan akses berdasarkan role
-- ✅ **CSRF Protection** - Token validation pada setiap form
-- ✅ **XSS Prevention** - Input sanitization dan output escaping
-- ✅ **SQL Injection Prevention** - Prepared statements dan query builder
-- ✅ **Password Hashing** - Menggunakan bcrypt untuk enkripsi password
-- ✅ **Session Security** - Secure session handling dengan regeneration
-- ✅ **File Upload Validation** - Strict validation untuk file upload
-- ✅ **Authentication Middleware** - Filter untuk route protection
+- ✅ **RBAC (Role-Based Access Control)** - Access restrictions based on roles
+- ✅ **CSRF Protection** - Token validation on every form
+- ✅ **XSS Prevention** - Input sanitization and output escaping
+- ✅ **SQL Injection Prevention** - Prepared statements and query builder
+- ✅ **Password Hashing** - Using bcrypt for password encryption
+- ✅ **Session Security** - Secure session handling with regeneration
+- ✅ **File Upload Validation** - Strict validation for file uploads
+- ✅ **Authentication Middleware** - Filter for route protection
 
 ### Best Practices
 
-- Selalu gunakan HTTPS di production
-- Ganti semua default credentials
-- Regular backup database
-- Update dependencies secara berkala
+- Always use HTTPS in production
+- Change all default credentials
+- Regular database backups
+- Update dependencies regularly
 - Monitor application logs
-- Implementasi rate limiting untuk API endpoints
+- Implement rate limiting for API endpoints
 
 ---
 
-## 🎨 Fitur Unggulan
+## 🎨 Highlighted Features
 
 ### Conflict Prevention System
 
-Sistem scheduling dengan validasi bentrok otomatis:
-- ✅ Deteksi bentrok instruktur (tidak bisa mengajar 2 kelas bersamaan diwaktu yang sama!)
-- ✅ Deteksi bentrok ruangan (satu ruangan satu waktu)
-- ✅ Validasi jam, hari, dan tanggal
-- ✅ Alert visual jika terjadi konflik
+Scheduling system with automatic conflict validation:
+- ✅ Instructor conflict detection (cannot teach 2 classes simultaneously!)
+- ✅ Room conflict detection (one room at a time)
+- ✅ Time, day, and date validation
+- ✅ Visual alert if conflict occurs
 
 ### Smart Dashboard
 
 - 📊 Real-time statistics
-- 📈 Grafik pendapatan dan pendaftaran
+- 📈 Revenue and registration charts
 - 📅 Upcoming schedule
-- ⚠️ Alert dan reminder otomatis
+- ⚠️ Automatic alerts and reminders
 
 ### Responsive Design
 
 - 📱 Mobile-friendly interface
-- 💻 Optimized untuk desktop
-- 🎨 Modern UI dengan Tailwind CSS
-- ⚡ Fast loading dengan lazy loading
+- 💻 Optimized for desktop
+- 🎨 Modern UI with Tailwind CSS
+- ⚡ Fast loading with lazy loading
 
 ---
 
-## 🤝 Kontribusi
+## 🤝 Contributing
 
-Kontribusi selalu diterima! Jika Anda ingin berkontribusi:
+Contributions are always welcome! If you'd like to contribute:
 
-1. Fork repository ini
-2. Buat branch fitur baru (`git checkout -b feature/AmazingFeature`)
-3. Commit perubahan (`git commit -m 'Add some AmazingFeature'`)
-4. Push ke branch (`git push origin feature/AmazingFeature`)
-5. Buat Pull Request
+1. Fork this repository
+2. Create a new feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Create a Pull Request
 
 ### Guidelines
 
-- Ikuti coding standards CodeIgniter 4
-- Tulis kode yang clean dan readable
-- Tambahkan comments untuk logika kompleks
-- Test fitur sebelum submit PR
-- Update dokumentasi jika diperlukan
+- Follow CodeIgniter 4 coding standards
+- Write clean and readable code
+- Add comments for complex logic
+- Test features before submitting PR
+- Update documentation if necessary
 
 ---
 
-## 📝 Lisensi
+## 📝 License
 
-Project ini dilisensikan di bawah [MIT License](LICENSE).
+This project is licensed under the [MIT License](LICENSE).
 
 ---
 
@@ -487,9 +487,9 @@ Project ini dilisensikan di bawah [MIT License](LICENSE).
 
 ## 🙏 Acknowledgments
 
-- CodeIgniter Team untuk framework yang awesome
-- Tailwind CSS untuk styling framework
-- Semua contributor yang telah membantu project ini
+- CodeIgniter Team for the awesome framework
+- Tailwind CSS for the styling framework
+- All contributors who have helped this project
 
 ---
 
@@ -497,7 +497,7 @@ Project ini dilisensikan di bawah [MIT License](LICENSE).
 
 **© 2025 Sonata Violin Project. All Rights Reserved.**
 
-⭐ Jika project ini bermanfaat, jangan lupa berikan star!
+⭐ If you find this project helpful, don't forget to give it a star!
 
 [Report Bug](https://github.com/Codenames-Ren/sonata-violin/issues) • [Request Feature](https://github.com/Codenames-Ren/sonata-violin/issues)
 
