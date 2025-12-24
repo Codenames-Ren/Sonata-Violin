@@ -88,7 +88,7 @@ if ($role === 'instruktur') {
     'items'=>[
       ['/jadwal-kelas','Jadwal Kelas','fa-calendar-days'],
       ['/absensi','Absensi','fa-user-check'],
-      ['/progress','Progress Kursus','fa-chart-line'],
+      ['/progress-kursus','Progress Kursus','fa-chart-line'],
     ]
   ];
 }
@@ -100,7 +100,7 @@ if (in_array($role, ['admin', 'operator'])) {
     'label'=>'Reports',
     'icon'=>'fa-chart-pie',
     'items'=>[
-      ['/progress','Progress Kursus','fa-chart-line'],
+      ['/progress-kursus','Progress Kursus','fa-chart-line'],
       ['/laporan','Laporan','fa-file-pdf'],
     ]
   ];

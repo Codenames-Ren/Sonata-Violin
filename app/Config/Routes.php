@@ -117,3 +117,23 @@ $routes->group('absensi', ['filter' => 'auth'], function ($routes) {
         $routes->post('submit', 'AbsensiController::submit');
     });
 });
+
+$routes->group('progress-kursus', ['filter' => 'auth'], function ($routes) {
+    // Routes untuk semua role (admin, operator, instruktur)
+    $routes->group('', ['filter' => 'role:admin,operator,instruktur'], function ($routes) {
+        $routes->get('/', 'ProgressKursusController::index');
+        $routes->get('detail/(:num)', 'ProgressKursusController::detail/$1');
+    });
+    
+    // Routes khusus admin dan operator (create progress baru)
+    $routes->group('', ['filter' => 'role:admin,operator'], function ($routes) {
+        $routes->post('create', 'ProgressKursusController::create');
+    });
+    
+    // Routes khusus instruktur (CRUD detail pertemuan)
+    $routes->group('', ['filter' => 'role:instruktur'], function ($routes) {
+        $routes->post('detail/(:num)/create', 'ProgressKursusController::createDetail/$1');
+        $routes->post('detail/(:num)/update/(:num)', 'ProgressKursusController::updateDetail/$1/$2');
+        $routes->post('detail/(:num)/delete/(:num)', 'ProgressKursusController::deleteDetail/$1/$2');
+    });
+});
