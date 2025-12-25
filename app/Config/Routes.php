@@ -134,6 +134,36 @@ $routes->group('progress-kursus', ['filter' => 'auth'], function ($routes) {
     $routes->group('', ['filter' => 'role:instruktur'], function ($routes) {
         $routes->post('detail/(:num)/create', 'ProgressKursusController::createDetail/$1');
         $routes->post('detail/(:num)/update/(:num)', 'ProgressKursusController::updateDetail/$1/$2');
-        $routes->post('detail/(:num)/delete/(:num)', 'ProgressKursusController::deleteDetail/$1/$2');
+    });
+});
+
+$routes->group('laporan', ['filter' => 'auth'], function($routes) {
+    $routes->group('', ['filter' => 'role:admin,operator'], function ($routes) {
+        $routes->get('/', 'LaporanController::index');
+        $routes->get('profit', 'LaporanController::profit');
+        $routes->get('pendaftaran', 'LaporanController::pendaftaran');
+        $routes->get('absensi', 'LaporanController::absensi');
+        $routes->get('progress', 'LaporanController::progress');
+    });
+});
+
+$routes->group('sertifikat', ['filter' => 'auth'], function($routes) {
+    $routes->group('', ['filter' => 'role:admin,operator'], function ($routes) { 
+        $routes->get('/', 'SertifikatController::index');    
+        $routes->get('siswa-lulus', 'SertifikatController::siswaLulus');
+        
+        // Generate sertifikat
+        $routes->post('generate/(:num)', 'SertifikatController::generateSingle/$1');
+        $routes->post('generate-batch', 'SertifikatController::generateBatch');
+        
+        // Cetak sertifikat (download PDF)
+        $routes->get('cetak/(:num)', 'SertifikatController::cetak/$1');
+        $routes->post('cetak-batch', 'SertifikatController::cetakBatch');
+        $routes->get('preview/(:num)', 'SertifikatController::preview/$1');
+
+        // Delete sertifikat
+        $routes->post('delete/(:num)', 'SertifikatController::delete/$1');
+        $routes->delete('delete/(:num)', 'SertifikatController::delete/$1');
+        $routes->get('statistik', 'SertifikatController::getStatistik');
     });
 });

@@ -22,7 +22,6 @@ class ProgressKursusController extends BaseController
         $this->paketModel = new PaketModel();
     }
 
-    // =============== INDEX: LIST PROGRESS ===============
     public function index()
     {
         $role = session('role');
@@ -40,6 +39,7 @@ class ProgressKursusController extends BaseController
                 'page_subtitle' => 'Daftar kelas yang Anda bimbing'
             ];
         } else {
+
             // Admin & Operator lihat semua + bisa create baru
             $data = [
                 'progress' => $this->progressModel->getProgressLengkap(),
@@ -53,7 +53,7 @@ class ProgressKursusController extends BaseController
         return view('progress_kursus/progress_kursus', $data);
     }
 
-    // =============== CREATE: BIKIN PROGRESS BARU (ADMIN/OPERATOR) ===============
+    // Create new progress only for admin and operator
     public function create()
     {
         if (session('role') === 'instruktur') {
@@ -71,7 +71,7 @@ class ProgressKursusController extends BaseController
                 ->with('error', implode('<br>', $this->validator->getErrors()));
         }
 
-        // Cek apakah jadwal ini udah punya progress
+        // Validasi cek jadwal sudah ada punya progress atau belum
         $existing = $this->progressModel
             ->where('jadwal_kelas_id', $this->request->getPost('jadwal_kelas_id'))
             ->first();
@@ -97,13 +97,12 @@ class ProgressKursusController extends BaseController
             ->with('error', 'Gagal membuat progress.');
     }
 
-    // =============== DETAIL: LIHAT & KELOLA DETAIL PROGRESS ===============
+    // DETAIL: LIHAT & KELOLA DETAIL PROGRESS
     public function detail($id)
     {
         $role = session('role');
         $instrukturId = session('instruktur_id');
 
-        // Ambil info progress kursus
         $progress = $this->progressModel
             ->select('
                 progress_kursus.*,
@@ -134,7 +133,6 @@ class ProgressKursusController extends BaseController
                 ->with('error', 'Anda tidak memiliki akses ke kelas ini!');
         }
 
-        // Ambil detail pertemuan
         $detailProgress = $this->detailModel->getDetailByProgress($id);
 
         $data = [
@@ -148,19 +146,18 @@ class ProgressKursusController extends BaseController
         return view('progress_kursus/detail', $data);
     }
 
-    // =============== CREATE DETAIL: INSTRUKTUR ISI PERTEMUAN ===============
+    // CREATE DETAIL: INSTRUKTUR ISI PROGRESS DI SETIAP PERTEMUAN
     public function createDetail($progressId)
     {
         $role = session('role');
         $instrukturId = session('instruktur_id');
 
-        // Cek role instruktur
         if ($role !== 'instruktur') {
             return redirect()->back()
                 ->with('error', 'Hanya instruktur yang bisa mengisi progress!');
         }
 
-        // Cek progress ada & milik instruktur ini
+        // Validasi progress ada & milik instruktur ini
         $progress = $this->progressModel
             ->select('progress_kursus.*, jadwal_kelas.instruktur_id')
             ->join('jadwal_kelas', 'jadwal_kelas.id = progress_kursus.jadwal_kelas_id')
@@ -195,7 +192,7 @@ class ProgressKursusController extends BaseController
                 ->with('error', "Pertemuan ke-{$pertemuanKe} sudah ada!");
         }
 
-        // Cek jangan sampai melebihi total pertemuan
+        // Validasi jangan sampai melebihi total pertemuan
         if ($pertemuanKe > $progress['total_pertemuan']) {
             return redirect()->back()
                 ->withInput()
@@ -213,7 +210,6 @@ class ProgressKursusController extends BaseController
         ];
 
         if ($this->detailModel->insert($data)) {
-            // Update counter pertemuan_terlaksana jika status completed
             if ($data['status'] === 'completed') {
                 $this->progressModel->update($progressId, [
                     'pertemuan_terlaksana' => $progress['pertemuan_terlaksana'] + 1
@@ -228,7 +224,7 @@ class ProgressKursusController extends BaseController
             ->with('error', 'Gagal menambahkan detail pertemuan.');
     }
 
-    // =============== UPDATE DETAIL: EDIT PERTEMUAN ===============
+    // UPDATE DETAIL: EDIT PERTEMUAN
     public function updateDetail($progressId, $detailId)
     {
         $role = session('role');
@@ -239,7 +235,6 @@ class ProgressKursusController extends BaseController
                 ->with('error', 'Hanya instruktur yang bisa edit progress!');
         }
 
-        // Cek progress & detail milik instruktur ini
         $progress = $this->progressModel
             ->select('progress_kursus.*, jadwal_kelas.instruktur_id')
             ->join('jadwal_kelas', 'jadwal_kelas.id = progress_kursus.jadwal_kelas_id')
@@ -268,7 +263,6 @@ class ProgressKursusController extends BaseController
 
         $pertemuanKe = $this->request->getPost('pertemuan_ke');
 
-        // Cek duplikat pertemuan_ke (exclude current)
         $exists = $this->detailModel->cekPertemuanExists($progressId, $pertemuanKe, $detailId);
         if ($exists) {
             return redirect()->back()
@@ -294,7 +288,6 @@ class ProgressKursusController extends BaseController
         ];
 
         if ($this->detailModel->update($detailId, $updateData)) {
-            // Update counter jika status berubah
             $currentCount = $progress['pertemuan_terlaksana'];
             
             if ($oldStatus !== 'completed' && $newStatus === 'completed') {
@@ -313,58 +306,5 @@ class ProgressKursusController extends BaseController
 
         return redirect()->back()
             ->with('error', 'Gagal mengupdate detail pertemuan.');
-    }
-
-    // =============== DELETE DETAIL: HAPUS PERTEMUAN ===============
-    public function deleteDetail($progressId, $detailId)
-    {
-        $role = session('role');
-        $instrukturId = session('instruktur_id');
-
-        if ($role !== 'instruktur') {
-            return $this->response->setJSON([
-                'success' => false,
-                'message' => 'Hanya instruktur yang bisa hapus progress!'
-            ]);
-        }
-
-        if (!$this->request->isAJAX()) {
-            return redirect()->back()->with('error', 'Invalid request');
-        }
-
-        // Cek ownership
-        $progress = $this->progressModel
-            ->select('progress_kursus.*, jadwal_kelas.instruktur_id')
-            ->join('jadwal_kelas', 'jadwal_kelas.id = progress_kursus.jadwal_kelas_id')
-            ->where('progress_kursus.id', $progressId)
-            ->first();
-
-        $detail = $this->detailModel->find($detailId);
-
-        if (!$progress || !$detail || $progress['instruktur_id'] != $instrukturId) {
-            return $this->response->setJSON([
-                'success' => false,
-                'message' => 'Akses ditolak!'
-            ]);
-        }
-
-        if ($this->detailModel->delete($detailId)) {
-            // Update counter jika yang dihapus statusnya completed
-            if ($detail['status'] === 'completed') {
-                $this->progressModel->update($progressId, [
-                    'pertemuan_terlaksana' => max(0, $progress['pertemuan_terlaksana'] - 1)
-                ]);
-            }
-
-            return $this->response->setJSON([
-                'success' => true,
-                'message' => 'Detail pertemuan berhasil dihapus'
-            ]);
-        }
-
-        return $this->response->setJSON([
-            'success' => false,
-            'message' => 'Gagal menghapus detail pertemuan'
-        ]);
     }
 }

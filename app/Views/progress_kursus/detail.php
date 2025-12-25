@@ -216,6 +216,9 @@ tailwind.config = {
                         <th class="py-4 px-4">Catatan</th>
                         <th class="py-4 px-4">Status</th>
                         <th class="py-4 px-4">Diisi Oleh</th>
+                        <?php if ($role === 'instruktur'): ?>
+                        <th class="py-4 px-4 text-center">Aksi</th>
+                        <?php endif; ?>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
@@ -261,10 +264,25 @@ tailwind.config = {
                         <td class="py-4 px-4 text-gray-600 text-sm">
                             <?= esc($d['nama_instruktur']) ?>
                         </td>
+                        <?php if ($role === 'instruktur'): ?>
+                        <td class="py-4 px-4">
+                            <div class="flex justify-center gap-2">
+                                <button class="btnEditPertemuan btn-hover px-3 py-1.5 bg-yellow-100 text-yellow-700 rounded-lg text-xs font-semibold hover:bg-yellow-200 transition-all"
+                                        data-id="<?= $d['id'] ?>"
+                                        data-pertemuan="<?= $d['pertemuan_ke'] ?>"
+                                        data-tanggal="<?= $d['tanggal'] ?>"
+                                        data-materi="<?= esc($d['materi'], 'attr') ?>"
+                                        data-catatan="<?= esc($d['catatan'], 'attr') ?>"
+                                        data-status="<?= $d['status'] ?>">
+                                    <i class="fa fa-pen"></i>
+                                </button>
+                            </div>
+                        </td>
+                        <?php endif; ?>
                     </tr>
                     <?php endforeach; else: ?>
                     <tr>
-                        <td colspan="6" class="text-center py-8 text-gray-500">
+                        <td colspan="<?= $role === 'instruktur' ? '7' : '6' ?>" class="text-center py-8 text-gray-500">
                             <i class="fa fa-clipboard-list text-4xl mb-3 opacity-20"></i>
                             <p>Belum ada pertemuan tercatat.</p>
                             <?php if ($role === 'instruktur'): ?>
@@ -306,7 +324,7 @@ tailwind.config = {
                 <?php endif; ?>
             </div>
             
-            <div class="space-y-2 text-sm">
+            <div class="space-y-2 text-sm mb-3">
                 <p class="text-gray-600">
                     <strong>Tanggal:</strong> <?= date('d M Y', strtotime($d['tanggal'])) ?>
                 </p>
@@ -324,6 +342,20 @@ tailwind.config = {
                     <i class="fa fa-user mr-1"></i>Diisi oleh: <?= esc($d['nama_instruktur']) ?>
                 </p>
             </div>
+            
+            <?php if ($role === 'instruktur'): ?>
+            <div class="mt-3">
+                <button class="btnEditPertemuan w-full px-3 py-2 bg-yellow-100 text-yellow-700 rounded-lg text-sm font-semibold hover:bg-yellow-200 transition-all"
+                        data-id="<?= $d['id'] ?>"
+                        data-pertemuan="<?= $d['pertemuan_ke'] ?>"
+                        data-tanggal="<?= $d['tanggal'] ?>"
+                        data-materi="<?= esc($d['materi'], 'attr') ?>"
+                        data-catatan="<?= esc($d['catatan'], 'attr') ?>"
+                        data-status="<?= $d['status'] ?>">
+                    <i class="fa fa-pen mr-1"></i>Edit
+                </button>
+            </div>
+            <?php endif; ?>
         </div>
         <?php endforeach; else: ?>
         <div class="text-center py-8 text-gray-500">
@@ -337,7 +369,7 @@ tailwind.config = {
     </div>
 </div>
 
-<!-- MODAL TAMBAH PERTEMUAN (hanya untuk instruktur) -->
+<!-- MODAL TAMBAH/EDIT PERTEMUAN (hanya untuk instruktur) -->
 <?php if ($role === 'instruktur'): ?>
 <div id="modalPertemuan" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden flex items-start justify-center p-4 z-50">
     <div id="modalBox" class="modal-content bg-white w-full max-w-2xl rounded-xl shadow-2xl overflow-hidden transform transition-all duration-300 opacity-0 scale-95">
@@ -363,6 +395,7 @@ tailwind.config = {
         <!-- FORM -->
         <form id="formPertemuan" method="POST">
             <?= csrf_field() ?>
+            <input type="hidden" id="detail_id" name="detail_id">
             <input type="hidden" name="progress_id" value="<?= $progress['id'] ?>">
 
             <div class="p-6 space-y-4 max-h-[60vh] overflow-y-auto">
@@ -441,17 +474,32 @@ tailwind.config = {
     <?php if ($role === 'instruktur'): ?>
     const modalPertemuan = document.getElementById("modalPertemuan");
     const modalBox = document.getElementById("modalBox");
+    const modalTitle = document.getElementById("modalTitle");
     const formPertemuan = document.getElementById("formPertemuan");
     
     const btnTambahPertemuan = document.getElementById("btnTambahPertemuan");
     const btnCloseModal = document.getElementById("btnCloseModal");
     const btnCancelModal = document.getElementById("btnCancelModal");
 
+    const detailId = document.getElementById("detail_id");
     const inputPertemuan = document.getElementById("pertemuan_ke");
+    const inputTanggal = document.getElementById("tanggal");
     const inputMateri = document.getElementById("materi");
+    const inputCatatan = document.getElementById("catatan");
+    const inputStatus = document.getElementById("status");
 
-    function openModalPertemuan() {
-        formPertemuan.reset();
+    let isEditMode = false;
+
+    function openModalPertemuan(mode = 'create') {
+        isEditMode = (mode === 'edit');
+        
+        modalTitle.textContent = isEditMode ? "Edit Pertemuan" : "Tambah Pertemuan";
+        
+        if (!isEditMode) {
+            formPertemuan.reset();
+            detailId.value = "";
+        }
+        
         modalPertemuan.classList.remove("hidden");
         
         setTimeout(() => {
@@ -467,12 +515,13 @@ tailwind.config = {
         setTimeout(() => {
             modalPertemuan.classList.add("hidden");
             formPertemuan.reset();
+            detailId.value = "";
         }, 300);
     }
 
     // Button Tambah Pertemuan
     if (btnTambahPertemuan) {
-        btnTambahPertemuan.addEventListener("click", openModalPertemuan);
+        btnTambahPertemuan.addEventListener("click", () => openModalPertemuan('create'));
     }
 
     // Close Modal
@@ -486,11 +535,12 @@ tailwind.config = {
         }
     });
 
-    // ==================== FORM SUBMIT ====================
+    // ==================== FORM SUBMIT (CREATE/UPDATE) ====================
     formPertemuan.addEventListener("submit", function(e) {
         e.preventDefault();
         
         const progressId = <?= $progress['id'] ?>;
+        const detailIdValue = detailId.value;
         
         // Validasi pertemuan_ke
         const pertemuanKe = inputPertemuan.value;
@@ -518,14 +568,23 @@ tailwind.config = {
         }
 
         const formData = new FormData(this);
-        const url = `<?= base_url('progress-kursus/detail/') ?>${progressId}/create`;
+        
+        // Tentukan URL berdasarkan mode
+        let url;
+        if (detailIdValue) {
+            // Edit mode
+            url = `<?= base_url('progress-kursus/detail/') ?>${progressId}/update/${detailIdValue}`;
+        } else {
+            // Create mode
+            url = `<?= base_url('progress-kursus/detail/') ?>${progressId}/create`;
+        }
 
         closeModalPertemuan();
 
         // Loading SweetAlert
         Swal.fire({
             title: 'Processing...',
-            text: 'Menambahkan pertemuan...',
+            text: isEditMode ? 'Mengupdate pertemuan...' : 'Menambahkan pertemuan...',
             allowOutsideClick: false,
             allowEscapeKey: false,
             didOpen: () => {
@@ -549,7 +608,7 @@ tailwind.config = {
                 Swal.fire({
                     icon: 'success',
                     title: 'Berhasil!',
-                    text: 'Pertemuan berhasil ditambahkan!',
+                    text: isEditMode ? 'Pertemuan berhasil diupdate!' : 'Pertemuan berhasil ditambahkan!',
                     showConfirmButton: false,
                     timer: 1500,
                     timerProgressBar: true
@@ -568,6 +627,29 @@ tailwind.config = {
             });
         });
     });
+
+    // ==================== EDIT PERTEMUAN ====================
+    document.querySelectorAll(".btnEditPertemuan").forEach(btn => {
+        btn.addEventListener("click", function() {
+            const id = this.dataset.id;
+            const pertemuan = this.dataset.pertemuan;
+            const tanggal = this.dataset.tanggal;
+            const materi = this.dataset.materi;
+            const catatan = this.dataset.catatan;
+            const status = this.dataset.status;
+
+            // Fill form dengan data
+            detailId.value = id;
+            inputPertemuan.value = pertemuan;
+            inputTanggal.value = tanggal;
+            inputMateri.value = materi;
+            inputCatatan.value = catatan || '';
+            inputStatus.value = status;
+
+            openModalPertemuan('edit');
+        });
+    });
+
     <?php endif; ?>
 
     // ==================== SMOOTH SCROLL ====================

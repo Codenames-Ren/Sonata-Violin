@@ -102,6 +102,7 @@ if (in_array($role, ['admin', 'operator'])) {
     'items'=>[
       ['/progress-kursus','Progress Kursus','fa-chart-line'],
       ['/laporan','Laporan','fa-file-pdf'],
+      ['/sertifikat','Sertifikat','fa-certificate'],
     ]
   ];
 }
