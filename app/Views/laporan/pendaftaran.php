@@ -1,6 +1,6 @@
 <?= $this->extend('layout/template') ?>
-<?= $this->section('title') ?>Laporan Profit<?= $this->endSection() ?>
-<?= $this->section('subtitle') ?>Data pemasukan dari pembayaran kursus yang telah disetujui<?= $this->endSection() ?>
+<?= $this->section('title') ?>Laporan Pendaftaran<?= $this->endSection() ?>
+<?= $this->section('subtitle') ?>Data pendaftaran siswa kursus Sonata Violin<?= $this->endSection() ?>
 <?= $this->section('content') ?>
 
 <script src="https://cdn.tailwindcss.com"></script>
@@ -52,16 +52,16 @@ tailwind.config = {
                 <a href="<?= base_url('laporan') ?>" class="text-white/80 hover:text-white transition-colors">
                     <i class="text-2xl fa fa-arrow-left"></i>
                 </a>
-                <h2 class="text-white text-2xl font-bold">Laporan Profit</h2>
+                <h2 class="text-white text-2xl font-bold">Laporan Pendaftaran</h2>
             </div>
             <p class="text-white/90 text-sm">
-                Total pemasukan dari pembayaran kursus yang telah diverifikasi
+                Data lengkap pendaftaran siswa kursus Sonata Violin
             </p>
         </div>
         <div class="mt-4 md:mt-0">
             <div class="bg-white/20 backdrop-blur-sm rounded-lg px-4 py-3 text-white">
-                <p class="text-xs opacity-90">Total Profit</p>
-                <p class="text-2xl font-bold">Rp <?= number_format($totalProfit, 0, ',', '.') ?></p>
+                <p class="text-xs opacity-90">Total Pendaftaran</p>
+                <p class="text-2xl font-bold"><?= $statistik['total'] ?? 0 ?> Siswa</p>
             </div>
         </div>
     </div>
@@ -80,15 +80,66 @@ tailwind.config = {
 </div>
 <?php endif ?>
 
+<!-- ================= STATISTIK CARDS ================= -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+    <div class="bg-white rounded-xl shadow-lg p-5 card-hover">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm text-gray-500 mb-1">Total</p>
+                <p class="text-2xl font-bold text-gray-800"><?= $statistik['total'] ?? 0 ?></p>
+            </div>
+            <div class="bg-blue-100 p-3 rounded-lg">
+                <i class="fa fa-users text-blue-600 text-2xl"></i>
+            </div>
+        </div>
+    </div>
+    
+    <div class="bg-white rounded-xl shadow-lg p-5 card-hover">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm text-gray-500 mb-1">Pending</p>
+                <p class="text-2xl font-bold text-yellow-600"><?= $statistik['pending'] ?? 0 ?></p>
+            </div>
+            <div class="bg-yellow-100 p-3 rounded-lg">
+                <i class="fa fa-clock text-yellow-600 text-2xl"></i>
+            </div>
+        </div>
+    </div>
+    
+    <div class="bg-white rounded-xl shadow-lg p-5 card-hover">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm text-gray-500 mb-1">Disetujui</p>
+                <p class="text-2xl font-bold text-green-600"><?= $statistik['aktif'] ?? 0 ?></p>
+            </div>
+            <div class="bg-green-100 p-3 rounded-lg">
+                <i class="fa fa-check-circle text-green-600 text-2xl"></i>
+            </div>
+        </div>
+    </div>
+    
+    <div class="bg-white rounded-xl shadow-lg p-5 card-hover">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm text-gray-500 mb-1">Batal</p>
+                <p class="text-2xl font-bold text-red-600"><?= $statistik['batal'] ?? 0 ?></p>
+            </div>
+            <div class="bg-red-100 p-3 rounded-lg">
+                <i class="fa fa-times-circle text-red-600 text-2xl"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- ================= FILTER SECTION ================= -->
 <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
-    <form method="GET" action="<?= base_url('laporan/profit') ?>">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+    <form method="GET" action="<?= base_url('laporan/pendaftaran') ?>">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-4">
             
             <!-- Tanggal Start -->
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-2">
-                    <i class="fa fa-calendar text-primary mr-1"></i> Tanggal Mulai
+                    <i class="fa fa-calendar text-primary mr-1"></i> Mulai Dari
                 </label>
                 <input type="date" 
                        name="tanggal_start" 
@@ -99,7 +150,7 @@ tailwind.config = {
             <!-- Tanggal End -->
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-2">
-                    <i class="fa fa-calendar text-primary mr-1"></i> Tanggal Selesai
+                    <i class="fa fa-calendar text-primary mr-1"></i> Sampai Dengan
                 </label>
                 <input type="date" 
                        name="tanggal_end" 
@@ -123,6 +174,22 @@ tailwind.config = {
                 </select>
             </div>
             
+            <!-- Status -->
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                    <i class="fa fa-info-circle text-primary mr-1"></i> Status
+                </label>
+                <select name="status" 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
+                    <option value="">Semua Status</option>
+                    <option value="pending" <?= ($filters['status'] ?? '') == 'pending' ? 'selected' : '' ?>>Pending</option>
+                    <option value="aktif" <?= ($filters['status'] ?? '') == 'aktif' ? 'selected' : '' ?>>Aktif</option>
+                    <option value="batal" <?= ($filters['status'] ?? '') == 'batal' ? 'selected' : '' ?>>Batal</option>
+                    <option value="selesai" <?= ($filters['status'] ?? '') == 'selesai' ? 'selected' : '' ?>>Selesai</option>
+                    <option value="mundur" <?= ($filters['status'] ?? '') == 'mundur' ? 'selected' : '' ?>>Mundur</option>
+                </select>
+            </div>
+            
             <!-- Search -->
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-2">
@@ -131,7 +198,7 @@ tailwind.config = {
                 <input type="text" 
                        name="search" 
                        value="<?= $filters['search'] ?? '' ?>"
-                       placeholder="Nama / No Pendaftaran"
+                       placeholder="Nama / Email / No HP"
                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
             </div>
         </div>
@@ -144,7 +211,7 @@ tailwind.config = {
                 <span>Terapkan Filter</span>
             </button>
             
-            <a href="<?= base_url('laporan/profit') ?>" 
+            <a href="<?= base_url('laporan/pendaftaran') ?>" 
                class="px-6 py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2">
                 <i class="fa fa-times"></i>
                 <span>Reset Filter</span>
@@ -152,13 +219,13 @@ tailwind.config = {
 
             <div class="flex-1"></div>
 
-            <a href="<?= base_url('laporan/profit?export=excel' . (isset($filters['tanggal_start']) ? '&tanggal_start='.$filters['tanggal_start'] : '') . (isset($filters['tanggal_end']) ? '&tanggal_end='.$filters['tanggal_end'] : '') . (isset($filters['paket_id']) ? '&paket_id='.$filters['paket_id'] : '')) ?>" 
+            <a href="<?= base_url('laporan/pendaftaran?export=excel' . (isset($filters['tanggal_start']) ? '&tanggal_start='.$filters['tanggal_start'] : '') . (isset($filters['tanggal_end']) ? '&tanggal_end='.$filters['tanggal_end'] : '') . (isset($filters['paket_id']) ? '&paket_id='.$filters['paket_id'] : '') . (isset($filters['status']) ? '&status='.$filters['status'] : '')) ?>" 
                class="px-6 py-2.5 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-all flex items-center justify-center gap-2">
                 <i class="fa fa-file-excel"></i>
                 <span>Export Excel</span>
             </a>
             
-            <a href="<?= base_url('laporan/profit?export=pdf' . (isset($filters['tanggal_start']) ? '&tanggal_start='.$filters['tanggal_start'] : '') . (isset($filters['tanggal_end']) ? '&tanggal_end='.$filters['tanggal_end'] : '') . (isset($filters['paket_id']) ? '&paket_id='.$filters['paket_id'] : '')) ?>" 
+            <a href="<?= base_url('laporan/pendaftaran?export=pdf' . (isset($filters['tanggal_start']) ? '&tanggal_start='.$filters['tanggal_start'] : '') . (isset($filters['tanggal_end']) ? '&tanggal_end='.$filters['tanggal_end'] : '') . (isset($filters['paket_id']) ? '&paket_id='.$filters['paket_id'] : '') . (isset($filters['status']) ? '&status='.$filters['status'] : '')) ?>" 
                class="px-6 py-2.5 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-all flex items-center justify-center gap-2">
                 <i class="fa fa-file-pdf"></i>
                 <span>Export PDF</span>
@@ -167,7 +234,7 @@ tailwind.config = {
     </form>
     
     <!-- Active Filters Info -->
-    <?php if(!empty($filters['tanggal_start']) || !empty($filters['tanggal_end']) || !empty($filters['paket_id']) || !empty($filters['search'])): ?>
+    <?php if(!empty($filters['tanggal_start']) || !empty($filters['tanggal_end']) || !empty($filters['paket_id']) || !empty($filters['status']) || !empty($filters['search'])): ?>
     <div class="mt-4 pt-4 border-t border-gray-200">
         <div class="flex flex-wrap items-center gap-2">
             <span class="text-sm text-gray-600 font-semibold">Filter Aktif:</span>
@@ -192,6 +259,13 @@ tailwind.config = {
             </span>
             <?php endif; ?>
             
+            <?php if(!empty($filters['status'])): ?>
+            <span class="px-3 py-1 bg-yellow-100 text-yellow-700 text-xs rounded-full">
+                <i class="fa fa-info-circle mr-1"></i>
+                <?= ucfirst($filters['status']) ?>
+            </span>
+            <?php endif; ?>
+            
             <?php if(!empty($filters['search'])): ?>
             <span class="px-3 py-1 bg-green-100 text-green-700 text-xs rounded-full">
                 <i class="fa fa-search mr-1"></i>
@@ -211,58 +285,80 @@ tailwind.config = {
                 <tr>
                     <th class="px-4 py-4 text-left text-sm font-bold">No</th>
                     <th class="px-4 py-4 text-left text-sm font-bold">No Pendaftaran</th>
-                    <th class="px-4 py-4 text-left text-sm font-bold">Nama Siswa</th>
-                    <th class="px-4 py-4 text-left text-sm font-bold">No Telp</th>
+                    <th class="px-4 py-4 text-left text-sm font-bold">Nama</th>
+                    <th class="px-4 py-4 text-left text-sm font-bold">Email</th>
+                    <th class="px-4 py-4 text-left text-sm font-bold">No HP</th>
                     <th class="px-4 py-4 text-left text-sm font-bold">Paket</th>
-                    <th class="px-4 py-4 text-right text-sm font-bold">Nominal</th>
-                    <th class="px-4 py-4 text-left text-sm font-bold">Tgl Upload</th>
-                    <th class="px-4 py-4 text-left text-sm font-bold">Tgl Approve</th>
+                    <th class="px-4 py-4 text-left text-sm font-bold">Tanggal Daftar</th>
+                    <th class="px-4 py-4 text-center text-sm font-bold">Status</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-200">
-                <?php if(empty($dataProfit)): ?>
+                <?php if(empty($dataPendaftaran)): ?>
                 <tr>
                     <td colspan="8" class="px-6 py-12 text-center text-gray-500">
                         <i class="fa fa-inbox text-4xl mb-3 block text-gray-300"></i>
-                        <p class="font-semibold">Tidak ada data profit</p>
+                        <p class="font-semibold">Tidak ada data pendaftaran</p>
                         <p class="text-sm mt-1">Coba ubah filter atau tambahkan data baru</p>
                     </td>
                 </tr>
                 <?php else: ?>
                     <?php 
                     $no = ($pagination['current_page'] - 1) * $pagination['per_page'] + 1;
-                    foreach($dataProfit as $profit): 
+                    foreach($dataPendaftaran as $daftar): 
                     ?>
                     <tr class="hover:bg-gray-50 transition-colors">
                         <td class="px-4 py-3 text-sm text-gray-700"><?= $no++ ?></td>
                         <td class="px-4 py-3">
                             <span class="font-mono text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded">
-                                <?= $profit['no_pendaftaran'] ?>
+                                <?= $daftar['no_pendaftaran'] ?>
                             </span>
                         </td>
                         <td class="px-4 py-3">
-                            <div>
-                                <p class="font-semibold text-gray-800 text-sm"><?= $profit['nama_siswa'] ?></p>
-                                <p class="text-xs text-gray-500"><?= $profit['no_hp'] ?></p>
-                            </div>
+                            <p class="font-semibold text-gray-800 text-sm"><?= $daftar['nama'] ?></p>
                         </td>
-                        <td class="px-4 py-3 text-sm text-gray-600"><?= $profit['email'] ?></td>
+                        <td class="px-4 py-3 text-sm text-gray-600"><?= $daftar['email'] ?></td>
+                        <td class="px-4 py-3 text-sm text-gray-600"><?= $daftar['no_hp'] ?></td>
                         <td class="px-4 py-3">
                             <div>
-                                <p class="font-semibold text-gray-800 text-sm"><?= $profit['nama_paket'] ?></p>
-                                <p class="text-xs text-gray-500"><?= $profit['level'] ?></p>
+                                <p class="font-semibold text-gray-800 text-sm"><?= $daftar['nama_paket'] ?></p>
+                                <p class="text-xs text-gray-500"><?= $daftar['level'] ?></p>
                             </div>
                         </td>
-                        <td class="px-4 py-3 text-right">
-                            <span class="font-bold text-green-600 text-sm">
-                                Rp <?= number_format($profit['nominal'], 0, ',', '.') ?>
+                        <td class="px-4 py-3 text-sm text-gray-600">
+                            <?= date('d/m/Y', strtotime($daftar['tanggal_daftar'])) ?>
+                        </td>
+                        <td class="px-4 py-3 text-center">
+                            <?php
+                            $statusClass = '';
+                            $statusIcon = '';
+                            switch($daftar['status']) {
+                                case 'pending':
+                                    $statusClass = 'bg-yellow-100 text-yellow-700';
+                                    $statusIcon = 'fa-clock';
+                                    break;
+                                case 'aktif':
+                                    $statusClass = 'bg-green-100 text-green-700';
+                                    $statusIcon = 'fa-check-circle';
+                                    break;
+                                case 'batal':
+                                    $statusClass = 'bg-red-100 text-red-700';
+                                    $statusIcon = 'fa-cross-circle';
+                                    break;
+                                case 'selesai':
+                                    $statusClass = 'bg-orange-200 text-orange-700';
+                                    $statusIcon = 'fa-check-circle';
+                                    break;
+                                case 'mundur':
+                                    $statusClass = 'bg-red-200 text-orange-800';
+                                    $statusIcon = 'fa-check-circle';
+                                    break;
+                            }
+                            ?>
+                            <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold <?= $statusClass ?>">
+                                <i class="fa <?= $statusIcon ?>"></i>
+                                <?= ucfirst($daftar['status']) ?>
                             </span>
-                        </td>
-                        <td class="px-4 py-3 text-sm text-gray-600">
-                            <?= date('d/m/Y H:i', strtotime($profit['tanggal_upload'])) ?>
-                        </td>
-                        <td class="px-4 py-3 text-sm text-gray-600">
-                            <?= date('d/m/Y H:i', strtotime($profit['created_at'])) ?>
                         </td>
                     </tr>
                     <?php endforeach; ?>
@@ -274,24 +370,24 @@ tailwind.config = {
 
 <!-- ================= MOBILE CARD VIEW ================= -->
 <div class="lg:hidden space-y-4 mb-6">
-    <?php if(empty($dataProfit)): ?>
+    <?php if(empty($dataPendaftaran)): ?>
     <div class="bg-white rounded-xl shadow-lg p-8 text-center">
         <i class="fa fa-inbox text-6xl text-gray-300 mb-4"></i>
-        <p class="font-semibold text-gray-700 text-lg mb-2">Tidak ada data profit</p>
+        <p class="font-semibold text-gray-700 text-lg mb-2">Tidak ada data pendaftaran</p>
         <p class="text-sm text-gray-500">Coba ubah filter atau tambahkan data baru</p>
     </div>
     <?php else: ?>
         <?php 
         $no = ($pagination['current_page'] - 1) * $pagination['per_page'] + 1;
-        foreach($dataProfit as $profit): 
+        foreach($dataPendaftaran as $daftar): 
         ?>
         <div class="card-hover gradient-border bg-white rounded-xl shadow-lg overflow-hidden">
             <div class="p-5">
                 <!-- Header Card -->
                 <div class="flex items-start justify-between mb-4">
                     <div>
-                        <p class="font-bold text-gray-800 text-lg"><?= $profit['nama_siswa'] ?></p>
-                        <p class="text-xs text-gray-500 mt-1"><?= $profit['no_hp'] ?></p>
+                        <p class="font-bold text-gray-800 text-lg"><?= $daftar['nama'] ?></p>
+                        <p class="text-xs text-gray-500 mt-1"><?= $daftar['no_hp'] ?></p>
                     </div>
                     <span class="text-xs bg-blue-50 text-blue-700 px-3 py-1 rounded-full font-mono">
                         #<?= $no++ ?>
@@ -302,45 +398,59 @@ tailwind.config = {
                 <div class="grid grid-cols-2 gap-3 mb-4">
                     <div class="bg-gray-50 rounded-lg p-3">
                         <p class="text-xs text-gray-500 mb-1">No Pendaftaran</p>
-                        <p class="text-sm font-semibold text-gray-800"><?= $profit['no_pendaftaran'] ?></p>
+                        <p class="text-sm font-semibold text-gray-800"><?= $daftar['no_pendaftaran'] ?></p>
                     </div>
                     <div class="bg-gray-50 rounded-lg p-3">
-                        <p class="text-xs text-gray-500 mb-1">Email</p>
-                        <p class="text-sm font-semibold text-gray-800 truncate"><?= $profit['email'] ?></p>
+                        <p class="text-xs text-gray-500 mb-1">Tanggal Daftar</p>
+                        <p class="text-sm font-semibold text-gray-800"><?= date('d/m/Y', strtotime($daftar['tanggal_daftar'])) ?></p>
                     </div>
+                </div>
+                
+                <!-- Email -->
+                <div class="bg-gray-50 rounded-lg p-3 mb-4">
+                    <p class="text-xs text-gray-500 mb-1">Email</p>
+                    <p class="text-sm font-semibold text-gray-800 break-all"><?= $daftar['email'] ?></p>
                 </div>
                 
                 <!-- Paket Info -->
                 <div class="bg-purple-50 rounded-lg p-3 mb-4">
                     <p class="text-xs text-purple-600 mb-1">Paket Kursus</p>
-                    <p class="text-sm font-bold text-purple-800"><?= $profit['nama_paket'] ?></p>
-                    <p class="text-xs text-purple-600 mt-1"><?= $profit['level'] ?></p>
+                    <p class="text-sm font-bold text-purple-800"><?= $daftar['nama_paket'] ?></p>
+                    <p class="text-xs text-purple-600 mt-1"><?= $daftar['level'] ?></p>
                 </div>
                 
-                <!-- Nominal -->
-                <div class="bg-green-50 rounded-lg p-4 mb-4 text-center">
-                    <p class="text-xs text-green-600 mb-1">Nominal Profit</p>
-                    <p class="text-2xl font-bold text-green-700">
-                        Rp <?= number_format($profit['nominal'], 0, ',', '.') ?>
-                    </p>
-                </div>
-                
-                <!-- Tanggal Info -->
-                <div class="grid grid-cols-2 gap-3 text-xs text-gray-600">
-                    <div>
-                        <p class="text-gray-500 mb-1">
-                            <i class="fa fa-upload mr-1"></i> Upload
-                        </p>
-                        <p class="font-semibold"><?= date('d/m/Y', strtotime($profit['tanggal_upload'])) ?></p>
-                        <p class="text-gray-400"><?= date('H:i', strtotime($profit['tanggal_upload'])) ?></p>
-                    </div>
-                    <div>
-                        <p class="text-gray-500 mb-1">
-                            <i class="fa fa-check-circle mr-1"></i> Approve
-                        </p>
-                        <p class="font-semibold"><?= date('d/m/Y', strtotime($profit['created_at'])) ?></p>
-                        <p class="text-gray-400"><?= date('H:i', strtotime($profit['created_at'])) ?></p>
-                    </div>
+                <!-- Status -->
+                <div class="text-center">
+                    <?php
+                    $statusClass = '';
+                    $statusIcon = '';
+                    switch($daftar['status']) {
+                        case 'pending':
+                            $statusClass = 'bg-yellow-100 text-yellow-700';
+                            $statusIcon = 'fa-clock';
+                            break;
+                        case 'aktif':
+                            $statusClass = 'bg-green-100 text-green-700';
+                            $statusIcon = 'fa-check-circle';
+                            break;
+                        case 'batal':
+                            $statusClass = 'bg-red-100 text-red-700';
+                            $statusIcon = 'fa-cross-circle';
+                            break;
+                        case 'selesai':
+                            $statusClass = 'bg-orange-200 text-orange-700';
+                            $statusIcon = 'fa-check-circle';
+                            break;
+                        case 'mundur':
+                            $statusClass = 'bg-red-200 text-orange-800';
+                            $statusIcon = 'fa-check-circle';
+                            break;
+                    }
+                    ?>
+                    <span class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold <?= $statusClass ?>">
+                        <i class="fa <?= $statusIcon ?>"></i>
+                        <?= ucfirst($daftar['status']) ?>
+                    </span>
                 </div>
             </div>
         </div>
@@ -371,45 +481,45 @@ tailwind.config = {
         const submitBtn = filterForm.querySelector('button[type="submit"]');
         const tableContainer = document.querySelector('.hidden.lg\\:block.bg-white');
         const mobileContainer = document.querySelector('.lg\\:hidden.space-y-4');
-        const dataInfo = document.querySelector('.bg-blue-50');
         
         // Function untuk fetch data via AJAX
         async function applyFilterAJAX(formData) {
-            try {
-                submitBtn.innerHTML = '<i class="fa fa-spinner fa-spin mr-2"></i><span>Memuat...</span>';
-                submitBtn.disabled = true;
-                
-                const params = new URLSearchParams(formData);
-                const url = `${filterForm.action}?${params.toString()}&ajax=1`;
-                
-                const response = await fetch(url, {
-                    method: 'GET',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                });
-                
-                if(!response.ok) throw new Error('Network response was not ok');
-                
-                const data = await response.json();
-                
-                updateTableData(data.dataProfit, data.pagination);
-                updateMobileCards(data.dataProfit, data.pagination);
-                updateDataInfo(data.pagination);                
-                
-                window.history.pushState({}, '', `?${params.toString()}`);        
-                submitBtn.innerHTML = '<i class="fa fa-filter"></i><span>Terapkan Filter</span>';
-                submitBtn.disabled = false;
-                
-                showNotification('Filter berhasil diterapkan!', 'success');
-                
-            } catch(error) {
-                console.error('Filter error:', error);
-                submitBtn.innerHTML = '<i class="fa fa-filter"></i><span>Terapkan Filter</span>';
-                submitBtn.disabled = false;
-                showNotification('Gagal memuat data. Silakan coba lagi.', 'error');
-            }
+        try {
+            submitBtn.innerHTML = '<i class="fa fa-spinner fa-spin mr-2"></i><span>Memuat...</span>';
+            submitBtn.disabled = true;
+            
+            const params = new URLSearchParams(formData);
+            const url = `<?= base_url('laporan/pendaftaran') ?>?${params.toString()}&ajax=1`;
+            
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+            
+            if(!response.ok) throw new Error('Network error');
+            
+            const data = await response.json();
+            
+            updateTableData(data.dataPendaftaran, data.pagination);
+            updateMobileCards(data.dataPendaftaran, data.pagination);
+            updateStatistikCards(data.statistik); // ✅ Tambah ini
+            updatePaginationView(); // ✅ Refresh pagination
+            
+            window.history.pushState({}, '', `?${params.toString()}`);        
+            submitBtn.innerHTML = '<i class="fa fa-filter"></i><span>Terapkan Filter</span>';
+            submitBtn.disabled = false;
+            
+            showNotification('Filter berhasil diterapkan!', 'success');
+            
+        } catch(error) {
+            console.error('Filter error:', error);
+            submitBtn.innerHTML = '<i class="fa fa-filter"></i><span>Terapkan Filter</span>';
+            submitBtn.disabled = false;
+            showNotification('Gagal memuat data. Silakan coba lagi.', 'error');
         }
+    }
         
         filterForm.addEventListener('submit', function(e) {
             e.preventDefault();
@@ -419,7 +529,7 @@ tailwind.config = {
         });
         
         // ========== RESET FILTER ==========
-        const resetBtn = document.querySelector('a[href*="laporan/profit"]:not([href*="export"])');
+        const resetBtn = document.querySelector('a[href*="laporan/pendaftaran"]:not([href*="export"])');
         if(resetBtn && resetBtn.textContent.includes('Reset')) {
             resetBtn.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -440,17 +550,72 @@ tailwind.config = {
             });
         }
         
+        // Function update statistik cards
+        function updateStatistikCards(statistik) {
+            const cards = document.querySelectorAll('.grid.grid-cols-1.md\\:grid-cols-4 .bg-white');
+            if(cards.length >= 4) {
+                // Total
+                cards[0].querySelector('.text-2xl.font-bold').textContent = statistik.total || 0;
+                // Pending
+                cards[1].querySelector('.text-2xl.font-bold').textContent = statistik.pending || 0;
+                // Aktif
+                cards[2].querySelector('.text-2xl.font-bold').textContent = statistik.aktif || 0;
+                // Batal
+                cards[3].querySelector('.text-2xl.font-bold').textContent = statistik.batal || 0;
+            }
+            
+            // Update header total
+            const headerTotal = document.querySelector('.bg-white\\/20 .text-2xl.font-bold');
+            if(headerTotal) {
+                headerTotal.textContent = (statistik.total || 0) + ' Siswa';
+            }
+        }
+        
+        //Status Badge
+        function getStatusBadge(status) {
+        let statusClass = '';
+        let statusIcon = '';
+        
+        switch(status) {
+            case 'pending':
+                statusClass = 'bg-yellow-100 text-yellow-700';
+                statusIcon = 'fa-clock';
+                break;
+            case 'aktif':
+                statusClass = 'bg-green-100 text-green-700';
+                statusIcon = 'fa-check-circle';
+                break;
+            case 'batal':
+                statusClass = 'bg-red-100 text-red-700';
+                statusIcon = 'fa-times-circle';
+                break;
+            case 'selesai':
+                statusClass = 'bg-blue-100 text-blue-700';
+                statusIcon = 'fa-flag-checkered';
+                break;
+            case 'mundur':
+                statusClass = 'bg-orange-100 text-orange-700';
+                statusIcon = 'fa-arrow-left';
+                break;
+            default:
+                statusClass = 'bg-gray-100 text-gray-700';
+                statusIcon = 'fa-info-circle';
+        }
+        
+        return { statusClass, statusIcon };
+    }
+        
         // Function update table
-        function updateTableData(dataProfit, pagination) {
+        function updateTableData(dataPendaftaran, pagination) {
             const tbody = tableContainer.querySelector('tbody');
             if(!tbody) return;
             
-            if(dataProfit.length === 0) {
+            if(dataPendaftaran.length === 0) {
                 tbody.innerHTML = `
                     <tr>
                         <td colspan="8" class="px-6 py-12 text-center text-gray-500">
                             <i class="fa fa-inbox text-4xl mb-3 block text-gray-300"></i>
-                            <p class="font-semibold">Tidak ada data profit</p>
+                            <p class="font-semibold">Tidak ada data pendaftaran</p>
                             <p class="text-sm mt-1">Coba ubah filter atau tambahkan data baru</p>
                         </td>
                     </tr>
@@ -461,38 +626,36 @@ tailwind.config = {
             let html = '';
             let no = (pagination.current_page - 1) * pagination.per_page + 1;
             
-            dataProfit.forEach(profit => {
+            dataPendaftaran.forEach(daftar => {
+                const { statusClass, statusIcon } = getStatusBadge(daftar.status);
+                
                 html += `
                     <tr class="hover:bg-gray-50 transition-colors">
                         <td class="px-4 py-3 text-sm text-gray-700">${no++}</td>
                         <td class="px-4 py-3">
                             <span class="font-mono text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded">
-                                ${profit.no_pendaftaran}
+                                ${daftar.no_pendaftaran}
                             </span>
                         </td>
                         <td class="px-4 py-3">
-                            <div>
-                                <p class="font-semibold text-gray-800 text-sm">${profit.nama_siswa}</p>
-                                <p class="text-xs text-gray-500">${profit.no_hp}</p>
-                            </div>
+                            <p class="font-semibold text-gray-800 text-sm">${daftar.nama}</p>
                         </td>
-                        <td class="px-4 py-3 text-sm text-gray-600">${profit.email}</td>
+                        <td class="px-4 py-3 text-sm text-gray-600">${daftar.email}</td>
+                        <td class="px-4 py-3 text-sm text-gray-600">${daftar.no_hp}</td>
                         <td class="px-4 py-3">
                             <div>
-                                <p class="font-semibold text-gray-800 text-sm">${profit.nama_paket}</p>
-                                <p class="text-xs text-gray-500">${profit.level}</p>
+                                <p class="font-semibold text-gray-800 text-sm">${daftar.nama_paket}</p>
+                                <p class="text-xs text-gray-500">${daftar.level}</p>
                             </div>
                         </td>
-                        <td class="px-4 py-3 text-right">
-                            <span class="font-bold text-green-600 text-sm">
-                                Rp ${parseInt(profit.nominal).toLocaleString('id-ID')}
+                        <td class="px-4 py-3 text-sm text-gray-600">
+                            ${formatDate(daftar.tanggal_daftar)}
+                        </td>
+                        <td class="px-4 py-3 text-center">
+                            <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold ${statusClass}">
+                                <i class="fa ${statusIcon}"></i>
+                                ${capitalizeFirst(daftar.status)}
                             </span>
-                        </td>
-                        <td class="px-4 py-3 text-sm text-gray-600">
-                            ${formatDateTime(profit.tanggal_upload)}
-                        </td>
-                        <td class="px-4 py-3 text-sm text-gray-600">
-                            ${formatDateTime(profit.created_at)}
                         </td>
                     </tr>
                 `;
@@ -502,14 +665,14 @@ tailwind.config = {
         }
         
         // Function update mobile cards
-        function updateMobileCards(dataProfit, pagination) {
+        function updateMobileCards(dataPendaftaran, pagination) {
             if(!mobileContainer) return;
             
-            if(dataProfit.length === 0) {
+            if(dataPendaftaran.length === 0) {
                 mobileContainer.innerHTML = `
                     <div class="bg-white rounded-xl shadow-lg p-8 text-center">
                         <i class="fa fa-inbox text-6xl text-gray-300 mb-4"></i>
-                        <p class="font-semibold text-gray-700 text-lg mb-2">Tidak ada data profit</p>
+                        <p class="font-semibold text-gray-700 text-lg mb-2">Tidak ada data pendaftaran</p>
                         <p class="text-sm text-gray-500">Coba ubah filter atau tambahkan data baru</p>
                     </div>
                 `;
@@ -519,14 +682,16 @@ tailwind.config = {
             let html = '';
             let no = (pagination.current_page - 1) * pagination.per_page + 1;
             
-            dataProfit.forEach(profit => {
+            dataPendaftaran.forEach(daftar => {
+                const { statusClass, statusIcon } = getStatusBadge(daftar.status);
+                
                 html += `
                     <div class="card-hover gradient-border bg-white rounded-xl shadow-lg overflow-hidden">
                         <div class="p-5">
                             <div class="flex items-start justify-between mb-4">
                                 <div>
-                                    <p class="font-bold text-gray-800 text-lg">${profit.nama_siswa}</p>
-                                    <p class="text-xs text-gray-500 mt-1">${profit.no_hp}</p>
+                                    <p class="font-bold text-gray-800 text-lg">${daftar.nama}</p>
+                                    <p class="text-xs text-gray-500 mt-1">${daftar.no_hp}</p>
                                 </div>
                                 <span class="text-xs bg-blue-50 text-blue-700 px-3 py-1 rounded-full font-mono">
                                     #${no++}
@@ -536,42 +701,30 @@ tailwind.config = {
                             <div class="grid grid-cols-2 gap-3 mb-4">
                                 <div class="bg-gray-50 rounded-lg p-3">
                                     <p class="text-xs text-gray-500 mb-1">No Pendaftaran</p>
-                                    <p class="text-sm font-semibold text-gray-800">${profit.no_pendaftaran}</p>
+                                    <p class="text-sm font-semibold text-gray-800">${daftar.no_pendaftaran}</p>
                                 </div>
                                 <div class="bg-gray-50 rounded-lg p-3">
-                                    <p class="text-xs text-gray-500 mb-1">Email</p>
-                                    <p class="text-sm font-semibold text-gray-800 truncate">${profit.email}</p>
+                                    <p class="text-xs text-gray-500 mb-1">Tanggal Daftar</p>
+                                    <p class="text-sm font-semibold text-gray-800">${formatDate(daftar.tanggal_daftar)}</p>
                                 </div>
+                            </div>
+                            
+                            <div class="bg-gray-50 rounded-lg p-3 mb-4">
+                                <p class="text-xs text-gray-500 mb-1">Email</p>
+                                <p class="text-sm font-semibold text-gray-800 break-all">${daftar.email}</p>
                             </div>
                             
                             <div class="bg-purple-50 rounded-lg p-3 mb-4">
                                 <p class="text-xs text-purple-600 mb-1">Paket Kursus</p>
-                                <p class="text-sm font-bold text-purple-800">${profit.nama_paket}</p>
-                                <p class="text-xs text-purple-600 mt-1">${profit.level}</p>
+                                <p class="text-sm font-bold text-purple-800">${daftar.nama_paket}</p>
+                                <p class="text-xs text-purple-600 mt-1">${daftar.level}</p>
                             </div>
                             
-                            <div class="bg-green-50 rounded-lg p-4 mb-4 text-center">
-                                <p class="text-xs text-green-600 mb-1">Nominal Profit</p>
-                                <p class="text-2xl font-bold text-green-700">
-                                    Rp ${parseInt(profit.nominal).toLocaleString('id-ID')}
-                                </p>
-                            </div>
-                            
-                            <div class="grid grid-cols-2 gap-3 text-xs text-gray-600">
-                                <div>
-                                    <p class="text-gray-500 mb-1">
-                                        <i class="fa fa-upload mr-1"></i> Upload
-                                    </p>
-                                    <p class="font-semibold">${formatDate(profit.tanggal_upload)}</p>
-                                    <p class="text-gray-400">${formatTime(profit.tanggal_upload)}</p>
-                                </div>
-                                <div>
-                                    <p class="text-gray-500 mb-1">
-                                        <i class="fa fa-check-circle mr-1"></i> Approve
-                                    </p>
-                                    <p class="font-semibold">${formatDate(profit.created_at)}</p>
-                                    <p class="text-gray-400">${formatTime(profit.created_at)}</p>
-                                </div>
+                            <div class="text-center">
+                                <span class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold ${statusClass}">
+                                    <i class="fa ${statusIcon}"></i>
+                                    ${capitalizeFirst(daftar.status)}
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -597,13 +750,13 @@ tailwind.config = {
             // Update Excel button
             const excelBtn = document.querySelector('a[href*="export=excel"]');
             if (excelBtn) {
-                excelBtn.href = `<?= base_url('laporan/profit') ?>?export=excel${queryString ? '&' + queryString : ''}`;
+                excelBtn.href = `<?= base_url('laporan/pendaftaran') ?>?export=excel${queryString ? '&' + queryString : ''}`;
             }
             
             // Update PDF button
             const pdfBtn = document.querySelector('a[href*="export=pdf"]');
             if (pdfBtn) {
-                pdfBtn.href = `<?= base_url('laporan/profit') ?>?export=pdf${queryString ? '&' + queryString : ''}`;
+                pdfBtn.href = `<?= base_url('laporan/pendaftaran') ?>?export=pdf${queryString ? '&' + queryString : ''}`;
             }
         }
 
@@ -611,7 +764,7 @@ tailwind.config = {
         filterForm.addEventListener('change', updateExportButtons);
         filterForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            updateExportButtons();
+            updateExportButtons(); // Update dulu sebelum submit
             
             const formData = new FormData(this);
             formData.set('page', '1');
@@ -621,30 +774,7 @@ tailwind.config = {
         // Initialize
         updateExportButtons();
         
-        // Function update data info
-        function updateDataInfo(pagination) {
-            if(!dataInfo) return;
-            
-            const infoText = dataInfo.querySelector('p');
-            if(infoText) {
-                infoText.innerHTML = `
-                    Menampilkan <strong>${pagination.showing}</strong> dari <strong>${pagination.total_data}</strong> data profit.
-                    ${pagination.total_data > 0 ? `Halaman <strong>${pagination.current_page}</strong> dari <strong>${pagination.total_pages}</strong>.` : ''}
-                `;
-            }
-        }
-        
         // Helper functions
-        function formatDateTime(dateString) {
-            const date = new Date(dateString);
-            const day = String(date.getDate()).padStart(2, '0');
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const year = date.getFullYear();
-            const hours = String(date.getHours()).padStart(2, '0');
-            const minutes = String(date.getMinutes()).padStart(2, '0');
-            return `${day}/${month}/${year} ${hours}:${minutes}`;
-        }
-        
         function formatDate(dateString) {
             const date = new Date(dateString);
             const day = String(date.getDate()).padStart(2, '0');
@@ -653,11 +783,8 @@ tailwind.config = {
             return `${day}/${month}/${year}`;
         }
         
-        function formatTime(dateString) {
-            const date = new Date(dateString);
-            const hours = String(date.getHours()).padStart(2, '0');
-            const minutes = String(date.getMinutes()).padStart(2, '0');
-            return `${hours}:${minutes}`;
+        function capitalizeFirst(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
         }
         
         // Notification helper
@@ -721,7 +848,7 @@ tailwind.config = {
             });
         });
         
-        // ==================== PAGINATION (Copas dari jadwal kelas) ====================
+        // ==================== PAGINATION ====================
         let currentPage = 1;
         let totalPages = 1;
 
@@ -784,14 +911,14 @@ tailwind.config = {
         // Initialize pagination
         updatePaginationView();
 
-        // NUMBER ANIMATION FOR TOTAL PROFIT
-        const totalProfitEl = document.querySelector('.bg-white\\/20 .text-2xl.font-bold');
-        if(totalProfitEl) {
-            const finalValue = parseInt(totalProfitEl.textContent.replace(/[^0-9]/g, ''));
+        // NUMBER ANIMATION FOR STATISTIK CARDS
+        const statCards = document.querySelectorAll('.grid.grid-cols-1.md\\:grid-cols-4 .text-2xl.font-bold');
+        statCards.forEach(card => {
+            const finalValue = parseInt(card.textContent) || 0;
             let currentValue = 0;
-            const increment = finalValue / 50;
-            const duration = 1000;
-            const stepTime = duration / 50;
+            const increment = Math.max(1, Math.ceil(finalValue / 30));
+            const duration = 800;
+            const stepTime = duration / (finalValue / increment);
             
             const counter = setInterval(() => {
                 currentValue += increment;
@@ -799,7 +926,27 @@ tailwind.config = {
                     currentValue = finalValue;
                     clearInterval(counter);
                 }
-                totalProfitEl.textContent = 'Rp ' + Math.floor(currentValue).toLocaleString('id-ID');
+                card.textContent = Math.floor(currentValue);
+            }, stepTime);
+        });
+        
+        // NUMBER ANIMATION FOR HEADER TOTAL
+        const headerTotal = document.querySelector('.bg-white\\/20 .text-2xl.font-bold');
+        if(headerTotal) {
+            const text = headerTotal.textContent;
+            const finalValue = parseInt(text.replace(/[^0-9]/g, '')) || 0;
+            let currentValue = 0;
+            const increment = Math.max(1, Math.ceil(finalValue / 30));
+            const duration = 800;
+            const stepTime = duration / (finalValue / increment);
+            
+            const counter = setInterval(() => {
+                currentValue += increment;
+                if(currentValue >= finalValue) {
+                    currentValue = finalValue;
+                    clearInterval(counter);
+                }
+                headerTotal.textContent = Math.floor(currentValue) + ' Siswa';
             }, stepTime);
         }
     });

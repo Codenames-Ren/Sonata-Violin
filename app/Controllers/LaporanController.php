@@ -56,8 +56,8 @@ class LaporanController extends BaseController
             'totalPendaftaranBulanIni' => $totalPendaftaranBulanIni,
             'totalKelasAktif' => $totalKelasAktif,
             'totalSertifikatPending' => $totalSertifikatPending,
-            'page_title' => 'Laporan dan Sertifikasi',
-            'page_subtitle' => 'Kelola data laporan dan cetak sertifikat siswa Sonata Violin',
+            'page_title' => 'Laporan',
+            'page_subtitle' => 'Kelola data laporan dan audit trail Sonata Violin',
         ];
         
         return view('laporan/index', $data);
@@ -146,13 +146,32 @@ class LaporanController extends BaseController
         $totalProfit = $this->laporanModel->getTotalProfit($filters);
 
         // Pagination
-        $perPage = 15;
+        $isMobile = $this->request->getUserAgent()->isMobile();
+        $perPage = $isMobile ? 5 : 10;
         $currentPage = $this->request->getGet('page') ?? 1;
         $totalData = count($dataProfit);
         $totalPages = ceil($totalData / $perPage);
         $offset = ($currentPage - 1) * $perPage;
         $paginatedData = array_slice($dataProfit, $offset, $perPage);
 
+        // ========== AJAX REQUEST HANDLING ==========
+        if ($this->request->isAJAX() || $this->request->getGet('ajax')) {
+            return $this->response->setJSON([
+                'success' => true,
+                'dataProfit' => $paginatedData,
+                'totalProfit' => $totalProfit,
+                'pagination' => [
+                    'current_page' => (int)$currentPage,
+                    'total_pages' => (int)$totalPages,
+                    'per_page' => (int)$perPage,
+                    'total_data' => (int)$totalData,
+                    'showing' => count($paginatedData)
+                ],
+                'filters' => $filters
+            ]);
+        }
+        
+        // Normal view response
         $data = [
             'title' => 'Laporan Profit',
             'menu_active' => 'laporan',
@@ -174,8 +193,55 @@ class LaporanController extends BaseController
         return view('laporan/profit', $data);
     }
 
+    // PDF EXPORT 
+    private function exportProfitPDF($filters)
+    {
+        try {
+            ini_set('memory_limit', '256M');
+            set_time_limit(300);
+
+            // Ambil data dengan filter yang sama
+            $dataProfit = $this->laporanModel->getLaporanProfit($filters);
+            $totalProfit = $this->laporanModel->getTotalProfit($filters);
+
+            // Periode
+            $periode = 'Semua Periode';
+            if (!empty($filters['tanggal_start']) && !empty($filters['tanggal_end'])) {
+                $periode = date('d/m/Y', strtotime($filters['tanggal_start'])) . ' - ' . date('d/m/Y', strtotime($filters['tanggal_end']));
+            }
+
+            // Generate HTML
+            $html = view('laporan/pdf/profit_pdf', [
+                'dataProfit' => $dataProfit,
+                'totalProfit' => $totalProfit,
+                'periode' => $periode
+            ]);
+
+            // Configure Dompdf
+            $options = new Options();
+            $options->set('isHtml5ParserEnabled', true);
+            $options->set('isRemoteEnabled', true);
+            $options->set('chroot', FCPATH); 
+            $options->set('defaultFont', 'Arial'); 
+            
+            // Initialize Dompdf
+            $dompdf = new Dompdf($options);
+            $dompdf->loadHtml($html);
+            $dompdf->setPaper('A4', 'landscape');
+            $dompdf->render();
+            $filename = 'Laporan_Profit_' . date('YmdHis') . '.pdf';
+            $dompdf->stream($filename, ['Attachment' => true]);
+            
+            exit;
+            
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal export PDF: ' . $e->getMessage());
+        }
+    }
+
     private function exportProfitExcel($filters)
     {
+        // Ambil data dengan filter yang sama
         $dataProfit = $this->laporanModel->getLaporanProfit($filters);
         $totalProfit = $this->laporanModel->getTotalProfit($filters);
 
@@ -206,9 +272,9 @@ class LaporanController extends BaseController
         $sheet->setCellValue('B5', 'No Pendaftaran');
         $sheet->setCellValue('C5', 'Nama Siswa');
         $sheet->setCellValue('D5', 'Email');
-        $sheet->setCellValue('E5', 'Paket');
-        $sheet->setCellValue('F5', 'Nominal');
-        $sheet->setCellValue('G5', 'Tanggal Upload');
+        $sheet->setCellValue('E5', 'No HP');
+        $sheet->setCellValue('F5', 'Paket');
+        $sheet->setCellValue('G5', 'Nominal');
         $sheet->setCellValue('H5', 'Tanggal Approve');
         
         $sheet->getStyle('A5:H5')->getFont()->setBold(true);
@@ -224,9 +290,15 @@ class LaporanController extends BaseController
             $sheet->setCellValue('B' . $row, $data['no_pendaftaran']);
             $sheet->setCellValue('C' . $row, $data['nama_siswa']);
             $sheet->setCellValue('D' . $row, $data['email']);
-            $sheet->setCellValue('E' . $row, $data['nama_paket'] . ' - ' . $data['level']);
-            $sheet->setCellValue('F' . $row, 'Rp ' . number_format($data['nominal'], 0, ',', '.'));
-            $sheet->setCellValue('G' . $row, date('d/m/Y H:i', strtotime($data['tanggal_upload'])));
+          
+            $sheet->setCellValueExplicit(
+                'E' . $row, 
+                $data['no_hp'], 
+                \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING
+            );
+            
+            $sheet->setCellValue('F' . $row, $data['nama_paket'] . ' - ' . $data['level']);
+            $sheet->setCellValue('G' . $row, 'Rp ' . number_format($data['nominal'], 0, ',', '.'));
             $sheet->setCellValue('H' . $row, date('d/m/Y H:i', strtotime($data['created_at'])));
             $row++;
         }
@@ -244,37 +316,6 @@ class LaporanController extends BaseController
 
         $writer = new Xlsx($spreadsheet);
         $writer->save('php://output');
-        exit;
-    }
-
-    private function exportProfitPDF($filters)
-    {
-        $dataProfit = $this->laporanModel->getLaporanProfit($filters);
-        $totalProfit = $this->laporanModel->getTotalProfit($filters);
-
-        // Periode
-        $periode = 'Semua Periode';
-        if (!empty($filters['tanggal_start']) && !empty($filters['tanggal_end'])) {
-            $periode = date('d/m/Y', strtotime($filters['tanggal_start'])) . ' - ' . date('d/m/Y', strtotime($filters['tanggal_end']));
-        }
-
-        $html = view('laporan/pdf/profit_pdf', [
-            'dataProfit' => $dataProfit,
-            'totalProfit' => $totalProfit,
-            'periode' => $periode
-        ]);
-
-        $options = new Options();
-        $options->set('isHtml5ParserEnabled', true);
-        $options->set('isRemoteEnabled', true);
-
-        $dompdf = new Dompdf($options);
-        $dompdf->loadHtml($html);
-        $dompdf->setPaper('A4', 'landscape');
-        $dompdf->render();
-
-        $filename = 'Laporan_Profit_' . date('YmdHis') . '.pdf';
-        $dompdf->stream($filename, ['Attachment' => true]);
         exit;
     }
 
@@ -298,15 +339,48 @@ class LaporanController extends BaseController
         }
 
         $dataPendaftaran = $this->laporanModel->getLaporanPendaftaran($filters);
-        $statistik = $this->laporanModel->getStatistikPendaftaran($filters);
+        
+        // Hitung statistik per status
+        $statistik = [
+            'total' => count($dataPendaftaran),
+            'pending' => 0,
+            'aktif' => 0,
+            'batal' => 0,
+            'selesai' => 0,
+            'mundur' => 0
+        ];
+        
+        foreach ($dataPendaftaran as $daftar) {
+            $status = $daftar['status'];
+            if (isset($statistik[$status])) {
+                $statistik[$status]++;
+            }
+        }
 
         // Pagination
-        $perPage = 15;
+        $isMobile = $this->request->getUserAgent()->isMobile();
+        $perPage = $isMobile ? 5 : 10;
         $currentPage = $this->request->getGet('page') ?? 1;
         $totalData = count($dataPendaftaran);
         $totalPages = ceil($totalData / $perPage);
         $offset = ($currentPage - 1) * $perPage;
         $paginatedData = array_slice($dataPendaftaran, $offset, $perPage);
+
+        // AJAX REQUEST HANDLING
+        if ($this->request->isAJAX() || $this->request->getGet('ajax')) {
+            return $this->response->setJSON([
+                'success' => true,
+                'dataPendaftaran' => $paginatedData,
+                'statistik' => $statistik,
+                'pagination' => [
+                    'current_page' => (int)$currentPage,
+                    'total_pages' => (int)$totalPages,
+                    'per_page' => (int)$perPage,
+                    'total_data' => (int)$totalData
+                ],
+                'filters' => $filters
+            ]);
+        }
 
         $data = [
             'title' => 'Laporan Pendaftaran',
@@ -321,7 +395,9 @@ class LaporanController extends BaseController
                 'per_page' => $perPage,
                 'total_data' => $totalData
             ],
-            'listPaket' => $this->laporanModel->getListPaket()
+            'listPaket' => $this->laporanModel->getListPaket(),
+            'page_title' => 'Laporan Pendaftaran',
+            'page_subtitle' => 'Cetak laporan dari pendaftaran siswa di Sonata Violin dengan mudah',
         ];
 
         return view('laporan/pendaftaran', $data);
@@ -329,6 +405,7 @@ class LaporanController extends BaseController
 
     private function exportPendaftaranExcel($filters)
     {
+        // Ambil data dengan filter yang sama
         $dataPendaftaran = $this->laporanModel->getLaporanPendaftaran($filters);
 
         $spreadsheet = new Spreadsheet();
@@ -367,7 +444,13 @@ class LaporanController extends BaseController
             $sheet->setCellValue('B' . $row, $data['no_pendaftaran']);
             $sheet->setCellValue('C' . $row, $data['nama']);
             $sheet->setCellValue('D' . $row, $data['email']);
-            $sheet->setCellValue('E' . $row, $data['no_hp']);
+            
+            $sheet->setCellValueExplicit(
+                'E' . $row, 
+                $data['no_hp'], 
+                \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING
+            );
+            
             $sheet->setCellValue('F' . $row, $data['nama_paket'] . ' - ' . $data['level']);
             $sheet->setCellValue('G' . $row, date('d/m/Y', strtotime($data['tanggal_daftar'])));
             $sheet->setCellValue('H' . $row, ucfirst($data['status']));
@@ -390,6 +473,7 @@ class LaporanController extends BaseController
 
     private function exportPendaftaranPDF($filters)
     {
+        // Ambil data dengan filter yang sama
         $dataPendaftaran = $this->laporanModel->getLaporanPendaftaran($filters);
 
         $periode = 'Semua Periode';
@@ -417,7 +501,6 @@ class LaporanController extends BaseController
     }
 
     // LAPORAN ABSENSI 
-
     public function absensi()
     {
         $filters = [
