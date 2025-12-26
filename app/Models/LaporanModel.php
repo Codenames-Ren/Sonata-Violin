@@ -178,43 +178,37 @@ class LaporanModel extends Model
      * Get laporan absensi dengan detail kehadiran
      * @param array $filters ['tanggal_start', 'tanggal_end', 'jadwal_kelas_id', 'instruktur_id']
      */
-    public function getLaporanAbsensi($filters = [])
+    public function getLaporanAbsensiPerKelas($filters = [])
     {
-        $builder = $this->db->table('absensi_kelas')
+        $builder = $this->db->table('jadwal_kelas')
             ->select('
-                absensi_kelas.id AS absensi_id,
-                absensi_kelas.tanggal,
-                absensi_kelas.status AS status_absensi,
-                absensi_kelas.open_when,
-                absensi_kelas.close_when,
                 jadwal_kelas.id AS jadwal_id,
                 jadwal_kelas.hari,
                 jadwal_kelas.jam_mulai,
                 jadwal_kelas.jam_selesai,
+                jadwal_kelas.created_at AS tanggal_mulai_kelas,
                 paket_kursus.nama_paket,
                 paket_kursus.level,
+                paket_kursus.jumlah_pertemuan,
                 instruktur.nama AS nama_instruktur,
                 ruang_kelas.nama_ruang,
                 COUNT(DISTINCT ks.id) AS jumlah_siswa,
-                COUNT(DISTINCT CASE WHEN abs.status = "hadir" THEN abs.id END) AS jumlah_hadir,
-                COUNT(DISTINCT CASE WHEN abs.status = "izin" THEN abs.id END) AS jumlah_izin,
-                COUNT(DISTINCT CASE WHEN abs.status = "sakit" THEN abs.id END) AS jumlah_sakit,
-                COUNT(DISTINCT CASE WHEN abs.status = "alpha" THEN abs.id END) AS jumlah_alpha
+                COUNT(DISTINCT absensi_kelas.id) AS pertemuan_terlaksana
             ')
-            ->join('jadwal_kelas', 'jadwal_kelas.id = absensi_kelas.jadwal_kelas_id')
-            ->join('instruktur', 'instruktur.id = jadwal_kelas.instruktur_id', 'left')
             ->join('paket_kursus', 'paket_kursus.id = jadwal_kelas.paket_id', 'left')
+            ->join('instruktur', 'instruktur.id = jadwal_kelas.instruktur_id', 'left')
             ->join('ruang_kelas', 'ruang_kelas.id = jadwal_kelas.ruang_kelas_id', 'left')
             ->join('kelas_siswa ks', 'ks.jadwal_kelas_id = jadwal_kelas.id AND ks.status = "aktif"', 'left')
-            ->join('absensi_siswa abs', 'abs.absensi_kelas_id = absensi_kelas.id', 'left')
-            ->groupBy('absensi_kelas.id');
+            ->join('absensi_kelas', 'absensi_kelas.jadwal_kelas_id = jadwal_kelas.id', 'left')
+            ->where('jadwal_kelas.status', 'aktif')
+            ->groupBy('jadwal_kelas.id');
         
-        // Filter tanggal
+        // Filter tanggal (tanggal mulai kelas)
         if (!empty($filters['tanggal_start'])) {
-            $builder->where('DATE(absensi_kelas.tanggal) >=', $filters['tanggal_start']);
+            $builder->where('DATE(jadwal_kelas.created_at) >=', $filters['tanggal_start']);
         }
         if (!empty($filters['tanggal_end'])) {
-            $builder->where('DATE(absensi_kelas.tanggal) <=', $filters['tanggal_end']);
+            $builder->where('DATE(jadwal_kelas.created_at) <=', $filters['tanggal_end']);
         }
         
         // Filter jadwal kelas
@@ -236,7 +230,7 @@ class LaporanModel extends Model
                 ->groupEnd();
         }
         
-        return $builder->orderBy('absensi_kelas.tanggal', 'DESC')
+        return $builder->orderBy('jadwal_kelas.created_at', 'DESC')
             ->get()
             ->getResultArray();
     }
@@ -244,21 +238,67 @@ class LaporanModel extends Model
     /**
      * Get detail absensi siswa per kelas
      */
-    public function getDetailAbsensiSiswa($absensiKelasId)
+    public function getDetailAbsensiPerSiswa($jadwalKelasId)
     {
-        return $this->db->table('absensi_siswa')
+        $builder = $this->db->table('kelas_siswa')
             ->select('
-                absensi_siswa.*,
+                kelas_siswa.id AS kelas_siswa_id,
                 pendaftaran.nama AS nama_siswa,
                 pendaftaran.email,
-                pendaftaran.no_hp
+                pendaftaran.no_hp,
+                COUNT(DISTINCT absensi_kelas.id) AS total_pertemuan_terlaksana,
+                COUNT(DISTINCT CASE WHEN abs_siswa.status = "hadir" THEN abs_siswa.id END) AS total_hadir,
+                COUNT(DISTINCT CASE WHEN abs_siswa.status = "izin" THEN abs_siswa.id END) AS total_izin,
+                COUNT(DISTINCT CASE WHEN abs_siswa.status = "sakit" THEN abs_siswa.id END) AS total_sakit,
+                COUNT(DISTINCT CASE WHEN abs_siswa.status = "alpha" THEN abs_siswa.id END) AS total_alpha
             ')
-            ->join('kelas_siswa', 'kelas_siswa.id = absensi_siswa.kelas_siswa_id')
             ->join('pendaftaran', 'pendaftaran.id = kelas_siswa.pendaftaran_id')
-            ->where('absensi_siswa.absensi_kelas_id', $absensiKelasId)
-            ->orderBy('pendaftaran.nama', 'ASC')
+            ->join('absensi_kelas', 'absensi_kelas.jadwal_kelas_id = kelas_siswa.jadwal_kelas_id', 'left')
+            ->join('absensi_siswa abs_siswa', 'abs_siswa.kelas_siswa_id = kelas_siswa.id AND abs_siswa.absensi_kelas_id = absensi_kelas.id', 'left')
+            ->where('kelas_siswa.jadwal_kelas_id', $jadwalKelasId)
+            ->where('kelas_siswa.status', 'aktif')
+            ->groupBy('kelas_siswa.id')
+            ->orderBy('pendaftaran.nama', 'ASC');
+        
+        $results = $builder->get()->getResultArray();
+        
+        // Hitung persentase kehadiran
+        foreach ($results as &$row) {
+            $totalPertemuan = $row['total_pertemuan_terlaksana'];
+            if ($totalPertemuan > 0) {
+                $row['persentase_kehadiran'] = round(($row['total_hadir'] / $totalPertemuan) * 100, 1);
+            } else {
+                $row['persentase_kehadiran'] = 0;
+            }
+        }
+        
+        return $results;
+    }
+
+    public function getInfoKelas($jadwalKelasId)
+    {
+        return $this->db->table('jadwal_kelas')
+            ->select('
+                jadwal_kelas.id,
+                jadwal_kelas.hari,
+                jadwal_kelas.jam_mulai,
+                jadwal_kelas.jam_selesai,
+                jadwal_kelas.created_at AS tanggal_mulai_kelas,
+                paket_kursus.nama_paket,
+                paket_kursus.level,
+                paket_kursus.jumlah_pertemuan,
+                instruktur.nama AS nama_instruktur,
+                ruang_kelas.nama_ruang,
+                COUNT(DISTINCT ks.id) AS jumlah_siswa
+            ')
+            ->join('paket_kursus', 'paket_kursus.id = jadwal_kelas.paket_id', 'left')
+            ->join('instruktur', 'instruktur.id = jadwal_kelas.instruktur_id', 'left')
+            ->join('ruang_kelas', 'ruang_kelas.id = jadwal_kelas.ruang_kelas_id', 'left')
+            ->join('kelas_siswa ks', 'ks.jadwal_kelas_id = jadwal_kelas.id AND ks.status = "aktif"', 'left')
+            ->where('jadwal_kelas.id', $jadwalKelasId)
+            ->groupBy('jadwal_kelas.id')
             ->get()
-            ->getResultArray();
+            ->getRowArray();
     }
 
     // ================== LAPORAN PROGRESS KURSUS ==================

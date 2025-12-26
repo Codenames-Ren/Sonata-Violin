@@ -143,6 +143,7 @@ $routes->group('laporan', ['filter' => 'auth'], function($routes) {
         $routes->get('profit', 'LaporanController::profit');
         $routes->get('pendaftaran', 'LaporanController::pendaftaran');
         $routes->get('absensi', 'LaporanController::absensi');
+        $routes->get('detailAbsensi/(:num)', 'LaporanController::detailAbsensi/$1');
         $routes->get('progress', 'LaporanController::progress');
     });
 });

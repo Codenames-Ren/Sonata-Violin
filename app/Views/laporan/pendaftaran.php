@@ -504,8 +504,8 @@ tailwind.config = {
             
             updateTableData(data.dataPendaftaran, data.pagination);
             updateMobileCards(data.dataPendaftaran, data.pagination);
-            updateStatistikCards(data.statistik); // ✅ Tambah ini
-            updatePaginationView(); // ✅ Refresh pagination
+            updateStatistikCards(data.statistik);
+            updatePaginationView();
             
             window.history.pushState({}, '', `?${params.toString()}`);        
             submitBtn.innerHTML = '<i class="fa fa-filter"></i><span>Terapkan Filter</span>';

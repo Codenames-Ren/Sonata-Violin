@@ -500,7 +500,7 @@ class LaporanController extends BaseController
         exit;
     }
 
-    // LAPORAN ABSENSI 
+    // LAPORAN ABSENSI (LIST KELAS)
     public function absensi()
     {
         $filters = [
@@ -511,23 +511,31 @@ class LaporanController extends BaseController
             'search' => $this->request->getGet('search')
         ];
 
-        // Export handling
-        $export = $this->request->getGet('export');
-        if ($export === 'excel') {
-            return $this->exportAbsensiExcel($filters);
-        } elseif ($export === 'pdf') {
-            return $this->exportAbsensiPDF($filters);
-        }
+        $dataAbsensi = $this->laporanModel->getLaporanAbsensiPerKelas($filters);
 
-        $dataAbsensi = $this->laporanModel->getLaporanAbsensi($filters);
-
-        // Pagination
-        $perPage = 15;
+        // Pagination adaptive
+        $isMobile = $this->request->getUserAgent()->isMobile();
+        $perPage = $isMobile ? 5 : 10;
         $currentPage = $this->request->getGet('page') ?? 1;
         $totalData = count($dataAbsensi);
         $totalPages = ceil($totalData / $perPage);
         $offset = ($currentPage - 1) * $perPage;
         $paginatedData = array_slice($dataAbsensi, $offset, $perPage);
+
+        // AJAX REQUEST HANDLING
+        if ($this->request->isAJAX() || $this->request->getGet('ajax')) {
+            return $this->response->setJSON([
+                'success' => true,
+                'dataAbsensi' => $paginatedData,
+                'pagination' => [
+                    'current_page' => (int)$currentPage,
+                    'total_pages' => (int)$totalPages,
+                    'per_page' => (int)$perPage,
+                    'total_data' => (int)$totalData
+                ],
+                'filters' => $filters
+            ]);
+        }
 
         $data = [
             'title' => 'Laporan Absensi',
@@ -542,70 +550,153 @@ class LaporanController extends BaseController
                 'total_data' => $totalData
             ],
             'listJadwal' => $this->laporanModel->getListJadwalKelas(),
-            'listInstruktur' => $this->laporanModel->getListInstruktur()
+            'listInstruktur' => $this->laporanModel->getListInstruktur(),
+            'page_title' => 'Laporan Absensi Kelas',
+            'page_subtitle' => 'Rekap kehadiran siswa per kelas'
         ];
 
         return view('laporan/absensi', $data);
     }
 
-    private function exportAbsensiExcel($filters)
+    // DETAIL ABSENSI PER KELAS (LIST SISWA)
+    public function detailAbsensi($jadwalKelasId)
     {
-        $dataAbsensi = $this->laporanModel->getLaporanAbsensi($filters);
+        // Export handling
+        $export = $this->request->getGet('export');
+        if ($export === 'excel') {
+            return $this->exportDetailAbsensiExcel($jadwalKelasId);
+        } elseif ($export === 'pdf') {
+            return $this->exportDetailAbsensiPDF($jadwalKelasId);
+        }
+
+        // Get info kelas
+        $infoKelas = $this->laporanModel->getInfoKelas($jadwalKelasId);
+        
+        if (!$infoKelas) {
+            return redirect()->to('laporan/absensi')->with('error', 'Kelas tidak ditemukan');
+        }
+
+        // Get detail absensi per siswa
+        $dataSiswa = $this->laporanModel->getDetailAbsensiPerSiswa($jadwalKelasId);
+
+        // Hitung statistik
+        $statistik = [
+            'total_siswa' => count($dataSiswa),
+            'total_pertemuan' => $infoKelas['jumlah_pertemuan'],
+            'pertemuan_terlaksana' => 0,
+            'total_hadir' => 0,
+            'total_izin' => 0,
+            'total_sakit' => 0,
+            'total_alpha' => 0,
+            'rata_rata_kehadiran' => 0
+        ];
+
+        foreach ($dataSiswa as $siswa) {
+            $statistik['pertemuan_terlaksana'] = max($statistik['pertemuan_terlaksana'], $siswa['total_pertemuan_terlaksana']);
+            $statistik['total_hadir'] += $siswa['total_hadir'];
+            $statistik['total_izin'] += $siswa['total_izin'];
+            $statistik['total_sakit'] += $siswa['total_sakit'];
+            $statistik['total_alpha'] += $siswa['total_alpha'];
+        }
+
+        if (count($dataSiswa) > 0) {
+            $totalKehadiranSemua = $statistik['total_hadir'];
+            $totalKemungkinan = $statistik['pertemuan_terlaksana'] * count($dataSiswa);
+            if ($totalKemungkinan > 0) {
+                $statistik['rata_rata_kehadiran'] = round(($totalKehadiranSemua / $totalKemungkinan) * 100, 1);
+            }
+        }
+
+        // Pagination
+        $isMobile = $this->request->getUserAgent()->isMobile();
+        $perPage = $isMobile ? 5 : 10;
+        $currentPage = $this->request->getGet('page') ?? 1;
+        $totalData = count($dataSiswa);
+        $totalPages = ceil($totalData / $perPage);
+        $offset = ($currentPage - 1) * $perPage;
+        $paginatedData = array_slice($dataSiswa, $offset, $perPage);
+
+        $data = [
+            'title' => 'Detail Absensi Kelas',
+            'menu_active' => 'laporan',
+            'submenu_active' => 'absensi',
+            'infoKelas' => $infoKelas,
+            'dataSiswa' => $paginatedData,
+            'statistik' => $statistik,
+            'pagination' => [
+                'current_page' => $currentPage,
+                'total_pages' => $totalPages,
+                'per_page' => $perPage,
+                'total_data' => $totalData
+            ],
+            'jadwalKelasId' => $jadwalKelasId,
+            'page_title' => 'Detail Absensi - ' . $infoKelas['nama_paket'],
+            'page_subtitle' => 'Rekap kehadiran siswa kelas ' . $infoKelas['nama_paket'] . ' - ' . $infoKelas['level']
+        ];
+
+        return view('laporan/detail_absensi', $data);
+    }
+
+    // Export Excel Detail Absensi
+    private function exportDetailAbsensiExcel($jadwalKelasId)
+    {
+        $infoKelas = $this->laporanModel->getInfoKelas($jadwalKelasId);
+        $dataSiswa = $this->laporanModel->getDetailAbsensiPerSiswa($jadwalKelasId);
 
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
 
-        $sheet->setCellValue('A1', 'LAPORAN ABSENSI KELAS');
-        $sheet->mergeCells('A1:J1');
+        // Header
+        $sheet->setCellValue('A1', 'LAPORAN ABSENSI SISWA PER KELAS');
+        $sheet->mergeCells('A1:I1');
         $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(16);
         $sheet->getStyle('A1')->getAlignment()->setHorizontal('center');
 
-        $periode = 'Semua Periode';
-        if (!empty($filters['tanggal_start']) && !empty($filters['tanggal_end'])) {
-            $periode = date('d/m/Y', strtotime($filters['tanggal_start'])) . ' - ' . date('d/m/Y', strtotime($filters['tanggal_end']));
-        }
-        $sheet->setCellValue('A2', 'Periode: ' . $periode);
-        $sheet->mergeCells('A2:J2');
+        // Info Kelas
+        $sheet->setCellValue('A2', 'Paket: ' . $infoKelas['nama_paket'] . ' - ' . $infoKelas['level']);
+        $sheet->mergeCells('A2:I2');
+        $sheet->setCellValue('A3', 'Instruktur: ' . $infoKelas['nama_instruktur'] . ' | Ruang: ' . $infoKelas['nama_ruang'] . ' | Jadwal: ' . $infoKelas['hari'] . ' ' . substr($infoKelas['jam_mulai'], 0, 5) . '-' . substr($infoKelas['jam_selesai'], 0, 5));
+        $sheet->mergeCells('A3:I3');
 
-        $sheet->setCellValue('A4', 'No');
-        $sheet->setCellValue('B4', 'Tanggal');
-        $sheet->setCellValue('C4', 'Paket');
-        $sheet->setCellValue('D4', 'Instruktur');
-        $sheet->setCellValue('E4', 'Ruang');
-        $sheet->setCellValue('F4', 'Jam');
-        $sheet->setCellValue('G4', 'Jumlah Siswa');
-        $sheet->setCellValue('H4', 'Hadir');
-        $sheet->setCellValue('I4', 'Izin');
-        $sheet->setCellValue('J4', 'Sakit');
-        $sheet->setCellValue('K4', 'Alpha');
+        // Header Tabel
+        $sheet->setCellValue('A5', 'No');
+        $sheet->setCellValue('B5', 'Nama Siswa');
+        $sheet->setCellValue('C5', 'Email');
+        $sheet->setCellValue('D5', 'No HP');
+        $sheet->setCellValue('E5', 'Hadir');
+        $sheet->setCellValue('F5', 'Izin');
+        $sheet->setCellValue('G5', 'Sakit');
+        $sheet->setCellValue('H5', 'Alpha');
+        $sheet->setCellValue('I5', '% Kehadiran');
         
-        $sheet->getStyle('A4:K4')->getFont()->setBold(true);
-        $sheet->getStyle('A4:K4')->getFill()
+        $sheet->getStyle('A5:I5')->getFont()->setBold(true);
+        $sheet->getStyle('A5:I5')->getFill()
             ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
             ->getStartColor()->setARGB('FFE0E0E0');
 
-        $row = 5;
+        // Data
+        $row = 6;
         $no = 1;
-        foreach ($dataAbsensi as $data) {
+        foreach ($dataSiswa as $siswa) {
             $sheet->setCellValue('A' . $row, $no++);
-            $sheet->setCellValue('B' . $row, date('d/m/Y', strtotime($data['tanggal'])));
-            $sheet->setCellValue('C' . $row, $data['nama_paket'] . ' - ' . $data['level']);
-            $sheet->setCellValue('D' . $row, $data['nama_instruktur']);
-            $sheet->setCellValue('E' . $row, $data['nama_ruang']);
-            $sheet->setCellValue('F' . $row, substr($data['jam_mulai'], 0, 5) . ' - ' . substr($data['jam_selesai'], 0, 5));
-            $sheet->setCellValue('G' . $row, $data['jumlah_siswa']);
-            $sheet->setCellValue('H' . $row, $data['jumlah_hadir']);
-            $sheet->setCellValue('I' . $row, $data['jumlah_izin']);
-            $sheet->setCellValue('J' . $row, $data['jumlah_sakit']);
-            $sheet->setCellValue('K' . $row, $data['jumlah_alpha']);
+            $sheet->setCellValue('B' . $row, $siswa['nama_siswa']);
+            $sheet->setCellValue('C' . $row, $siswa['email']);
+            $sheet->setCellValueExplicit('D' . $row, $siswa['no_hp'], \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+            $sheet->setCellValue('E' . $row, $siswa['total_hadir']);
+            $sheet->setCellValue('F' . $row, $siswa['total_izin']);
+            $sheet->setCellValue('G' . $row, $siswa['total_sakit']);
+            $sheet->setCellValue('H' . $row, $siswa['total_alpha']);
+            $sheet->setCellValue('I' . $row, $siswa['persentase_kehadiran'] . '%');
             $row++;
         }
 
-        foreach (range('A', 'K') as $col) {
+        // Auto width
+        foreach (range('A', 'I') as $col) {
             $sheet->getColumnDimension($col)->setAutoSize(true);
         }
 
-        $filename = 'Laporan_Absensi_' . date('YmdHis') . '.xlsx';
+        // Download
+        $filename = 'Detail_Absensi_' . str_replace(' ', '_', $infoKelas['nama_paket']) . '_' . date('YmdHis') . '.xlsx';
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="' . $filename . '"');
         header('Cache-Control: max-age=0');
@@ -615,18 +706,15 @@ class LaporanController extends BaseController
         exit;
     }
 
-    private function exportAbsensiPDF($filters)
+    // Export PDF Detail Absensi
+    private function exportDetailAbsensiPDF($jadwalKelasId)
     {
-        $dataAbsensi = $this->laporanModel->getLaporanAbsensi($filters);
+        $infoKelas = $this->laporanModel->getInfoKelas($jadwalKelasId);
+        $dataSiswa = $this->laporanModel->getDetailAbsensiPerSiswa($jadwalKelasId);
 
-        $periode = 'Semua Periode';
-        if (!empty($filters['tanggal_start']) && !empty($filters['tanggal_end'])) {
-            $periode = date('d/m/Y', strtotime($filters['tanggal_start'])) . ' - ' . date('d/m/Y', strtotime($filters['tanggal_end']));
-        }
-
-        $html = view('laporan/pdf/absensi_pdf', [
-            'dataAbsensi' => $dataAbsensi,
-            'periode' => $periode
+        $html = view('laporan/pdf/detail_absensi_pdf', [
+            'infoKelas' => $infoKelas,
+            'dataSiswa' => $dataSiswa
         ]);
 
         $options = new Options();
@@ -638,7 +726,7 @@ class LaporanController extends BaseController
         $dompdf->setPaper('A4', 'landscape');
         $dompdf->render();
 
-        $filename = 'Laporan_Absensi_' . date('YmdHis') . '.pdf';
+        $filename = 'Detail_Absensi_' . str_replace(' ', '_', $infoKelas['nama_paket']) . '_' . date('YmdHis') . '.pdf';
         $dompdf->stream($filename, ['Attachment' => true]);
         exit;
     }
