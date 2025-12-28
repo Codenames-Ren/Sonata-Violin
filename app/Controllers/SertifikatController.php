@@ -21,6 +21,7 @@ class SertifikatController extends BaseController
         $this->kelasSiswaModel = new KelasSiswaModel();
         $this->session = \Config\Services::session();
         helper(['form', 'url', 'filesystem']);
+        $this->db = \Config\Database::connect();
     }
 
     // LIST SERTIFIKAT
@@ -39,6 +40,9 @@ class SertifikatController extends BaseController
         if ($export === 'excel') {
             return $this->exportExcel($filters);
         }
+        if ($export === 'pdf') {
+            return $this->exportPDF($filters);
+        }
 
         $dataSertifikat = $this->sertifikatModel->getSertifikatWithFilter($filters);
 
@@ -55,6 +59,8 @@ class SertifikatController extends BaseController
         $totalBelumCetak = $this->sertifikatModel->getTotalBelumCetak();
 
         $data = [
+            'page_title' => 'Sertifikat',
+            'page_subtitle' => 'Kelola data sertifikat siswa Sonata Violin',
             'title' => 'Kelola Sertifikat',
             'menu_active' => 'sertifikat',
             'dataSertifikat' => $paginatedData,
@@ -80,9 +86,21 @@ class SertifikatController extends BaseController
     // SISWA LULUS YANG BELUM PUNYA SERTIFIKAT
     public function siswaLulus()
     {
+        $this->db->query("
+            UPDATE kelas_siswa ks
+            JOIN pendaftaran p ON p.id = ks.pendaftaran_id
+            JOIN siswa s ON s.no_pendaftaran = p.no_pendaftaran
+            SET ks.status = 'lulus'
+            WHERE s.status = 'lulus' 
+            AND p.status = 'selesai'
+            AND ks.status = 'aktif'
+        ");
+        
         $siswaLulus = $this->sertifikatModel->getSiswaLulusBelumSertifikat();
 
         $data = [
+            'page_title' => 'Generate Sertifikat',
+            'page_subtitle' => 'Buat sertifikat untuk siswa yang lulus Sonata Violin',
             'title' => 'Siswa Lulus - Generate Sertifikat',
             'menu_active' => 'sertifikat',
             'submenu_active' => 'siswa_lulus',
@@ -101,11 +119,13 @@ class SertifikatController extends BaseController
             return redirect()->back()->with('error', 'Sertifikat sudah pernah dibuat untuk siswa ini!');
         }
 
-        // Get data kelas siswa
         $kelasSiswa = $this->kelasSiswaModel
-            ->select('kelas_siswa.*, pendaftaran.id as pendaftaran_id, jadwal_kelas.id as jadwal_kelas_id')
-            ->join('pendaftaran', 'pendaftaran.id = kelas_siswa.pendaftaran_id')
-            ->join('jadwal_kelas', 'jadwal_kelas.id = kelas_siswa.jadwal_kelas_id')
+            ->select('
+                kelas_siswa.id,
+                kelas_siswa.status,
+                kelas_siswa.pendaftaran_id,
+                kelas_siswa.jadwal_kelas_id
+            ')
             ->where('kelas_siswa.id', $kelasSiswaId)
             ->first();
 
@@ -122,7 +142,7 @@ class SertifikatController extends BaseController
             'kelas_siswa_id' => $kelasSiswaId,
             'pendaftaran_id' => $kelasSiswa['pendaftaran_id'],
             'jadwal_kelas_id' => $kelasSiswa['jadwal_kelas_id'],
-            'tanggal_lulus' => date('Y-m-d'),
+            'tanggal_lulus' => date('Y-m-d'), // Pake hari ini aja
             'status' => 'belum_cetak'
         ];
 
@@ -151,21 +171,23 @@ class SertifikatController extends BaseController
             $existing = $this->sertifikatModel->cekSertifikatExists($kelasSiswaId);
             if ($existing) {
                 $failed++;
-                $errors[] = "Kelas Siswa ID {$kelasSiswaId} sudah punya sertifikat";
+                $errors[] = "Siswa dengan ID {$kelasSiswaId} sudah punya sertifikat";
                 continue;
             }
 
-            // Get data
             $kelasSiswa = $this->kelasSiswaModel
-                ->select('kelas_siswa.*, pendaftaran.id as pendaftaran_id, jadwal_kelas.id as jadwal_kelas_id')
-                ->join('pendaftaran', 'pendaftaran.id = kelas_siswa.pendaftaran_id')
-                ->join('jadwal_kelas', 'jadwal_kelas.id = kelas_siswa.jadwal_kelas_id')
+                ->select('
+                    kelas_siswa.id,
+                    kelas_siswa.status,
+                    kelas_siswa.pendaftaran_id,
+                    kelas_siswa.jadwal_kelas_id
+                ')
                 ->where('kelas_siswa.id', $kelasSiswaId)
                 ->first();
 
             if (!$kelasSiswa || $kelasSiswa['status'] !== 'lulus') {
                 $failed++;
-                $errors[] = "Kelas Siswa ID {$kelasSiswaId} tidak valid atau bukan status lulus";
+                $errors[] = "Siswa ID {$kelasSiswaId} tidak valid atau bukan status lulus";
                 continue;
             }
 
@@ -184,7 +206,7 @@ class SertifikatController extends BaseController
                 $success++;
             } else {
                 $failed++;
-                $errors[] = "Gagal insert sertifikat untuk Kelas Siswa ID {$kelasSiswaId}";
+                $errors[] = "Gagal insert sertifikat untuk Siswa ID {$kelasSiswaId}";
             }
         }
 
@@ -309,6 +331,8 @@ class SertifikatController extends BaseController
         }
 
         $data = [
+            'page_title' => 'Preview',
+            'page_subtitle' => 'Pastikan sertifikat yang akan dicetak sudah sesuai',
             'title' => 'Preview Sertifikat',
             'sertifikat' => $sertifikat
         ];
@@ -403,5 +427,53 @@ class SertifikatController extends BaseController
         ];
 
         return $this->response->setJSON($statistik);
+    }
+
+    // EXPORT TO PDF
+    private function exportPDF($filters)
+    {
+        $dataSertifikat = $this->sertifikatModel->getSertifikatWithFilter($filters);
+
+        // Generate periode text
+        $periode = 'Semua Periode';
+        if (!empty($filters['tanggal_start']) && !empty($filters['tanggal_end'])) {
+            $periode = date('d/m/Y', strtotime($filters['tanggal_start'])) . ' - ' . date('d/m/Y', strtotime($filters['tanggal_end']));
+        } elseif (!empty($filters['tanggal_start'])) {
+            $periode = 'Dari ' . date('d/m/Y', strtotime($filters['tanggal_start']));
+        } elseif (!empty($filters['tanggal_end'])) {
+            $periode = 'Sampai ' . date('d/m/Y', strtotime($filters['tanggal_end']));
+        }
+
+        // Generate status filter text
+        $statusFilter = 'Semua Status';
+        if (!empty($filters['status'])) {
+            $statusFilter = ucwords(str_replace('_', ' ', $filters['status']));
+        }
+
+        $data = [
+            'dataSertifikat' => $dataSertifikat,
+            'periode' => $periode,
+            'statusFilter' => $statusFilter,
+            'totalSertifikat' => count($dataSertifikat)
+        ];
+
+        // Load view
+        $html = view('sertifikat/laporan_pdf', $data);
+
+        // Setup Dompdf
+        $options = new Options();
+        $options->set('isHtml5ParserEnabled', true);
+        $options->set('isRemoteEnabled', true);
+        $options->set('defaultFont', 'Arial');
+
+        $dompdf = new Dompdf($options);
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+
+        // Output PDF
+        $filename = 'Laporan_Sertifikat_' . date('YmdHis') . '.pdf';
+        $dompdf->stream($filename, ['Attachment' => true]);
+        exit;
     }
 }

@@ -372,6 +372,33 @@ class LaporanModel extends Model
             ->getResultArray();
     }
 
+    /**
+     * Get info kelas untuk detail progress
+     */
+    public function getInfoProgressKursus($progressKursusId)
+    {
+        return $this->db->table('progress_kursus')
+            ->select('
+                progress_kursus.*,
+                jadwal_kelas.hari,
+                jadwal_kelas.jam_mulai,
+                jadwal_kelas.jam_selesai,
+                paket_kursus.nama_paket,
+                paket_kursus.level,
+                paket_kursus.jumlah_pertemuan,
+                instruktur.nama AS nama_instruktur,
+                ruang_kelas.nama_ruang,
+                ROUND((progress_kursus.pertemuan_terlaksana / progress_kursus.total_pertemuan * 100), 2) AS persentase_progress
+            ')
+            ->join('jadwal_kelas', 'jadwal_kelas.id = progress_kursus.jadwal_kelas_id')
+            ->join('paket_kursus', 'paket_kursus.id = jadwal_kelas.paket_id', 'left')
+            ->join('instruktur', 'instruktur.id = jadwal_kelas.instruktur_id', 'left')
+            ->join('ruang_kelas', 'ruang_kelas.id = jadwal_kelas.ruang_kelas_id', 'left')
+            ->where('progress_kursus.id', $progressKursusId)
+            ->get()
+            ->getRowArray();
+    }
+
     // ================== HELPER METHODS ==================
     
     /**

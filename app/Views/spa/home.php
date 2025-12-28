@@ -855,7 +855,7 @@
         <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center text-white/60 text-sm">
             <p>&copy; 2025 Sonata Violin. All rights reserved.</p>
             <div class="flex space-x-6 mt-4 md:mt-0">
-                <a href="/login" class="hover:text-primary transition-colors duration-300">Privacy Policy</a>
+                <a href="#" class="hover:text-primary transition-colors duration-300">Privacy Policy</a>
                 <a href="#" class="hover:text-primary transition-colors duration-300">Terms of Service</a>
                 <a href="#" class="hover:text-primary transition-colors duration-300">Cookie Policy</a>
             </div>

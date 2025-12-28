@@ -1,0 +1,845 @@
+<?= $this->extend('layout/template') ?>
+<?= $this->section('title') ?>Laporan Progress Kursus<?= $this->endSection() ?>
+<?= $this->section('subtitle') ?>Monitoring progress pembelajaran per kelas<?= $this->endSection() ?>
+<?= $this->section('content') ?>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+    theme: {
+        extend: {
+            colors: {
+                primary: '#667eea',
+                'primary-dark': '#5568d3',
+                secondary: '#764ba2',
+            }
+        }
+    }
+}
+</script>
+
+<style>
+    .card-hover {
+        transition: all 0.3s ease;
+    }
+    
+    .card-hover:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2);
+    }
+    
+    .gradient-border {
+        position: relative;
+    }
+    
+    .gradient-border::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(to right, #667eea, #764ba2);
+        border-radius: 12px 12px 0 0;
+    }
+    
+    .progress-bar {
+        height: 8px;
+        background: #e5e7eb;
+        border-radius: 999px;
+        overflow: hidden;
+    }
+    
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(to right, #667eea, #764ba2);
+        transition: width 0.3s ease;
+    }
+</style>
+
+<!-- ================= HEADER ================= -->
+<div class="bg-gradient-to-r from-primary to-secondary p-6 rounded-xl shadow-lg mb-6">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+            <div class="flex items-center gap-2 mb-2">
+                <a href="<?= base_url('laporan') ?>" class="text-white/80 hover:text-white transition-colors">
+                    <i class="text-2xl fa fa-arrow-left"></i>
+                </a>
+                <h2 class="text-white text-2xl font-bold">Laporan Progress Kursus</h2>
+            </div>
+            <p class="text-white/90 text-sm">
+                Monitoring progress pembelajaran per kelas
+            </p>
+        </div>
+        <div class="mt-4 md:mt-0">
+            <div class="bg-white/20 backdrop-blur-sm rounded-lg px-4 py-3 text-white">
+                <p class="text-xs opacity-90">Total Kelas</p>
+                <p class="text-2xl font-bold"><?= count($dataProgress) ?> Kelas</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ================= FLASH MESSAGES ================= -->
+<?php if(session()->getFlashdata('success')): ?>
+<div class="p-4 rounded-lg bg-green-50 border-l-4 border-green-500 text-green-700 mb-4 shadow-sm">
+    <i class="fa fa-check-circle mr-2"></i><?= session()->getFlashdata('success') ?>
+</div>
+<?php endif ?>
+
+<?php if(session()->getFlashdata('error')): ?>
+<div class="p-4 rounded-lg bg-red-50 border-l-4 border-red-500 text-red-700 mb-4 shadow-sm">
+    <i class="fa fa-exclamation-circle mr-2"></i><?= session()->getFlashdata('error') ?>
+</div>
+<?php endif ?>
+
+<!-- ================= FILTER SECTION ================= -->
+<div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+    <form method="GET" action="<?= base_url('laporan/progress') ?>">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+            
+            <!-- Jadwal Kelas -->
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                    <i class="fa fa-calendar-alt text-primary mr-1"></i> Jadwal Kelas
+                </label>
+                <select name="jadwal_kelas_id" 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
+                    <option value="">Semua Jadwal</option>
+                    <?php foreach($listJadwal as $jadwal): ?>
+                        <option value="<?= $jadwal['id'] ?>" <?= ($filters['jadwal_kelas_id'] ?? '') == $jadwal['id'] ? 'selected' : '' ?>>
+                            <?= $jadwal['nama_paket'] ?> - <?= $jadwal['level'] ?> (<?= $jadwal['hari'] ?>)
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            
+            <!-- Instruktur -->
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                    <i class="fa fa-chalkboard-teacher text-primary mr-1"></i> Instruktur
+                </label>
+                <select name="instruktur_id" 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
+                    <option value="">Semua Instruktur</option>
+                    <?php foreach($listInstruktur as $instruktur): ?>
+                        <option value="<?= $instruktur['id'] ?>" <?= ($filters['instruktur_id'] ?? '') == $instruktur['id'] ? 'selected' : '' ?>>
+                            <?= $instruktur['nama'] ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            
+            <!-- Status -->
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                    <i class="fa fa-info-circle text-primary mr-1"></i> Status
+                </label>
+                <select name="status" 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
+                    <option value="">Semua Status</option>
+                    <option value="aktif" <?= ($filters['status'] ?? '') == 'aktif' ? 'selected' : '' ?>>Aktif</option>
+                    <option value="selesai" <?= ($filters['status'] ?? '') == 'selesai' ? 'selected' : '' ?>>Selesai</option>
+                    <option value="pending" <?= ($filters['status'] ?? '') == 'pending' ? 'selected' : '' ?>>Pending</option>
+                </select>
+            </div>
+            
+            <!-- Search -->
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                    <i class="fa fa-search text-primary mr-1"></i> Cari
+                </label>
+                <input type="text" 
+                       name="search" 
+                       value="<?= $filters['search'] ?? '' ?>"
+                       placeholder="Cari paket / instruktur"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row gap-3">
+            <button type="submit" 
+                    class="px-6 py-2.5 bg-gradient-to-r from-primary to-secondary text-white font-semibold rounded-lg hover:shadow-lg transition-all flex items-center justify-center gap-2">
+                <i class="fa fa-filter"></i>
+                <span>Terapkan Filter</span>
+            </button>
+            
+            <a href="<?= base_url('laporan/progress') ?>" 
+               class="px-6 py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2">
+                <i class="fa fa-times"></i>
+                <span>Reset Filter</span>
+            </a>
+        </div>
+    </form>
+    
+    <!-- Active Filters Info -->
+    <?php if(!empty($filters['jadwal_kelas_id']) || !empty($filters['instruktur_id']) || !empty($filters['status']) || !empty($filters['search'])): ?>
+    <div class="mt-4 pt-4 border-t border-gray-200">
+        <div class="flex flex-wrap items-center gap-2">
+            <span class="text-sm text-gray-600 font-semibold">Filter Aktif:</span>
+            
+            <?php if(!empty($filters['jadwal_kelas_id'])): ?>
+            <span class="px-3 py-1 bg-purple-100 text-purple-700 text-xs rounded-full">
+                <i class="fa fa-calendar-alt mr-1"></i>
+                <?php 
+                    $selectedJadwal = array_filter($listJadwal, fn($j) => $j['id'] == $filters['jadwal_kelas_id']);
+                    $selectedJadwal = reset($selectedJadwal);
+                    echo $selectedJadwal['nama_paket'] ?? 'Jadwal';
+                ?>
+            </span>
+            <?php endif; ?>
+            
+            <?php if(!empty($filters['instruktur_id'])): ?>
+            <span class="px-3 py-1 bg-yellow-100 text-yellow-700 text-xs rounded-full">
+                <i class="fa fa-chalkboard-teacher mr-1"></i>
+                <?php 
+                    $selectedInstruktur = array_filter($listInstruktur, fn($i) => $i['id'] == $filters['instruktur_id']);
+                    $selectedInstruktur = reset($selectedInstruktur);
+                    echo $selectedInstruktur['nama'] ?? 'Instruktur';
+                ?>
+            </span>
+            <?php endif; ?>
+            
+            <?php if(!empty($filters['status'])): ?>
+            <span class="px-3 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">
+                <i class="fa fa-info-circle mr-1"></i>
+                <?= ucfirst($filters['status']) ?>
+            </span>
+            <?php endif; ?>
+            
+            <?php if(!empty($filters['search'])): ?>
+            <span class="px-3 py-1 bg-green-100 text-green-700 text-xs rounded-full">
+                <i class="fa fa-search mr-1"></i>
+                "<?= esc($filters['search']) ?>"
+            </span>
+            <?php endif; ?>
+        </div>
+    </div>
+    <?php endif; ?>
+</div>
+
+<!-- ================= DESKTOP TABLE VIEW ================= -->
+<div class="hidden lg:block bg-white rounded-xl shadow-lg overflow-hidden mb-6">
+    <div class="overflow-x-auto">
+        <table class="w-full">
+            <thead class="bg-gradient-to-r from-primary to-secondary text-white">
+                <tr>
+                    <th class="px-4 py-4 text-left text-sm font-bold">No</th>
+                    <th class="px-4 py-4 text-left text-sm font-bold">Paket</th>
+                    <th class="px-4 py-4 text-left text-sm font-bold">Instruktur</th>
+                    <th class="px-4 py-4 text-left text-sm font-bold">Jadwal</th>
+                    <th class="px-4 py-4 text-left text-sm font-bold">Ruang</th>
+                    <th class="px-4 py-4 text-center text-sm font-bold">Pertemuan</th>
+                    <th class="px-4 py-4 text-center text-sm font-bold">Progress</th>
+                    <th class="px-4 py-4 text-center text-sm font-bold">Status</th>
+                    <th class="px-4 py-4 text-center text-sm font-bold">Aksi</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                <?php if(empty($dataProgress)): ?>
+                <tr>
+                    <td colspan="9" class="px-6 py-12 text-center text-gray-500">
+                        <i class="fa fa-inbox text-4xl mb-3 block text-gray-300"></i>
+                        <p class="font-semibold">Tidak ada data progress</p>
+                        <p class="text-sm mt-1">Coba ubah filter atau tunggu data progress ditambahkan</p>
+                    </td>
+                </tr>
+                <?php else: ?>
+                    <?php 
+                    $no = ($pagination['current_page'] - 1) * $pagination['per_page'] + 1;
+                    foreach($dataProgress as $progress): 
+                    ?>
+                    <tr class="hover:bg-gray-50 transition-colors">
+                        <td class="px-4 py-3 text-sm text-gray-700"><?= $no++ ?></td>
+                        <td class="px-4 py-3">
+                            <div>
+                                <p class="font-semibold text-gray-800 text-sm"><?= $progress['nama_paket'] ?></p>
+                                <p class="text-xs text-gray-500"><?= $progress['level'] ?></p>
+                            </div>
+                        </td>
+                        <td class="px-4 py-3 text-sm text-gray-600"><?= $progress['nama_instruktur'] ?></td>
+                        <td class="px-4 py-3">
+                            <div>
+                                <p class="text-sm font-semibold text-gray-800"><?= $progress['hari'] ?></p>
+                                <p class="text-xs text-gray-500">
+                                    <?= substr($progress['jam_mulai'], 0, 5) ?> - <?= substr($progress['jam_selesai'], 0, 5) ?>
+                                </p>
+                            </div>
+                        </td>
+                        <td class="px-4 py-3 text-sm text-gray-600"><?= $progress['nama_ruang'] ?></td>
+                        <td class="px-4 py-3">
+                            <div class="flex flex-col items-center">
+                                <p class="text-lg font-bold text-primary"><?= $progress['pertemuan_terlaksana'] ?>/<?= $progress['total_pertemuan'] ?></p>
+                                <p class="text-xs text-gray-500">Pertemuan</p>
+                            </div>
+                        </td>
+                        <td class="px-4 py-3">
+                            <div class="flex flex-col items-center gap-2">
+                                <span class="text-lg font-bold text-primary"><?= $progress['persentase_progress'] ?>%</span>
+                                <div class="w-full progress-bar">
+                                    <div class="progress-fill" style="width: <?= $progress['persentase_progress'] ?>%"></div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-4 py-3 text-center">
+                            <?php 
+                            $statusClass = '';
+                            switch($progress['status']) {
+                                case 'aktif':
+                                    $statusClass = 'bg-green-100 text-green-700';
+                                    break;
+                                case 'selesai':
+                                    $statusClass = 'bg-blue-100 text-blue-700';
+                                    break;
+                                default:
+                                    $statusClass = 'bg-gray-100 text-gray-700';
+                            }
+                            ?>
+                            <span class="inline-flex items-center px-3 py-1 <?= $statusClass ?> rounded-full text-xs font-semibold">
+                                <?= ucfirst($progress['status']) ?>
+                            </span>
+                        </td>
+                        <td class="px-4 py-3 text-center">
+                            <a href="<?= base_url('laporan/detailProgress/' . $progress['id']) ?>" 
+                               class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary to-secondary text-white text-sm font-semibold rounded-lg hover:shadow-lg transition-all">
+                                <i class="fa fa-eye"></i>
+                                <span>Detail</span>
+                            </a>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ================= MOBILE CARD VIEW ================= -->
+<div class="lg:hidden space-y-4 mb-6">
+    <?php if(empty($dataProgress)): ?>
+    <div class="bg-white rounded-xl shadow-lg p-8 text-center">
+        <i class="fa fa-inbox text-6xl text-gray-300 mb-4"></i>
+        <p class="font-semibold text-gray-700 text-lg mb-2">Tidak ada data progress</p>
+        <p class="text-sm text-gray-500">Coba ubah filter atau tunggu data progress ditambahkan</p>
+    </div>
+    <?php else: ?>
+        <?php 
+        $no = ($pagination['current_page'] - 1) * $pagination['per_page'] + 1;
+        foreach($dataProgress as $progress): 
+        ?>
+        <div class="card-hover gradient-border bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="p-5">
+                <!-- Header Card -->
+                <div class="flex items-start justify-between mb-4">
+                    <div>
+                        <p class="font-bold text-gray-800 text-lg"><?= $progress['nama_paket'] ?></p>
+                        <p class="text-xs text-gray-500 mt-1"><?= $progress['level'] ?></p>
+                    </div>
+                    <span class="text-xs bg-blue-50 text-blue-700 px-3 py-1 rounded-full font-mono">
+                        #<?= $no++ ?>
+                    </span>
+                </div>
+                
+                <!-- Progress Bar -->
+                <div class="mb-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm font-semibold text-gray-700">Progress Kursus</span>
+                        <span class="text-lg font-bold text-primary"><?= $progress['persentase_progress'] ?>%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: <?= $progress['persentase_progress'] ?>%"></div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1 text-center">
+                        <?= $progress['pertemuan_terlaksana'] ?>/<?= $progress['total_pertemuan'] ?> Pertemuan Selesai
+                    </p>
+                </div>
+                
+                <!-- Info Grid -->
+                <div class="grid grid-cols-2 gap-3 mb-4">
+                    <div class="bg-purple-50 rounded-lg p-3">
+                        <p class="text-xs text-purple-600 mb-1">Instruktur</p>
+                        <p class="text-sm font-bold text-purple-800"><?= $progress['nama_instruktur'] ?></p>
+                    </div>
+                    <div class="bg-blue-50 rounded-lg p-3">
+                        <p class="text-xs text-blue-600 mb-1">Ruang</p>
+                        <p class="text-sm font-bold text-blue-800"><?= $progress['nama_ruang'] ?></p>
+                    </div>
+                </div>
+                
+                <!-- Jadwal & Status -->
+                <div class="grid grid-cols-2 gap-3 mb-4">
+                    <div class="bg-orange-50 rounded-lg p-3">
+                        <p class="text-xs text-orange-600 mb-1">Jadwal</p>
+                        <p class="text-sm font-bold text-orange-800"><?= $progress['hari'] ?></p>
+                        <p class="text-xs text-orange-600 mt-1">
+                            <?= substr($progress['jam_mulai'], 0, 5) ?> - <?= substr($progress['jam_selesai'], 0, 5) ?>
+                        </p>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-3 flex items-center justify-center">
+                        <?php 
+                        $statusClass = '';
+                        switch($progress['status']) {
+                            case 'aktif':
+                                $statusClass = 'bg-green-100 text-green-700';
+                                break;
+                            case 'selesai':
+                                $statusClass = 'bg-blue-100 text-blue-700';
+                                break;
+                            default:
+                                $statusClass = 'bg-gray-100 text-gray-700';
+                        }
+                        ?>
+                        <span class="px-4 py-2 <?= $statusClass ?> rounded-full text-sm font-bold">
+                            <?= ucfirst($progress['status']) ?>
+                        </span>
+                    </div>
+                </div>
+                
+                <!-- Button Detail -->
+                <a href="<?= base_url('laporan/detailProgress/' . $progress['id']) ?>" 
+                   class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-primary to-secondary text-white font-semibold rounded-lg hover:shadow-lg transition-all">
+                    <i class="fa fa-eye"></i>
+                    <span>Lihat Detail Progress</span>
+                </a>
+            </div>
+        </div>
+        <?php endforeach; ?>
+    <?php endif; ?>
+</div>
+
+<!-- ================= PAGINATION ================= -->
+<div class="mt-6 flex justify-center items-center gap-4">
+    <button id="btnPrev" 
+            class="px-5 py-2.5 border-2 border-gray-300 rounded-lg font-semibold hover:border-primary hover:text-primary transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+        <i class="fa fa-chevron-left mr-1"></i>Prev
+    </button>
+    <div class="text-sm text-gray-600 font-medium">
+        Halaman <span id="currentPage" class="font-bold text-primary">1</span> dari <span id="totalPages" class="font-bold">1</span>
+    </div>
+    <button id="btnNext" 
+            class="px-5 py-2.5 border-2 border-gray-300 rounded-lg font-semibold hover:border-primary hover:text-primary transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+        Next<i class="fa fa-chevron-right ml-1"></i>
+    </button>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        
+        // ========== FILTER ==========
+        const filterForm = document.querySelector('form[method="GET"]');
+        const submitBtn = filterForm.querySelector('button[type="submit"]');
+        const tableContainer = document.querySelector('.hidden.lg\\:block.bg-white');
+        const mobileContainer = document.querySelector('.lg\\:hidden.space-y-4');
+        
+        // Function untuk fetch data via AJAX
+        async function applyFilterAJAX(formData) {
+            try {
+                submitBtn.innerHTML = '<i class="fa fa-spinner fa-spin mr-2"></i><span>Memuat...</span>';
+                submitBtn.disabled = true;
+                
+                const params = new URLSearchParams(formData);
+                const url = `<?= base_url('laporan/progress') ?>?${params.toString()}&ajax=1`;
+                
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                
+                if(!response.ok) throw new Error('Network error');
+                
+                const data = await response.json();
+                
+                updateTableData(data.dataProgress, data.pagination);
+                updateMobileCards(data.dataProgress, data.pagination);
+                updatePaginationView();
+                
+                window.history.pushState({}, '', `?${params.toString()}`);        
+                submitBtn.innerHTML = '<i class="fa fa-filter"></i><span>Terapkan Filter</span>';
+                submitBtn.disabled = false;
+                
+                showNotification('Filter berhasil diterapkan!', 'success');
+                
+            } catch(error) {
+                console.error('Filter error:', error);
+                submitBtn.innerHTML = '<i class="fa fa-filter"></i><span>Terapkan Filter</span>';
+                submitBtn.disabled = false;
+                showNotification('Gagal memuat data. Silakan coba lagi.', 'error');
+            }
+        }
+        
+        filterForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            formData.set('page', '1');
+            applyFilterAJAX(formData);
+        });
+        
+        // ========== RESET FILTER ==========
+        const resetBtn = document.querySelector('a[href*="laporan/progress"]:not([href*="export"])');
+        if(resetBtn && resetBtn.textContent.includes('Reset')) {
+            resetBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Clear all inputs
+                filterForm.querySelectorAll('input, select').forEach(input => {
+                    if(input.type === 'text') {
+                        input.value = '';
+                    } else if(input.tagName === 'SELECT') {
+                        input.selectedIndex = 0;
+                    }
+                });
+                
+                // Apply empty filter
+                applyFilterAJAX(new FormData(filterForm));
+                
+                window.history.pushState({}, '', window.location.pathname);
+            });
+        }
+        
+        // Function update table
+        function updateTableData(dataProgress, pagination) {
+            const tbody = tableContainer.querySelector('tbody');
+            if(!tbody) return;
+            
+            if(dataProgress.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9" class="px-6 py-12 text-center text-gray-500">
+                            <i class="fa fa-inbox text-4xl mb-3 block text-gray-300"></i>
+                            <p class="font-semibold">Tidak ada data progress</p>
+                            <p class="text-sm mt-1">Coba ubah filter atau tunggu data progress ditambahkan</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            let html = '';
+            let no = (pagination.current_page - 1) * pagination.per_page + 1;
+            
+            dataProgress.forEach(progress => {
+                const statusClass = getStatusClass(progress.status);
+                
+                html += `
+                    <tr class="hover:bg-gray-50 transition-colors">
+                        <td class="px-4 py-3 text-sm text-gray-700">${no++}</td>
+                        <td class="px-4 py-3">
+                            <div>
+                                <p class="font-semibold text-gray-800 text-sm">${progress.nama_paket}</p>
+                                <p class="text-xs text-gray-500">${progress.level}</p>
+                            </div>
+                        </td>
+                        <td class="px-4 py-3 text-sm text-gray-600">${progress.nama_instruktur}</td>
+                        <td class="px-4 py-3">
+                            <div>
+                                <p class="text-sm font-semibold text-gray-800">${progress.hari}</p>
+                                <p class="text-xs text-gray-500">
+                                    ${progress.jam_mulai.substring(0, 5)} - ${progress.jam_selesai.substring(0, 5)}
+                                </p>
+                            </div>
+                        </td>
+                        <td class="px-4 py-3 text-sm text-gray-600">${progress.nama_ruang}</td>
+                        <td class="px-4 py-3">
+                            <div class="flex flex-col items-center">
+                                <p class="text-lg font-bold text-primary">${progress.pertemuan_terlaksana}/${progress.total_pertemuan}</p>
+                                <p class="text-xs text-gray-500">Pertemuan</p>
+                            </div>
+                        </td>
+                        <td class="px-4 py-3">
+                            <div class="flex flex-col items-center gap-2">
+                                <span class="text-lg font-bold text-primary">${progress.persentase_progress}%</span>
+                                <div class="w-full progress-bar">
+                                    <div class="progress-fill" style="width: ${progress.persentase_progress}%"></div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-4 py-3 text-center">
+                            <span class="inline-flex items-center px-3 py-1 ${statusClass} rounded-full text-xs font-semibold">
+                                ${capitalizeFirst(progress.status)}
+                            </span>
+                        </td>
+                        <td class="px-4 py-3 text-center">
+                            <a href="<?= base_url('laporan/detailProgress/') ?>${progress.id}" 
+                               class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary to-secondary text-white text-sm font-semibold rounded-lg hover:shadow-lg transition-all">
+                                <i class="fa fa-eye"></i>
+                                <span>Detail</span>
+                            </a>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            tbody.innerHTML = html;
+            
+            // Animate progress bars
+            setTimeout(() => {
+                const progressBars = tbody.querySelectorAll('.progress-fill');
+                progressBars.forEach(bar => {
+                    const width = bar.style.width;
+                    bar.style.width = '0%';
+                    setTimeout(() => {
+                        bar.style.width = width;
+                    }, 100);
+                });
+            }, 50);
+        }
+        
+        // Function update mobile cards
+        function updateMobileCards(dataProgress, pagination) {
+            if(!mobileContainer) return;
+            
+            if(dataProgress.length === 0) {
+                mobileContainer.innerHTML = `
+                    <div class="bg-white rounded-xl shadow-lg p-8 text-center">
+                        <i class="fa fa-inbox text-6xl text-gray-300 mb-4"></i>
+                        <p class="font-semibold text-gray-700 text-lg mb-2">Tidak ada data progress</p>
+                        <p class="text-sm text-gray-500">Coba ubah filter atau tunggu data progress ditambahkan</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            let no = (pagination.current_page - 1) * pagination.per_page + 1;
+            
+            dataProgress.forEach(progress => {
+                const statusClass = getStatusClass(progress.status);
+                
+                html += `
+                    <div class="card-hover gradient-border bg-white rounded-xl shadow-lg overflow-hidden">
+                        <div class="p-5">
+                            <div class="flex items-start justify-between mb-4">
+                                <div>
+                                    <p class="font-bold text-gray-800 text-lg">${progress.nama_paket}</p>
+                                    <p class="text-xs text-gray-500 mt-1">${progress.level}</p>
+                                </div>
+                                <span class="text-xs bg-blue-50 text-blue-700 px-3 py-1 rounded-full font-mono">
+                                    #${no++}
+                                </span>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm font-semibold text-gray-700">Progress Kursus</span>
+                                    <span class="text-lg font-bold text-primary">${progress.persentase_progress}%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: ${progress.persentase_progress}%"></div>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1 text-center">
+                                    ${progress.pertemuan_terlaksana}/${progress.total_pertemuan} Pertemuan Selesai
+                                </p>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-3 mb-4">
+                                <div class="bg-purple-50 rounded-lg p-3">
+                                    <p class="text-xs text-purple-600 mb-1">Instruktur</p>
+                                    <p class="text-sm font-bold text-purple-800">${progress.nama_instruktur}</p>
+                                </div>
+                                <div class="bg-blue-50 rounded-lg p-3">
+                                    <p class="text-xs text-blue-600 mb-1">Ruang</p>
+                                    <p class="text-sm font-bold text-blue-800">${progress.nama_ruang}</p>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-3 mb-4">
+                                <div class="bg-orange-50 rounded-lg p-3">
+                                    <p class="text-xs text-orange-600 mb-1">Jadwal</p>
+                                    <p class="text-sm font-bold text-orange-800">${progress.hari}</p>
+                                    <p class="text-xs text-orange-600 mt-1">
+                                        ${progress.jam_mulai.substring(0, 5)} - ${progress.jam_selesai.substring(0, 5)}
+                                    </p>
+                                </div>
+                                <div class="bg-gray-50 rounded-lg p-3 flex items-center justify-center">
+                                    <span class="px-4 py-2 ${statusClass} rounded-full text-sm font-bold">
+                                        ${capitalizeFirst(progress.status)}
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <a href="<?= base_url('laporan/detailProgress/') ?>${progress.id}" 
+                               class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-primary to-secondary text-white font-semibold rounded-lg hover:shadow-lg transition-all">
+                                <i class="fa fa-eye"></i>
+                                <span>Lihat Detail Progress</span>
+                            </a>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            mobileContainer.innerHTML = html;
+            
+            // Animate progress bars
+            setTimeout(() => {
+                const progressBars = mobileContainer.querySelectorAll('.progress-fill');
+                progressBars.forEach(bar => {
+                    const width = bar.style.width;
+                    bar.style.width = '0%';
+                    setTimeout(() => {
+                        bar.style.width = width;
+                    }, 100);
+                });
+            }, 50);
+        }
+        
+        // Helper: Get status class
+        function getStatusClass(status) {
+            switch(status) {
+                case 'aktif':
+                    return 'bg-green-100 text-green-700';
+                case 'selesai':
+                    return 'bg-blue-100 text-blue-700';
+                default:
+                    return 'bg-gray-100 text-gray-700';
+            }
+        }
+        
+        // Helper: Capitalize first letter
+        function capitalizeFirst(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+        
+        // Notification helper
+        function showNotification(message, type = 'success') {
+            const bgColor = type === 'success' ? 'bg-green-50 border-green-500 text-green-700' : 'bg-red-50 border-red-500 text-red-700';
+            const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+            
+            const notification = document.createElement('div');
+            notification.className = `p-4 rounded-lg ${bgColor} border-l-4 mb-4 shadow-sm fixed top-4 right-4 z-50 max-w-md`;
+            notification.innerHTML = `<i class="fa ${icon} mr-2"></i>${message}`;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100px)';
+                setTimeout(() => notification.remove(), 500);
+            }, 3000);
+        }
+        
+        // AUTO HIDE FLASH MESSAGES
+        const flashMessages = document.querySelectorAll('.bg-green-50, .bg-red-50');
+        flashMessages.forEach(msg => {
+            if(!msg.classList.contains('fixed')) {
+                setTimeout(() => {
+                    msg.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    msg.style.opacity = '0';
+                    msg.style.transform = 'translateY(-10px)';
+                    setTimeout(() => msg.remove(), 500);
+                }, 5000);
+            }
+        });
+        
+        // TABLE ROW ANIMATION
+        const tableRows = document.querySelectorAll('tbody tr');
+        tableRows.forEach((row, index) => {
+            row.style.opacity = '0';
+            row.style.transform = 'translateY(10px)';
+            setTimeout(() => {
+                row.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                row.style.opacity = '1';
+                row.style.transform = 'translateY(0)';
+            }, index * 50);
+        });
+        
+        // PROGRESS BAR ANIMATION ON LOAD
+        const progressBars = document.querySelectorAll('.progress-fill');
+        progressBars.forEach((bar, index) => {
+            const targetWidth = bar.style.width;
+            bar.style.width = '0%';
+            setTimeout(() => {
+                bar.style.width = targetWidth;
+            }, 300 + (index * 50));
+        });
+        
+        // ==================== PAGINATION ====================
+        let currentPage = 1;
+        let totalPages = 1;
+
+        function getVisibleItems() {
+            const isMobile = window.innerWidth < 1024;
+            const rows = Array.from(document.querySelectorAll('.hidden.lg\\:block.bg-white tbody tr'));
+            const cards = Array.from(document.querySelectorAll('.lg\\:hidden.space-y-4 > div'));
+            
+            return isMobile ? cards : rows;
+        }
+
+        function updatePaginationView() {
+            const isMobile = window.innerWidth < 1024;
+            const allRows = Array.from(document.querySelectorAll('.hidden.lg\\:block.bg-white tbody tr'));
+            const allCards = Array.from(document.querySelectorAll('.lg\\:hidden.space-y-4 > div'));
+            
+            allRows.forEach(row => row.style.display = "none");
+            allCards.forEach(card => card.style.display = "none");
+            
+            const visibleItems = getVisibleItems();
+            const perPage = isMobile ? 5 : 10;
+
+            totalPages = Math.max(1, Math.ceil(visibleItems.length / perPage));
+            if (currentPage > totalPages) currentPage = totalPages;
+
+            const startIndex = (currentPage - 1) * perPage;
+            const endIndex = startIndex + perPage;
+            
+            visibleItems.slice(startIndex, endIndex).forEach(item => {
+                item.style.display = "";
+            });
+
+            document.getElementById("currentPage").textContent = currentPage;
+            document.getElementById("totalPages").textContent = totalPages;
+
+            document.getElementById("btnPrev").disabled = currentPage === 1;
+            document.getElementById("btnNext").disabled = currentPage === totalPages;
+        }
+
+        document.getElementById("btnPrev").addEventListener("click", () => {
+            if (currentPage > 1) { 
+                currentPage--; 
+                updatePaginationView();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+
+        document.getElementById("btnNext").addEventListener("click", () => {
+            if (currentPage < totalPages) { 
+                currentPage++; 
+                updatePaginationView();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+
+        window.addEventListener("resize", () => {
+            currentPage = 1;
+            updatePaginationView();
+        });
+
+        // Initialize pagination
+        updatePaginationView();
+        
+        // NUMBER ANIMATION FOR HEADER TOTAL
+        const headerTotal = document.querySelector('.bg-white\\/20 .text-2xl.font-bold');
+        if(headerTotal) {
+            const text = headerTotal.textContent;
+            const finalValue = parseInt(text.replace(/[^0-9]/g, '')) || 0;
+            let currentValue = 0;
+            const increment = Math.max(1, Math.ceil(finalValue / 30));
+            const duration = 800;
+            const stepTime = duration / (finalValue / increment);
+            
+            const counter = setInterval(() => {
+                currentValue += increment;
+                if(currentValue >= finalValue) {
+                    currentValue = finalValue;
+                    clearInterval(counter);
+                }
+                headerTotal.textContent = Math.floor(currentValue) + ' Kelas';
+            }, stepTime);
+        }
+    });
+</script>
+
+<?= $this->endSection() ?>

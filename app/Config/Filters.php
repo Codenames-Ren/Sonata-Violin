@@ -38,6 +38,7 @@ class Filters extends BaseFilters
         'admin'         => \App\Filters\AdminFilter::class,
         'role'          => \App\Filters\RoleFilter::class,
         'transaksi'     => \App\Filters\TransaksiFilter::class,
+        'rate'          => \App\Filters\ThrottleFilter::class,
     ];
 
     /**

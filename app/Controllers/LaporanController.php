@@ -778,53 +778,111 @@ class LaporanController extends BaseController
         return view('laporan/progress', $data);
     }
 
-    private function exportProgressExcel($filters)
+    // Detail Progress per Pertemuan
+    public function detailProgress($progressKursusId)
     {
-        $dataProgress = $this->laporanModel->getLaporanProgress($filters);
+        // Export handling
+        $export = $this->request->getGet('export');
+        if ($export === 'excel') {
+            return $this->exportDetailProgressExcel($progressKursusId);
+        } elseif ($export === 'pdf') {
+            return $this->exportDetailProgressPDF($progressKursusId);
+        }
+
+        // Get info progress
+        $infoProgress = $this->laporanModel->getInfoProgressKursus($progressKursusId);
+        
+        if (!$infoProgress) {
+            return redirect()->to('laporan/progress')->with('error', 'Data progress tidak ditemukan');
+        }
+
+        // Get detail per pertemuan
+        $dataPertemuan = $this->laporanModel->getDetailProgressPertemuan($progressKursusId);
+
+        // Pagination
+        $isMobile = $this->request->getUserAgent()->isMobile();
+        $perPage = $isMobile ? 5 : 10;
+        $currentPage = $this->request->getGet('page') ?? 1;
+        $totalData = count($dataPertemuan);
+        $totalPages = ceil($totalData / $perPage);
+        $offset = ($currentPage - 1) * $perPage;
+        $paginatedData = array_slice($dataPertemuan, $offset, $perPage);
+
+        $data = [
+            'title' => 'Detail Progress Kursus',
+            'menu_active' => 'laporan',
+            'submenu_active' => 'progress',
+            'infoProgress' => $infoProgress,
+            'dataPertemuan' => $paginatedData,
+            'pagination' => [
+                'current_page' => $currentPage,
+                'total_pages' => $totalPages,
+                'per_page' => $perPage,
+                'total_data' => $totalData
+            ],
+            'progressKursusId' => $progressKursusId,
+            'page_title' => 'Detail Progress - ' . $infoProgress['nama_paket'],
+            'page_subtitle' => 'Detail pertemuan kelas ' . $infoProgress['nama_paket'] . ' - ' . $infoProgress['level']
+        ];
+
+        return view('laporan/detail_progress', $data);
+    }
+
+    // Export Excel Detail Progress
+    private function exportDetailProgressExcel($progressKursusId)
+    {
+        $infoProgress = $this->laporanModel->getInfoProgressKursus($progressKursusId);
+        $dataPertemuan = $this->laporanModel->getDetailProgressPertemuan($progressKursusId);
 
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
 
-        $sheet->setCellValue('A1', 'LAPORAN PROGRESS KURSUS');
-        $sheet->mergeCells('A1:H1');
+        // Header
+        $sheet->setCellValue('A1', 'DETAIL PROGRESS KURSUS');
+        $sheet->mergeCells('A1:G1');
         $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(16);
         $sheet->getStyle('A1')->getAlignment()->setHorizontal('center');
 
-        $sheet->setCellValue('A3', 'No');
-        $sheet->setCellValue('B3', 'Paket');
-        $sheet->setCellValue('C3', 'Instruktur');
-        $sheet->setCellValue('D3', 'Hari');
-        $sheet->setCellValue('E3', 'Jam');
-        $sheet->setCellValue('F3', 'Total Pertemuan');
-        $sheet->setCellValue('G3', 'Terlaksana');
-        $sheet->setCellValue('H3', 'Progress (%)');
-        $sheet->setCellValue('I3', 'Status');
+        // Info Kelas
+        $sheet->setCellValue('A2', 'Paket: ' . $infoProgress['nama_paket'] . ' - ' . $infoProgress['level']);
+        $sheet->mergeCells('A2:G2');
+        $sheet->setCellValue('A3', 'Instruktur: ' . $infoProgress['nama_instruktur'] . ' | Progress: ' . $infoProgress['persentase_progress'] . '%');
+        $sheet->mergeCells('A3:G3');
+
+        // Header Tabel
+        $sheet->setCellValue('A5', 'Pertemuan');
+        $sheet->setCellValue('B5', 'Tanggal');
+        $sheet->setCellValue('C5', 'Materi');
+        $sheet->setCellValue('D5', 'Catatan');
+        $sheet->setCellValue('E5', 'Status');
+        $sheet->setCellValue('F5', 'Instruktur');
+        $sheet->setCellValue('G5', 'Waktu Input');
         
-        $sheet->getStyle('A3:I3')->getFont()->setBold(true);
-        $sheet->getStyle('A3:I3')->getFill()
+        $sheet->getStyle('A5:G5')->getFont()->setBold(true);
+        $sheet->getStyle('A5:G5')->getFill()
             ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
             ->getStartColor()->setARGB('FFE0E0E0');
 
-        $row = 4;
-        $no = 1;
-        foreach ($dataProgress as $data) {
-            $sheet->setCellValue('A' . $row, $no++);
-            $sheet->setCellValue('B' . $row, $data['nama_paket'] . ' - ' . $data['level']);
-            $sheet->setCellValue('C' . $row, $data['nama_instruktur']);
-            $sheet->setCellValue('D' . $row, $data['hari']);
-            $sheet->setCellValue('E' . $row, substr($data['jam_mulai'], 0, 5) . ' - ' . substr($data['jam_selesai'], 0, 5));
-            $sheet->setCellValue('F' . $row, $data['total_pertemuan']);
-            $sheet->setCellValue('G' . $row, $data['pertemuan_terlaksana']);
-            $sheet->setCellValue('H' . $row, $data['persentase_progress'] . '%');
-            $sheet->setCellValue('I' . $row, ucfirst($data['status']));
+        // Data
+        $row = 6;
+        foreach ($dataPertemuan as $pertemuan) {
+            $sheet->setCellValue('A' . $row, 'Pertemuan ' . $pertemuan['pertemuan_ke']);
+            $sheet->setCellValue('B' . $row, date('d/m/Y', strtotime($pertemuan['tanggal'])));
+            $sheet->setCellValue('C' . $row, $pertemuan['materi'] ?? '-');
+            $sheet->setCellValue('D' . $row, $pertemuan['catatan'] ?? '-');
+            $sheet->setCellValue('E' . $row, ucfirst($pertemuan['status']));
+            $sheet->setCellValue('F' . $row, $pertemuan['nama_instruktur'] ?? '-');
+            $sheet->setCellValue('G' . $row, date('d/m/Y H:i', strtotime($pertemuan['created_at'])));
             $row++;
         }
 
-        foreach (range('A', 'I') as $col) {
+        // Auto width
+        foreach (range('A', 'G') as $col) {
             $sheet->getColumnDimension($col)->setAutoSize(true);
         }
 
-        $filename = 'Laporan_Progress_' . date('YmdHis') . '.xlsx';
+        // Download
+        $filename = 'Detail_Progress_' . str_replace(' ', '_', $infoProgress['nama_paket']) . '_' . date('YmdHis') . '.xlsx';
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="' . $filename . '"');
         header('Cache-Control: max-age=0');
@@ -834,12 +892,15 @@ class LaporanController extends BaseController
         exit;
     }
 
-    private function exportProgressPDF($filters)
+    // Export PDF Detail Progress
+    private function exportDetailProgressPDF($progressKursusId)
     {
-        $dataProgress = $this->laporanModel->getLaporanProgress($filters);
+        $infoProgress = $this->laporanModel->getInfoProgressKursus($progressKursusId);
+        $dataPertemuan = $this->laporanModel->getDetailProgressPertemuan($progressKursusId);
 
-        $html = view('laporan/pdf/progress_pdf', [
-            'dataProgress' => $dataProgress
+        $html = view('laporan/pdf/detail_progress_pdf', [
+            'infoProgress' => $infoProgress,
+            'dataPertemuan' => $dataPertemuan
         ]);
 
         $options = new Options();
@@ -851,7 +912,7 @@ class LaporanController extends BaseController
         $dompdf->setPaper('A4', 'landscape');
         $dompdf->render();
 
-        $filename = 'Laporan_Progress_' . date('YmdHis') . '.pdf';
+        $filename = 'Detail_Progress_' . str_replace(' ', '_', $infoProgress['nama_paket']) . '_' . date('YmdHis') . '.pdf';
         $dompdf->stream($filename, ['Attachment' => true]);
         exit;
     }

@@ -97,11 +97,11 @@ class SertifikatModel extends Model
         return $this->db->table('kelas_siswa')
             ->select('
                 kelas_siswa.id AS kelas_siswa_id,
-                kelas_siswa.status,
+                kelas_siswa.status as status_kelas,
                 pendaftaran.id AS pendaftaran_id,
-                pendaftaran.nama AS nama_siswa,
-                pendaftaran.email,
-                pendaftaran.no_hp,
+                siswa.nama AS nama_siswa,
+                siswa.email,
+                siswa.no_hp,
                 jadwal_kelas.id AS jadwal_kelas_id,
                 jadwal_kelas.hari,
                 jadwal_kelas.jam_mulai,
@@ -111,13 +111,14 @@ class SertifikatModel extends Model
                 instruktur.nama AS nama_instruktur
             ')
             ->join('pendaftaran', 'pendaftaran.id = kelas_siswa.pendaftaran_id')
+            ->join('siswa', 'siswa.no_pendaftaran = pendaftaran.no_pendaftaran') 
             ->join('jadwal_kelas', 'jadwal_kelas.id = kelas_siswa.jadwal_kelas_id')
             ->join('paket_kursus', 'paket_kursus.id = jadwal_kelas.paket_id', 'left')
             ->join('instruktur', 'instruktur.id = jadwal_kelas.instruktur_id', 'left')
             ->join('sertifikat', 'sertifikat.kelas_siswa_id = kelas_siswa.id', 'left')
-            ->where('kelas_siswa.status', 'lulus')
-            ->where('sertifikat.id IS NULL') // Belum ada sertifikat
-            ->orderBy('pendaftaran.nama', 'ASC')
+            ->where('siswa.status', 'lulus') 
+            ->where('sertifikat.id', null)
+            ->orderBy('siswa.nama', 'ASC')
             ->get()
             ->getResultArray();
     }

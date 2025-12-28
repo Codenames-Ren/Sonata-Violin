@@ -26,10 +26,28 @@ class JadwalKelasController extends BaseController
         $this->instrukturModel = new InstrukturModel();
         $this->pendaftaranModel = new PendaftaranModel();
         $this->kelasSiswaModel = new KelasSiswaModel();
+        $this->db = \Config\Database::connect();
+    }
+
+    // ✅ BARU: Method helper buat sinkronisasi status
+    private function sinkronStatusKelasSiswa()
+    {
+        $this->db->query("
+            UPDATE kelas_siswa ks
+            JOIN pendaftaran p ON p.id = ks.pendaftaran_id
+            JOIN siswa s ON s.no_pendaftaran = p.no_pendaftaran
+            SET ks.status = 'lulus'
+            WHERE s.status = 'lulus' 
+            AND p.status = 'selesai'
+            AND ks.status = 'aktif'
+        ");
     }
 
     public function index()
     {
+        // ✅ Sinkronin status dulu sebelum nampilin data
+        $this->sinkronStatusKelasSiswa();
+        
         $role = session('role');
         $instrukturId = session('instruktur_id');
 
@@ -40,7 +58,6 @@ class JadwalKelasController extends BaseController
         
         $pendaftaranIdTerpakai = array_column($sudahDiassign, 'pendaftaran_id');
 
-        // Jika instruktur, hanya ambil jadwal yang dia ampu
         if ($role === 'instruktur') {
             $kelas = $this->jadwalModel->getJadwalByInstruktur($instrukturId);
             
@@ -204,10 +221,24 @@ class JadwalKelasController extends BaseController
             return redirect()->back()->with('error', 'Kelas sudah penuh! Kapasitas maksimal: ' . $jadwal['kapasitas_ruang']);
         }
 
+        // ✅ Cek status siswa & pendaftaran
+        $checkStatus = $this->db->table('pendaftaran')
+            ->select('pendaftaran.status as status_pendaftaran, siswa.status as status_siswa')
+            ->join('siswa', 'siswa.no_pendaftaran = pendaftaran.no_pendaftaran')
+            ->where('pendaftaran.id', $pendaftaranId)
+            ->get()
+            ->getRowArray();
+
+        // ✅ Tentukan status kelas_siswa berdasarkan status pendaftaran & siswa
+        $statusKelasSiswa = 'aktif'; // default
+        if ($checkStatus && $checkStatus['status_pendaftaran'] === 'selesai' && $checkStatus['status_siswa'] === 'lulus') {
+            $statusKelasSiswa = 'lulus';
+        }
+
         $data = [
             'jadwal_kelas_id' => $jadwalId,
             'pendaftaran_id' => $pendaftaranId,
-            'status' => 'aktif'
+            'status' => $statusKelasSiswa
         ];
 
         if ($this->kelasSiswaModel->insert($data)) {
@@ -219,6 +250,9 @@ class JadwalKelasController extends BaseController
 
     public function detail($id)
     {
+        // ✅ Sinkronin status dulu
+        $this->sinkronStatusKelasSiswa();
+        
         $role = session('role');
         $instrukturId = session('instruktur_id');
 

@@ -74,7 +74,9 @@ $routes->group('pendaftaran', ['filter' => 'transaksi'], function($routes) {
 
 });
 
-$routes->post('daftar', 'PendaftaranSiswaController::create');
+$routes->post('daftar', 'PendaftaranSiswaController::create', [
+    'filter' => ['rate', 'csrf']
+]);
 
 $routes->get('pembayaran', 'PembayaranController::index');
 $routes->post('pembayaran/verify/(:num)', 'PembayaranController::verify/$1');
@@ -145,6 +147,7 @@ $routes->group('laporan', ['filter' => 'auth'], function($routes) {
         $routes->get('absensi', 'LaporanController::absensi');
         $routes->get('detailAbsensi/(:num)', 'LaporanController::detailAbsensi/$1');
         $routes->get('progress', 'LaporanController::progress');
+        $routes->get('detailProgress/(:num)', 'LaporanController::detailProgress/$1');
     });
 });
 

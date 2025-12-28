@@ -74,6 +74,33 @@
         background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
         border: 2px dashed #cbd5e0;
     }
+
+    .table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .table-wrapper table {
+        min-width: 1280px;
+    }
+
+    .table-wrapper::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    .table-wrapper::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+
+    .table-wrapper::-webkit-scrollbar-thumb {
+        background: #667eea;
+        border-radius: 10px;
+    }
+
+    .table-wrapper::-webkit-scrollbar-thumb:hover {
+        background: #5568d3;
+    }
     
     @media (max-width: 768px) {
         .file-input-wrapper {
@@ -134,7 +161,8 @@
 
 <!-- DESKTOP TABLE -->
 <div class="hidden md:block bg-white shadow-lg rounded-xl overflow-hidden">
-    <table class="w-full table-auto">
+    <div class="table-wrapper">
+        <table class="w-full table-auto">
         <thead class="bg-gradient-to-r from-gray-50 to-gray-100 text-gray-600 uppercase text-sm font-semibold border-b-2 border-gray-200">
         <tr>
             <th class="py-4 px-4">No Pendaftaran</th>
@@ -210,39 +238,44 @@
                 </form>
                 <?php endif; ?>
 
-                <!-- EDIT -->
-                <button class="btnEdit btn-hover bg-indigo-100 text-indigo-700 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-indigo-200 transition-all"
-                        data-id="<?= $s['id'] ?>"
-                        data-nama="<?= esc($s['nama'], 'attr') ?>"
-                        data-email="<?= esc($s['email'], 'attr') ?>"
-                        data-nohp="<?= esc($s['no_hp'], 'attr') ?>"
-                        data-alamat="<?= esc($s['alamat'], 'attr') ?>"
-                        data-tgl="<?= esc($s['tgl_lahir'], 'attr') ?>"
-                        data-foto="<?= esc($s['foto_profil'], 'attr') ?>">
-                    <i class="fa fa-pen mr-1"></i>Edit
-                </button>
-
-                <!-- DELETE -->
-                <?php if ($canDelete): ?>
-                <form method="POST" action="<?= base_url('/siswa/delete/'.$s['id']) ?>"
-                    class="formDeleteSiswa">
-                    <?= csrf_field() ?>
-                    <button type="submit" class="btn-hover bg-red-100 text-red-700 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-red-200 transition-all">
-                        <i class="fa fa-trash mr-1"></i>Hapus
+                    <!-- EDIT -->
+                    <button class="btnEdit btn-hover bg-indigo-100 text-indigo-700 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-indigo-200 transition-all"
+                            data-id="<?= $s['id'] ?>"
+                            data-nama="<?= esc($s['nama'], 'attr') ?>"
+                            data-email="<?= esc($s['email'], 'attr') ?>"
+                            data-nohp="<?= esc($s['no_hp'], 'attr') ?>"
+                            data-alamat="<?= esc($s['alamat'], 'attr') ?>"
+                            data-tgl="<?= esc($s['tgl_lahir'], 'attr') ?>"
+                            data-foto="<?= esc($s['foto_profil'], 'attr') ?>">
+                        <i class="fa fa-pen mr-1"></i>Edit
                     </button>
-                </form>
-                <?php endif; ?>
 
-            </td>
-        </tr>
-        <?php endforeach; else: ?>
-        <tr><td colspan="8" class="py-8 text-center text-gray-500">
-            <i class="fa fa-users text-4xl mb-3 opacity-20"></i>
-            <p>Belum ada data siswa.</p>
-        </td></tr>
-        <?php endif ?>
-        </tbody>
-    </table>
+                    <!-- DELETE -->
+                    <?php if ($canDelete): ?>
+                    <form method="POST" action="<?= base_url('/siswa/delete/'.$s['id']) ?>"
+                        class="formDeleteSiswa">
+                        <?= csrf_field() ?>
+                        <button type="submit" class="btn-hover bg-red-100 text-red-700 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-red-200 transition-all">
+                            <i class="fa fa-trash mr-1"></i>Hapus
+                        </button>
+                    </form>
+                    <?php endif; ?>
+
+                </td>
+            </tr>
+            <?php endforeach; else: ?>
+            <tr><td colspan="8" class="py-8 text-center text-gray-500">
+                <i class="fa fa-users text-4xl mb-3 opacity-20"></i>
+                <p>Belum ada data siswa.</p>
+            </td></tr>
+            <?php endif ?>
+            </tbody>
+        </table>
+    </div>
+    <!-- HINT SCROLL -->
+    <div class="text-center text-xs text-gray-500 p-2 bg-gray-50 border-t">
+        <i class="fa fa-arrows-alt-h mr-1"></i>Geser tabel ke kanan untuk melihat lebih banyak
+    </div>
 </div>
 
 <!-- MOBILE CARDS -->
