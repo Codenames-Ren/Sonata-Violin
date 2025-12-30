@@ -29,7 +29,7 @@ class JadwalKelasController extends BaseController
         $this->db = \Config\Database::connect();
     }
 
-    // ✅ BARU: Method helper buat sinkronisasi status
+    // Method helper buat sinkronisasi status
     private function sinkronStatusKelasSiswa()
     {
         $this->db->query("
