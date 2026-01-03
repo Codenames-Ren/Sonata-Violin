@@ -14,6 +14,11 @@ writable/session/*
 # Ignore vendor
 vendor/
 
+#fly-mysql
+fly-mysql/
+
+.github
+
 # Ignore node_modules (jika ada)
 node_modules/
 
