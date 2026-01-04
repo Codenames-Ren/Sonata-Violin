@@ -524,6 +524,12 @@ class LaporanController extends BaseController
 
         // AJAX REQUEST HANDLING
         if ($this->request->isAJAX() || $this->request->getGet('ajax')) {
+            // Encode jadwal_id buat link
+            $paginatedData = array_map(function($item) {
+                $item['jadwal_id_encoded'] = encode_id($item['jadwal_id']);
+                return $item;
+            }, $paginatedData);
+            
             return $this->response->setJSON([
                 'success' => true,
                 'dataAbsensi' => $paginatedData,
@@ -559,8 +565,15 @@ class LaporanController extends BaseController
     }
 
     // DETAIL ABSENSI PER KELAS (LIST SISWA)
-    public function detailAbsensi($jadwalKelasId)
+    public function detailAbsensi($hash)
     {
+        // Decode hash jadi ID
+        $jadwalKelasId = decode_id($hash);
+        
+        if (!$jadwalKelasId) {
+            return redirect()->to('/laporan/absensi')->with('error', 'Data tidak ditemukan');
+        }
+        
         // Export handling
         $export = $this->request->getGet('export');
         if ($export === 'excel') {
@@ -568,17 +581,17 @@ class LaporanController extends BaseController
         } elseif ($export === 'pdf') {
             return $this->exportDetailAbsensiPDF($jadwalKelasId);
         }
-
+        
         // Get info kelas
         $infoKelas = $this->laporanModel->getInfoKelas($jadwalKelasId);
         
         if (!$infoKelas) {
             return redirect()->to('laporan/absensi')->with('error', 'Kelas tidak ditemukan');
         }
-
+        
         // Get detail absensi per siswa
         $dataSiswa = $this->laporanModel->getDetailAbsensiPerSiswa($jadwalKelasId);
-
+        
         // Hitung statistik
         $statistik = [
             'total_siswa' => count($dataSiswa),
@@ -590,7 +603,7 @@ class LaporanController extends BaseController
             'total_alpha' => 0,
             'rata_rata_kehadiran' => 0
         ];
-
+        
         foreach ($dataSiswa as $siswa) {
             $statistik['pertemuan_terlaksana'] = max($statistik['pertemuan_terlaksana'], $siswa['total_pertemuan_terlaksana']);
             $statistik['total_hadir'] += $siswa['total_hadir'];
@@ -598,7 +611,7 @@ class LaporanController extends BaseController
             $statistik['total_sakit'] += $siswa['total_sakit'];
             $statistik['total_alpha'] += $siswa['total_alpha'];
         }
-
+        
         if (count($dataSiswa) > 0) {
             $totalKehadiranSemua = $statistik['total_hadir'];
             $totalKemungkinan = $statistik['pertemuan_terlaksana'] * count($dataSiswa);
@@ -606,7 +619,7 @@ class LaporanController extends BaseController
                 $statistik['rata_rata_kehadiran'] = round(($totalKehadiranSemua / $totalKemungkinan) * 100, 1);
             }
         }
-
+        
         // Pagination
         $isMobile = $this->request->getUserAgent()->isMobile();
         $perPage = $isMobile ? 5 : 10;
@@ -615,7 +628,7 @@ class LaporanController extends BaseController
         $totalPages = ceil($totalData / $perPage);
         $offset = ($currentPage - 1) * $perPage;
         $paginatedData = array_slice($dataSiswa, $offset, $perPage);
-
+        
         $data = [
             'title' => 'Detail Absensi Kelas',
             'menu_active' => 'laporan',
@@ -633,7 +646,7 @@ class LaporanController extends BaseController
             'page_title' => 'Detail Absensi - ' . $infoKelas['nama_paket'],
             'page_subtitle' => 'Rekap kehadiran siswa kelas ' . $infoKelas['nama_paket'] . ' - ' . $infoKelas['level']
         ];
-
+        
         return view('laporan/detail_absensi', $data);
     }
 
@@ -759,6 +772,12 @@ class LaporanController extends BaseController
         $offset = ($currentPage - 1) * $perPage;
         $paginatedData = array_slice($dataProgress, $offset, $perPage);
 
+        // Encode ID sebelum kirim ke view
+        $paginatedData = array_map(function($item) {
+            $item['id_encoded'] = encode_id($item['id']);
+            return $item;
+        }, $paginatedData);
+
         $data = [
             'title' => 'Laporan Progress Kursus',
             'menu_active' => 'laporan',
@@ -779,8 +798,15 @@ class LaporanController extends BaseController
     }
 
     // Detail Progress per Pertemuan
-    public function detailProgress($progressKursusId)
+    public function detailProgress($hash)
     {
+        // Decode hash jadi ID
+        $progressKursusId = decode_id($hash);
+        
+        if (!$progressKursusId) {
+            return redirect()->to('/laporan/progress')->with('error', 'Data tidak ditemukan');
+        }
+        
         // Export handling
         $export = $this->request->getGet('export');
         if ($export === 'excel') {
@@ -788,17 +814,17 @@ class LaporanController extends BaseController
         } elseif ($export === 'pdf') {
             return $this->exportDetailProgressPDF($progressKursusId);
         }
-
+        
         // Get info progress
         $infoProgress = $this->laporanModel->getInfoProgressKursus($progressKursusId);
         
         if (!$infoProgress) {
             return redirect()->to('laporan/progress')->with('error', 'Data progress tidak ditemukan');
         }
-
+        
         // Get detail per pertemuan
         $dataPertemuan = $this->laporanModel->getDetailProgressPertemuan($progressKursusId);
-
+        
         // Pagination
         $isMobile = $this->request->getUserAgent()->isMobile();
         $perPage = $isMobile ? 5 : 10;
@@ -807,7 +833,7 @@ class LaporanController extends BaseController
         $totalPages = ceil($totalData / $perPage);
         $offset = ($currentPage - 1) * $perPage;
         $paginatedData = array_slice($dataPertemuan, $offset, $perPage);
-
+        
         $data = [
             'title' => 'Detail Progress Kursus',
             'menu_active' => 'laporan',
@@ -824,7 +850,7 @@ class LaporanController extends BaseController
             'page_title' => 'Detail Progress - ' . $infoProgress['nama_paket'],
             'page_subtitle' => 'Detail pertemuan kelas ' . $infoProgress['nama_paket'] . ' - ' . $infoProgress['level']
         ];
-
+        
         return view('laporan/detail_progress', $data);
     }
 

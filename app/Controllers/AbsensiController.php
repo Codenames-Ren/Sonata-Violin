@@ -45,6 +45,7 @@ class AbsensiController extends BaseController
 
         foreach ($absensi as &$abs) {
             $abs['hari_absensi'] = $this->getHariIndonesia(date('N', strtotime($abs['tanggal'])));
+            $abs['absensi_id_encoded'] = encode_id($abs['absensi_id']);
         }
 
         return view('absensi/absensi', [
@@ -136,8 +137,15 @@ class AbsensiController extends BaseController
         return redirect()->back()->with('success', 'Absensi berhasil ditutup');
     }
 
-    public function detail($absensiKelasId)
+    public function detail($hash)
     {
+        // Decode hash jadi ID
+        $absensiKelasId = decode_id($hash);
+        
+        if (!$absensiKelasId) {
+            return redirect()->to('/absensi')->with('error', 'Data tidak ditemukan');
+        }
+        
         // Validasi role: admin, operator, instruktur
         if (!in_array(session('role'), ['admin', 'operator', 'instruktur'])) {
             return redirect()->to('/dashboard')->with('error', 'Akses ditolak');
@@ -145,21 +153,21 @@ class AbsensiController extends BaseController
         
         $role         = session('role');
         $instrukturId = session('instruktur_id');
-
+        
         $absensi = $this->absensiKelasModel->getDetailAbsensi($absensiKelasId);
-
+        
         if (!$absensi) {
             return redirect()->back()->with('error', 'Data tidak ditemukan');
         }
-
+        
         // Proteksi instruktur: hanya bisa lihat kelas sendiri
         if ($role === 'instruktur' && $absensi['instruktur_id'] != $instrukturId) {
             return redirect()->to('/absensi')->with('error', 'Anda tidak memiliki akses ke absensi ini');
         }
-
+        
         $absensi['hari_absensi'] = $this->getHariIndonesia(date('N', strtotime($absensi['tanggal'])));
         $siswaAbsen = $this->absensiSiswaModel->getSiswaWithAbsensi($absensiKelasId);
-
+        
         return view('absensi/detail', [
             'absensi'     => $absensi,
             'siswaAbsen'  => $siswaAbsen,

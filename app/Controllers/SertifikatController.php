@@ -54,6 +54,12 @@ class SertifikatController extends BaseController
         $offset = ($currentPage - 1) * $perPage;
         $paginatedData = array_slice($dataSertifikat, $offset, $perPage);
 
+        // Encode ID untuk link preview & cetak
+        $paginatedData = array_map(function($item) {
+            $item['id_encoded'] = encode_id($item['id']);
+            return $item;
+        }, $paginatedData);
+
         // Statistik
         $totalSudahCetak = $this->sertifikatModel->getTotalSudahCetak();
         $totalBelumCetak = $this->sertifikatModel->getTotalBelumCetak();
@@ -219,8 +225,15 @@ class SertifikatController extends BaseController
     }
 
     // CETAK SERTIFIKAT PDF
-    public function cetak($sertifikatId)
+    public function cetak($hash)
     {
+        // Decode hash jadi ID
+        $sertifikatId = decode_id($hash);
+        
+        if (!$sertifikatId) {
+            return redirect()->to('/sertifikat')->with('error', 'Sertifikat tidak ditemukan!');
+        }
+        
         $sertifikat = $this->sertifikatModel->getDetailSertifikat($sertifikatId);
 
         if (!$sertifikat) {
@@ -322,21 +335,28 @@ class SertifikatController extends BaseController
     }
 
     // VIEW PREVIEW SERTIFIKAT 
-    public function preview($sertifikatId)
+    public function preview($hash)
     {
+        // Decode hash jadi ID
+        $sertifikatId = decode_id($hash);
+        
+        if (!$sertifikatId) {
+            return redirect()->to('/sertifikat')->with('error', 'Sertifikat tidak ditemukan!');
+        }
+        
         $sertifikat = $this->sertifikatModel->getDetailSertifikat($sertifikatId);
-
+        
         if (!$sertifikat) {
             return redirect()->back()->with('error', 'Sertifikat tidak ditemukan!');
         }
-
+        
         $data = [
             'page_title' => 'Preview',
             'page_subtitle' => 'Pastikan sertifikat yang akan dicetak sudah sesuai',
             'title' => 'Preview Sertifikat',
             'sertifikat' => $sertifikat
         ];
-
+        
         return view('sertifikat/preview', $data);
     }
 

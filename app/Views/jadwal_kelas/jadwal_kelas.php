@@ -191,7 +191,7 @@ tailwind.config = {
                 </td>
                 <td class="px-4 py-4">
                     <div class="flex flex-wrap justify-center gap-2">
-                        <a href="<?= base_url('jadwal-kelas/'.$k['id']) ?>"
+                        <a href="<?= base_url('jadwal-kelas/'.encode_id($k['id'])) ?>"
                            class="btn-hover px-4 py-2 bg-blue-100 text-blue-700 rounded-lg text-xs font-semibold hover:bg-blue-200 transition-all whitespace-nowrap">
                             <i class="fa fa-eye mr-1"></i>Detail
                         </a>
@@ -268,7 +268,7 @@ tailwind.config = {
                 </div>
 
                 <div class="grid grid-cols-1 gap-2 mt-4">
-                    <a href="<?= base_url('jadwal-kelas/'.$k['id']) ?>"
+                    <a href="<?= base_url('jadwal-kelas/'.encode_id($k['id'])) ?>"
                        class="text-center px-3 py-2 bg-blue-100 text-blue-700 rounded-lg text-sm font-semibold hover:bg-blue-200 transition-all">
                         <i class="fa fa-eye mr-1"></i>Detail Kelas
                     </a>

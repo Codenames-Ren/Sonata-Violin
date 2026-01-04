@@ -86,7 +86,7 @@ $routes->post('pembayaran/resubmit/(:num)', 'PembayaranController::resubmit/$1')
 $routes->group('jadwal-kelas', ['filter' => 'auth'], function ($routes) {
     $routes->group('', ['filter' => 'role:admin,operator,instruktur'], function ($routes) {
         $routes->get('/', 'JadwalKelasController::index');
-        $routes->get('(:num)', 'JadwalKelasController::detail/$1');
+        $routes->get('(:any)', 'JadwalKelasController::detail/$1');
     });
     
     // Routes khusus admin dan operator untuk jadwal kelas
@@ -104,7 +104,7 @@ $routes->group('absensi', ['filter' => 'auth'], function ($routes) {
     // Routes untuk semua role (admin, operator, instruktur)
     $routes->group('', ['filter' => 'role:admin,operator,instruktur'], function ($routes) {
         $routes->get('/', 'AbsensiController::index');
-        $routes->get('detail/(:num)', 'AbsensiController::detail/$1');
+        $routes->get('detail/(:any)', 'AbsensiController::detail/$1');
     });
     
     // Routes khusus admin dan operator untuk manage absensi
@@ -124,7 +124,7 @@ $routes->group('progress-kursus', ['filter' => 'auth'], function ($routes) {
     // Routes untuk semua role (admin, operator, instruktur)
     $routes->group('', ['filter' => 'role:admin,operator,instruktur'], function ($routes) {
         $routes->get('/', 'ProgressKursusController::index');
-        $routes->get('detail/(:num)', 'ProgressKursusController::detail/$1');
+        $routes->get('detail/(:any)', 'ProgressKursusController::detail/$1');
     });
     
     // Routes khusus admin dan operator (create progress baru)
@@ -145,9 +145,9 @@ $routes->group('laporan', ['filter' => 'auth'], function($routes) {
         $routes->get('profit', 'LaporanController::profit');
         $routes->get('pendaftaran', 'LaporanController::pendaftaran');
         $routes->get('absensi', 'LaporanController::absensi');
-        $routes->get('detailAbsensi/(:num)', 'LaporanController::detailAbsensi/$1');
+        $routes->get('detailAbsensi/(:any)', 'LaporanController::detailAbsensi/$1');
         $routes->get('progress', 'LaporanController::progress');
-        $routes->get('detailProgress/(:num)', 'LaporanController::detailProgress/$1');
+        $routes->get('detailProgress/(:any)', 'LaporanController::detailProgress/$1');
     });
 });
 
@@ -161,9 +161,9 @@ $routes->group('sertifikat', ['filter' => 'auth'], function($routes) {
         $routes->post('generate-batch', 'SertifikatController::generateBatch');
         
         // Cetak sertifikat (download PDF)
-        $routes->get('cetak/(:num)', 'SertifikatController::cetak/$1');
+        $routes->get('cetak/(:any)', 'SertifikatController::cetak/$1');
         $routes->post('cetak-batch', 'SertifikatController::cetakBatch');
-        $routes->get('preview/(:num)', 'SertifikatController::preview/$1');
+        $routes->get('preview/(:any)', 'SertifikatController::preview/$1');
 
         // Delete sertifikat
         $routes->post('delete/(:num)', 'SertifikatController::delete/$1');

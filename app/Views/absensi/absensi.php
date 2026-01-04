@@ -203,7 +203,7 @@ tailwind.config = {
                 </td>
                 <td class="px-4 py-4">
                     <div class="flex flex-wrap justify-center gap-2">
-                        <a href="<?= base_url('absensi/detail/'.$abs['absensi_id']) ?>"
+                        <a href="<?= base_url('absensi/detail/'.encode_id($abs['absensi_id'])) ?>"
                            class="btn-hover px-4 py-2 bg-blue-100 text-blue-700 rounded-lg text-xs font-semibold hover:bg-blue-200 transition-all whitespace-nowrap">
                             <i class="fa fa-eye mr-1"></i>Lihat Detail
                         </a>
@@ -292,7 +292,7 @@ tailwind.config = {
                 </div>
 
                 <div class="grid grid-cols-1 gap-2 mt-4">
-                    <a href="<?= base_url('absensi/detail/'.$abs['absensi_id']) ?>"
+                    <a href="<?= base_url('absensi/detail/'.encode_id($abs['absensi_id'])) ?>"
                        class="text-center px-3 py-2 bg-blue-100 text-blue-700 rounded-lg text-sm font-semibold hover:bg-blue-200 transition-all">
                         <i class="fa fa-eye mr-1"></i>Lihat Detail
                     </a>

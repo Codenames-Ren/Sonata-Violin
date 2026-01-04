@@ -301,7 +301,7 @@ tailwind.config = {
                             </span>
                         </td>
                         <td class="px-4 py-3 text-center">
-                            <a href="<?= base_url('laporan/detailProgress/' . $progress['id']) ?>" 
+                            <a href="<?= base_url('laporan/detailProgress/' . encode_id($progress['id'])) ?>" 
                                class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary to-secondary text-white text-sm font-semibold rounded-lg hover:shadow-lg transition-all">
                                 <i class="fa fa-eye"></i>
                                 <span>Detail</span>
@@ -397,7 +397,7 @@ tailwind.config = {
                 </div>
                 
                 <!-- Button Detail -->
-                <a href="<?= base_url('laporan/detailProgress/' . $progress['id']) ?>" 
+                <a href="<?= base_url('laporan/detailProgress/' . encode_id($progress['id'])) ?>" 
                    class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-primary to-secondary text-white font-semibold rounded-lg hover:shadow-lg transition-all">
                     <i class="fa fa-eye"></i>
                     <span>Lihat Detail Progress</span>
@@ -562,7 +562,7 @@ tailwind.config = {
                             </span>
                         </td>
                         <td class="px-4 py-3 text-center">
-                            <a href="<?= base_url('laporan/detailProgress/') ?>${progress.id}" 
+                            <a href="<?= base_url('laporan/detailProgress/') ?>${progress.id_encoded}" 
                                class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary to-secondary text-white text-sm font-semibold rounded-lg hover:shadow-lg transition-all">
                                 <i class="fa fa-eye"></i>
                                 <span>Detail</span>
@@ -660,7 +660,7 @@ tailwind.config = {
                                 </div>
                             </div>
                             
-                            <a href="<?= base_url('laporan/detailProgress/') ?>${progress.id}" 
+                            <a href="<?= base_url('laporan/detailProgress/') ?>${progress.id_encoded}" 
                                class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-primary to-secondary text-white font-semibold rounded-lg hover:shadow-lg transition-all">
                                 <i class="fa fa-eye"></i>
                                 <span>Lihat Detail Progress</span>

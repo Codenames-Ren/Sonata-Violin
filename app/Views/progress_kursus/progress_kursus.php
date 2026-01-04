@@ -227,7 +227,7 @@ tailwind.config = {
                 
                 <td class="px-4 py-4">
                     <div class="flex justify-center">
-                        <a href="<?= base_url('progress-kursus/detail/'.$p['id']) ?>"
+                        <a href="<?= base_url('progress-kursus/detail/'.encode_id($p['id'])) ?>"
                            class="btn-hover px-4 py-2 bg-blue-100 text-blue-700 rounded-lg text-xs font-semibold hover:bg-blue-200 transition-all whitespace-nowrap">
                             <i class="fa fa-eye mr-1"></i>Detail
                         </a>
@@ -314,7 +314,7 @@ tailwind.config = {
 
                 <!-- BUTTON DETAIL -->
                 <div class="mt-4">
-                    <a href="<?= base_url('progress-kursus/detail/'.$p['id']) ?>"
+                    <a href="<?= base_url('progress-kursus/detail/'.encode_id($p['id'])) ?>"
                        class="block text-center px-3 py-2 bg-blue-100 text-blue-700 rounded-lg text-sm font-semibold hover:bg-blue-200 transition-all">
                         <i class="fa fa-eye mr-1"></i>Lihat Detail Progress
                     </a>

@@ -284,8 +284,8 @@ tailwind.config = {
                             </span>
                         </td>
                         <td class="px-4 py-3 text-center">
-                            <a href="<?= base_url('laporan/detailAbsensi/' . $absen['jadwal_id']) ?>" 
-                               class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary to-secondary text-white text-sm font-semibold rounded-lg hover:shadow-lg transition-all">
+                            <a href="<?= base_url('laporan/detailAbsensi/' . encode_id($absen['jadwal_id'])) ?>" 
+                            class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary to-secondary text-white text-sm font-semibold rounded-lg hover:shadow-lg transition-all">
                                 <i class="fa fa-eye"></i>
                                 <span>Detail</span>
                             </a>
@@ -365,8 +365,8 @@ tailwind.config = {
                 </div>
                 
                 <!-- Button Detail -->
-                <a href="<?= base_url('laporan/detail/' . $absen['jadwal_id']) ?>" 
-                   class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-primary to-secondary text-white font-semibold rounded-lg hover:shadow-lg transition-all">
+                <a href="<?= base_url('laporan/detailAbsensi/' . encode_id($absen['jadwal_id'])) ?>" 
+                class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-primary to-secondary text-white font-semibold rounded-lg hover:shadow-lg transition-all">
                     <i class="fa fa-eye"></i>
                     <span>Lihat Detail Absensi</span>
                 </a>
@@ -525,8 +525,8 @@ tailwind.config = {
                             </span>
                         </td>
                         <td class="px-4 py-3 text-center">
-                            <a href="<?= base_url('laporan/detailAbsensi/') ?>${absen.jadwal_id}" 
-                               class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary to-secondary text-white text-sm font-semibold rounded-lg hover:shadow-lg transition-all">
+                            <a href="<?= base_url('laporan/detailAbsensi/') ?>${absen.jadwal_id_encoded}" 
+                            class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary to-secondary text-white text-sm font-semibold rounded-lg hover:shadow-lg transition-all">
                                 <i class="fa fa-eye"></i>
                                 <span>Detail</span>
                             </a>
@@ -607,7 +607,7 @@ tailwind.config = {
                                 </div>
                             </div>
                             
-                            <a href="<?= base_url('laporan/detailAbsensi/') ?>${absen.jadwal_id}" 
+                            <a href="<?= base_url('laporan/detailAbsensi/') ?>${absen.jadwal_id_encoded}"
                                class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-primary to-secondary text-white font-semibold rounded-lg hover:shadow-lg transition-all">
                                 <i class="fa fa-eye"></i>
                                 <span>Lihat Detail Absensi</span>

@@ -334,12 +334,12 @@ tailwind.config = {
                         </td>
                         <td class="px-4 py-3">
                             <div class="flex items-center justify-center gap-2">
-                                <a href="<?= base_url('sertifikat/preview/'.$sertifikat['id']) ?>" 
+                                <a href="<?= base_url('sertifikat/preview/'.encode_id($sertifikat['id'])) ?>"
                                    class="px-3 py-1.5 bg-blue-500 text-white text-xs font-semibold rounded hover:bg-blue-600 transition-colors"
                                    title="Preview">
                                     <i class="fa fa-eye"></i>
                                 </a>
-                                <a href="<?= base_url('sertifikat/cetak/'.$sertifikat['id']) ?>" 
+                                <a href="<?= base_url('sertifikat/cetak/'.encode_id($sertifikat['id'])) ?>" 
                                    class="px-3 py-1.5 bg-red-500 text-white text-xs font-semibold rounded hover:bg-red-600 transition-colors"
                                    title="Cetak PDF">
                                     <i class="fa fa-print"></i>
@@ -434,12 +434,12 @@ tailwind.config = {
                 
                 <!-- Action Buttons -->
                 <div class="grid grid-cols-3 gap-2">
-                    <a href="<?= base_url('sertifikat/preview/'.$sertifikat['id']) ?>" 
+                    <a href="<?= base_url('sertifikat/preview/'.encode_id($sertifikat['id'])) ?>" 
                        class="px-4 py-2.5 bg-blue-500 text-white text-sm font-semibold rounded-lg hover:bg-blue-600 transition-colors text-center">
                         <i class="fa fa-eye"></i>
                         <span class="block text-xs mt-1">Preview</span>
                     </a>
-                    <a href="<?= base_url('sertifikat/cetak/'.$sertifikat['id']) ?>" 
+                    <a href="<?= base_url('sertifikat/cetak/'.encode_id($sertifikat['id'])) ?>" 
                        class="px-4 py-2.5 bg-red-500 text-white text-sm font-semibold rounded-lg hover:bg-red-600 transition-colors text-center">
                         <i class="fa fa-print"></i>
                         <span class="block text-xs mt-1">Cetak</span>

@@ -31,6 +31,11 @@ class ProgressKursusController extends BaseController
         if ($role === 'instruktur') {
             $progressList = $this->progressModel->getProgressByInstruktur($instrukturId);
             
+            // Encode ID untuk link detail
+            foreach ($progressList as &$p) {
+                $p['id_encoded'] = encode_id($p['id']);
+            }
+            
             $data = [
                 'progress' => $progressList,
                 'kelasAvailable' => [],
@@ -39,10 +44,16 @@ class ProgressKursusController extends BaseController
                 'page_subtitle' => 'Daftar kelas yang Anda bimbing'
             ];
         } else {
-
             // Admin & Operator lihat semua + bisa create baru
+            $progressList = $this->progressModel->getProgressLengkap();
+            
+            // Encode ID untuk link detail
+            foreach ($progressList as &$p) {
+                $p['id_encoded'] = encode_id($p['id']);
+            }
+            
             $data = [
-                'progress' => $this->progressModel->getProgressLengkap(),
+                'progress' => $progressList,
                 'kelasAvailable' => $this->progressModel->getKelasWithoutProgress(),
                 'role' => $role,
                 'page_title' => 'Manajemen Progress Kursus',
@@ -98,11 +109,18 @@ class ProgressKursusController extends BaseController
     }
 
     // DETAIL: LIHAT & KELOLA DETAIL PROGRESS
-    public function detail($id)
+    public function detail($hash)
     {
+        // Decode hash jadi ID
+        $id = decode_id($hash);
+        
+        if (!$id) {
+            return redirect()->to('/progress-kursus')->with('error', 'Progress tidak ditemukan!');
+        }
+        
         $role = session('role');
         $instrukturId = session('instruktur_id');
-
+        
         $progress = $this->progressModel
             ->select('
                 progress_kursus.*,
@@ -121,20 +139,20 @@ class ProgressKursusController extends BaseController
             ->join('ruang_kelas', 'ruang_kelas.id = jadwal_kelas.ruang_kelas_id', 'left')
             ->where('progress_kursus.id', $id)
             ->first();
-
+        
         if (!$progress) {
             return redirect()->to('/progress-kursus')
                 ->with('error', 'Progress tidak ditemukan!');
         }
-
+        
         // Cek akses instruktur
         if ($role === 'instruktur' && $progress['instruktur_id'] != $instrukturId) {
             return redirect()->to('/progress-kursus')
                 ->with('error', 'Anda tidak memiliki akses ke kelas ini!');
         }
-
+        
         $detailProgress = $this->detailModel->getDetailByProgress($id);
-
+        
         $data = [
             'progress' => $progress,
             'detailProgress' => $detailProgress,
@@ -142,7 +160,7 @@ class ProgressKursusController extends BaseController
             'page_title' => 'Detail Progress Kursus',
             'page_subtitle' => $progress['nama_paket'] . ' - ' . $progress['hari']
         ];
-
+        
         return view('progress_kursus/detail', $data);
     }
 

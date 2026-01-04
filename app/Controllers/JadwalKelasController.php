@@ -45,7 +45,7 @@ class JadwalKelasController extends BaseController
 
     public function index()
     {
-        // ✅ Sinkronin status dulu sebelum nampilin data
+        // Sinkronin status dulu sebelum nampilin data
         $this->sinkronStatusKelasSiswa();
         
         $role = session('role');
@@ -61,6 +61,11 @@ class JadwalKelasController extends BaseController
         if ($role === 'instruktur') {
             $kelas = $this->jadwalModel->getJadwalByInstruktur($instrukturId);
             
+            // Encode ID untuk link detail
+            foreach ($kelas as &$k) {
+                $k['id_encoded'] = encode_id($k['id']);
+            }
+            
             $data = [
                 'kelas' => $kelas,
                 'role' => $role,
@@ -72,8 +77,15 @@ class JadwalKelasController extends BaseController
                 'page_subtitle' => 'Daftar kelas yang Anda bimbing'
             ];
         } else {
+            $kelas = $this->jadwalModel->getJadwalLengkap();
+            
+            // Encode ID untuk link detail
+            foreach ($kelas as &$k) {
+                $k['id_encoded'] = encode_id($k['id']);
+            }
+            
             $data = [
-                'kelas' => $this->jadwalModel->getJadwalLengkap(),
+                'kelas' => $kelas,
                 'role' => $role,
                 'paket' => $this->paketModel->where('status', 'aktif')->findAll(),
                 'ruang' => $this->ruangModel->where('status', 'aktif')->findAll(),
@@ -248,26 +260,33 @@ class JadwalKelasController extends BaseController
         return redirect()->back()->with('error', 'Gagal assign siswa.');
     }
 
-    public function detail($id)
+    public function detail($hash)
     {
-        // ✅ Sinkronin status dulu
+        // Decode hash jadi ID
+        $id = decode_id($hash);
+        
+        if (!$id) {
+            return redirect()->to('/jadwal-kelas')->with('error', 'Jadwal tidak ditemukan!');
+        }
+        
+        // Sinkronin status dulu
         $this->sinkronStatusKelasSiswa();
         
         $role = session('role');
         $instrukturId = session('instruktur_id');
-
+        
         $jadwal = $this->jadwalModel->getJadwalById($id);
         
         if (!$jadwal) {
             return redirect()->to('/jadwal-kelas')->with('error', 'Jadwal tidak ditemukan!');
         }
-
+        
         if ($role === 'instruktur' && $jadwal['instruktur_id'] != $instrukturId) {
             return redirect()->to('/jadwal-kelas')->with('error', 'Anda tidak memiliki akses ke kelas ini!');
         }
-
+        
         $siswa = $this->kelasSiswaModel->getSiswaByKelas($id);
-
+        
         $siswaAvailable = [];
         if (in_array($role, ['admin', 'operator'])) {
             $sudahDiassign = $this->kelasSiswaModel
@@ -276,7 +295,7 @@ class JadwalKelasController extends BaseController
                 ->findAll();
             
             $pendaftaranIdTerpakai = array_column($sudahDiassign, 'pendaftaran_id');
-
+            
             $siswaAvailable = $this->pendaftaranModel
                 ->select('pendaftaran.*, paket_kursus.nama_paket')
                 ->join('paket_kursus', 'paket_kursus.id = pendaftaran.paket_id')
@@ -285,7 +304,7 @@ class JadwalKelasController extends BaseController
                 ->whereNotIn('pendaftaran.id', !empty($pendaftaranIdTerpakai) ? $pendaftaranIdTerpakai : [0])
                 ->findAll();
         }
-
+        
         $data = [
             'jadwal' => $jadwal,
             'siswa' => $siswa,
@@ -294,7 +313,7 @@ class JadwalKelasController extends BaseController
             'page_title' => 'Jadwal Kelas',
             'page_subtitle' => 'Informasi kelas ' . $jadwal['nama_paket'] . ' - ' . $jadwal['hari']
         ];
-
+        
         return view('jadwal_kelas/detail', $data);
     }
 
