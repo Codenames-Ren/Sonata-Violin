@@ -177,14 +177,14 @@ tailwind.config = {
 
 <!-- ================= EXPORT BUTTONS ================= -->
 <div class="flex flex-col sm:flex-row gap-3 mb-6">
-    <a href="<?= base_url('laporan/detailProgress/' . $progressKursusId . '?export=excel') ?>" 
-       class="flex-1 flex items-center justify-center gap-2 px-5 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl">
+    <a href="<?= base_url('laporan/detailProgress/' . encode_id($progressKursusId) . '?export=excel') ?>" 
+    class="flex-1 flex items-center justify-center gap-2 px-5 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl">
         <i class="fa fa-file-excel text-xl"></i>
         <span>Export Excel</span>
     </a>
-    
-    <a href="<?= base_url('laporan/detailProgress/' . $progressKursusId . '?export=pdf') ?>" 
-       class="flex-1 flex items-center justify-center gap-2 px-5 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl">
+
+    <a href="<?= base_url('laporan/detailProgress/' . encode_id($progressKursusId) . '?export=pdf') ?>" 
+    class="flex-1 flex items-center justify-center gap-2 px-5 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl">
         <i class="fa fa-file-pdf text-xl"></i>
         <span>Export PDF</span>
     </a>
@@ -632,8 +632,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     `;
     document.head.appendChild(style);
-    
-    console.log('✅ Detail Progress Kursus JavaScript initialized successfully!');
 });
 </script>
 

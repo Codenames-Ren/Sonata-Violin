@@ -180,17 +180,26 @@ tailwind.config = {
 
             <div class="flex-1"></div>
 
-            <a href="<?= base_url('sertifikat?export=excel' . (isset($filters['status']) ? '&status='.$filters['status'] : '') . (isset($filters['tanggal_start']) ? '&tanggal_start='.$filters['tanggal_start'] : '') . (isset($filters['tanggal_end']) ? '&tanggal_end='.$filters['tanggal_end'] : '') . (isset($filters['paket_id']) ? '&paket_id='.$filters['paket_id'] : '')) ?>" 
-               class="px-6 py-2.5 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-all flex items-center justify-center gap-2">
-                <i class="fa fa-file-excel"></i>
-                <span>Export Excel</span>
-            </a>
+                <?php
+                
+                $exportParams = array_merge(['export' => 'excel'], array_filter($filters));
+                $excelUrl = base_url('sertifikat') . '?' . http_build_query($exportParams);
 
-            <a href="<?= base_url('sertifikat/?export=pdf' . (isset($filters['status']) ? '&status='.$filters['status'] : '') . (isset($filters['tanggal_start']) ? '&tanggal_start='.$filters['tanggal_start'] : '') . (isset($filters['tanggal_end']) ? '&tanggal_end='.$filters['tanggal_end'] : '') . (isset($filters['paket_id']) ? '&paket_id='.$filters['paket_id'] : '')) ?>"
-               class="px-6 py-2.5 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-all flex items-center justify-center gap-2">
-                <i class="fa fa-file-pdf"></i>
-                <span>Export PDF</span>
-            </a>
+                $exportParams['export'] = 'pdf';
+                $pdfUrl = base_url('sertifikat') . '?' . http_build_query($exportParams);
+                ?>
+
+                <a href="<?= $excelUrl ?>" 
+                class="px-6 py-2.5 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-all flex items-center justify-center gap-2">
+                    <i class="fa fa-file-excel"></i>
+                    <span>Export Excel</span>
+                </a>
+
+                <a href="<?= $pdfUrl ?>"
+                class="px-6 py-2.5 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-all flex items-center justify-center gap-2">
+                    <i class="fa fa-file-pdf"></i>
+                    <span>Export PDF</span>
+                </a>
         </div>
     </form>
     

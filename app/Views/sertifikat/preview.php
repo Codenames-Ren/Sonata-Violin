@@ -60,8 +60,8 @@
     </a>
     
     <div class="w-full md:w-auto flex flex-col md:flex-row gap-3">
-        <a href="<?= base_url('sertifikat/cetak/' . $sertifikat['id']) ?>" 
-           class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-green-500 to-green-700 text-white rounded-lg font-semibold shadow-md hover:shadow-lg transition-all">
+        <a href="<?= base_url('sertifikat/cetak/' . encode_id($sertifikat['id'])) ?>" 
+        class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-green-500 to-green-700 text-white rounded-lg font-semibold shadow-md hover:shadow-lg transition-all">
             <i class="fa fa-download"></i>
             <span>Download Sertifikat</span>
         </a>

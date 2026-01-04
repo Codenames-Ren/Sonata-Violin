@@ -201,14 +201,14 @@ tailwind.config = {
 
 <!-- ================= EXPORT BUTTONS ================= -->
 <div class="flex flex-col sm:flex-row gap-3 mb-6">
-    <a href="<?= base_url('laporan/detailAbsensi/' . $jadwalKelasId . '?export=excel') ?>" 
-       class="px-6 py-2.5 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-all flex items-center justify-center gap-2">
+    <a href="<?= base_url('laporan/detailAbsensi/' . encode_id($jadwalKelasId) . '?export=excel') ?>" 
+    class="px-6 py-2.5 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-all flex items-center justify-center gap-2">
         <i class="fa fa-file-excel"></i>
         <span>Export Excel</span>
     </a>
-    
-    <a href="<?= base_url('laporan/detailAbsensi/' . $jadwalKelasId . '?export=pdf') ?>" 
-       class="px-6 py-2.5 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-all flex items-center justify-center gap-2">
+
+    <a href="<?= base_url('laporan/detailAbsensi/' . encode_id($jadwalKelasId) . '?export=pdf') ?>" 
+    class="px-6 py-2.5 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-all flex items-center justify-center gap-2">
         <i class="fa fa-file-pdf"></i>
         <span>Export PDF</span>
     </a>
